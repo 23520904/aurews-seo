@@ -1,8 +1,40 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  reactCompiler: true,
+  // Required for Netlify serverless bundling
+  output: 'standalone',
+
+  // Catch React + Next.js bugs at build time
+  reactStrictMode: true,
+
+  // Suppress all deprecation warnings from dependencies
+  serverExternalPackages: ['@prisma/client', 'bcrypt'],
+
+
+  // next/image remote domains — required or you get 400 errors
+  images: {
+    remotePatterns: [
+      { protocol: 'https', hostname: 'res.cloudinary.com' },
+      { protocol: 'https', hostname: 'images.unsplash.com' },
+      { protocol: 'https', hostname: 'avatars.githubusercontent.com' },
+    ],
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 60,
+  },
+
+  // Enable Turbopack (Next.js 16 default)
+  turbopack: {},
+
+  // Trailing slash consistency (Netlify prefers false)
+  trailingSlash: false,
+
+
+  // Disable X-Powered-By header (security)
+  poweredByHeader: false,
+
+  // Compress responses
+  compress: true,
 };
 
 export default nextConfig;
+
