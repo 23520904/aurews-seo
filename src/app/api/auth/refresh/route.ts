@@ -1,0 +1,29 @@
+import { NextResponse } from "next/server";
+import { verifyRefreshToken, generateAccessToken, generateRefreshToken } from "@/lib/tokens";
+
+export async function POST(request: Request) {
+  try {
+    const { refreshToken } = await request.json();
+
+    if (!refreshToken) {
+      return NextResponse.json({ error: "Missing refresh token" }, { status: 400 });
+    }
+
+    const payload = await verifyRefreshToken(refreshToken);
+    if (!payload) {
+      return NextResponse.json({ error: "Invalid or expired refresh token" }, { status: 401 });
+    }
+
+    // Generate new pair (Refresh Token Rotation)
+    // First, remove the old one (logic inside generateRefreshToken handles overwriting/expiry)
+    const newAccessToken = await generateAccessToken({ id: payload.id, email: payload.email, role: payload.role });
+    const newRefreshToken = await generateRefreshToken({ id: payload.id, email: payload.email, role: payload.role });
+
+    return NextResponse.json({
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken
+    });
+  } catch (error) {
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
