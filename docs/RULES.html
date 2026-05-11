@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RULES — Agent Development Directives Every package must be latest</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Space+Mono:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Work+Sans:wght@400;600;700&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --black: #000000;
+      --ink: #1a1a1a;
+      --paper: #ffffff;
+      --blue: #057dbc;
+      --green: #1a7a34;
+      --amber: #7a4d00;
+      --red: #8b0000;
+      --caption: #757575;
+      --disabled: #999999;
+      --hairline: #e2e8f0;
+      --code-bg: #f4f4f0;
+
+      --font-display: 'Playfair Display', helvetica, serif;
+      --font-body: 'Lora', helvetica, serif;
+      --font-ui: 'Work Sans', helvetica, sans-serif;
+      --font-mono: 'Space Mono', 'Monaco', 'Courier New', monospace;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-size: 16px;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: var(--blue);
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .mono {
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.92px;
+      font-size: 0.75rem;
+    }
+
+    .mono-bold {
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 1.1px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .hairline {
+      border: none;
+      border-top: 1px solid var(--hairline);
+      margin: 0;
+    }
+
+    .rule {
+      border: none;
+      border-top: 1px solid var(--black);
+      margin: 0;
+    }
+
+    .rule2 {
+      border: none;
+      border-top: 2px solid var(--black);
+      margin: 0;
+    }
+
+    .util-bar {
+      background: var(--black);
+      padding: 8px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .util-bar span,
+    .util-bar a {
+      color: var(--paper);
+      font-family: var(--font-mono);
+      font-size: 0.69rem;
+      text-transform: uppercase;
+      letter-spacing: 1.1px;
+    }
+
+    .util-bar a:hover {
+      color: var(--blue);
+    }
+
+    .util-bar-links {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .masthead {
+      border-bottom: 2px solid var(--black);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .logo {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: -1px;
+      color: var(--black);
+      line-height: 1;
+    }
+
+    .masthead-sub {
+      font-family: var(--font-mono);
+      font-size: 0.63rem;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--caption);
+      margin-top: 4px;
+    }
+
+    .masthead-meta {
+      font-family: var(--font-mono);
+      font-size: 0.69rem;
+      text-transform: uppercase;
+      letter-spacing: 0.9px;
+      color: var(--caption);
+      text-align: right;
+      line-height: 1.6;
+    }
+
+    .wrapper {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    @media (min-width: 1024px) {
+      .wrapper {
+        padding: 0 48px;
+      }
+    }
+
+    .ribbon {
+      background: var(--black);
+      padding: 8px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .ribbon-label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--paper);
+    }
+
+    .ribbon-rule-line {
+      flex: 1;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .ribbon.green {
+      background: var(--green);
+    }
+
+    .ribbon.blue {
+      background: var(--blue);
+    }
+
+    .ribbon.amber {
+      background: var(--amber);
+    }
+
+    .ribbon.red {
+      background: var(--red);
+    }
+
+    .section-head {
+      padding: 32px 0 16px;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 2.25rem;
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.5px;
+      color: var(--ink);
+    }
+
+    .section-kicker {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.92px;
+      color: var(--caption);
+      margin-bottom: 6px;
+    }
+
+    .section-deck {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      color: var(--caption);
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    .route-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    @media (min-width: 768px) {
+      .route-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .route-card.wide {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .route-grid {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+
+      .route-card.wide {
+        grid-column: 1 / -1;
+      }
+
+      .route-card.half {
+        grid-column: span 2;
+      }
+    }
+
+    .route-card {
+      border: 1px solid var(--hairline);
+      border-top: 3px solid var(--black);
+      padding: 20px;
+      background: var(--paper);
+      position: relative;
+      transition: border-top-color 150ms;
+    }
+
+    .route-card:hover {
+      border-top-color: var(--blue);
+    }
+
+    .route-card.green-top {
+      border-top-color: var(--green);
+    }
+
+    .route-card.amber-top {
+      border-top-color: var(--amber);
+    }
+
+    .route-card.red-top {
+      border-top-color: var(--red);
+    }
+
+    .route-path {
+      font-family: var(--font-mono);
+      font-size: 0.81rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: var(--black);
+      background: var(--hairline);
+      display: inline-block;
+      padding: 3px 8px;
+      margin-bottom: 10px;
+    }
+
+    .route-title {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      line-height: 1.15;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    .route-desc {
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      color: var(--caption);
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .badge {
+      font-family: var(--font-mono);
+      font-size: 0.63rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 2px 8px;
+      border: 1px solid var(--black);
+      background: var(--paper);
+      color: var(--black);
+    }
+
+    .badge.auth {
+      border-color: #057dbc;
+      color: #057dbc;
+    }
+
+    .badge.admin {
+      background: var(--black);
+      color: var(--paper);
+    }
+
+    .badge.seo {
+      border-color: #2d7a34;
+      color: #2d7a34;
+    }
+
+    .badge.perf {
+      border-color: #7a4d00;
+      color: #7a4d00;
+    }
+
+    .badge.api {
+      background: #057dbc;
+      color: var(--paper);
+      border-color: #057dbc;
+    }
+
+    .badge.netlify {
+      background: #00ad9f;
+      color: #fff;
+      border-color: #00ad9f;
+    }
+
+    .badge.warn {
+      background: var(--amber);
+      color: #fff;
+      border-color: var(--amber);
+    }
+
+    .badge.ok {
+      background: var(--green);
+      color: #fff;
+      border-color: var(--green);
+    }
+
+    .badge.err {
+      background: var(--red);
+      color: #fff;
+      border-color: var(--red);
+    }
+
+    .feature-list {
+      list-style: none;
+      padding: 0;
+      border-top: 1px solid var(--hairline);
+      padding-top: 10px;
+    }
+
+    .feature-list li {
+      font-family: var(--font-ui);
+      font-size: 0.8rem;
+      color: var(--ink);
+      padding: 4px 0;
+      border-bottom: 1px solid var(--hairline);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .feature-list li:last-child {
+      border-bottom: none;
+    }
+
+    .feature-list li::before {
+      content: "→";
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--caption);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* CODE BLOCKS */
+    .code-block {
+      background: var(--ink);
+      color: #e8e8e0;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      line-height: 1.7;
+      padding: 18px 20px;
+      overflow-x: auto;
+      margin: 14px 0;
+      border-left: 3px solid var(--blue);
+      letter-spacing: 0;
+      text-transform: none;
+      white-space: pre;
+    }
+
+    .code-block .cm {
+      color: #6a9955;
+    }
+
+    .code-block .kw {
+      color: #569cd6;
+    }
+
+    .code-block .st {
+      color: #ce9178;
+    }
+
+    .code-block .nu {
+      color: #b5cea8;
+    }
+
+    .code-block .fn {
+      color: #dcdcaa;
+    }
+
+    .code-block .ty {
+      color: #4ec9b0;
+    }
+
+    .code-block .hd {
+      color: #888;
+      font-style: italic;
+    }
+
+    .code-block .ok {
+      color: #4ec9b0;
+      font-weight: 700;
+    }
+
+    .code-block .er {
+      color: #f48771;
+      font-weight: 700;
+    }
+
+    .code-label {
+      font-family: var(--font-mono);
+      font-size: 0.63rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--caption);
+      margin-bottom: 4px;
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .code-label::before {
+      content: "";
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: var(--blue);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .code-label.green::before {
+      background: var(--green);
+    }
+
+    .code-label.amber::before {
+      background: var(--amber);
+    }
+
+    .code-label.red::before {
+      background: var(--red);
+    }
+
+    .infra-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1px;
+      background: var(--hairline);
+      border: 1px solid var(--hairline);
+      margin: 16px 0;
+    }
+
+    .infra-item {
+      background: var(--paper);
+      padding: 14px 18px;
+      flex: 1 1 200px;
+    }
+
+    .infra-label {
+      font-family: var(--font-mono);
+      font-size: 0.63rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--caption);
+      margin-bottom: 4px;
+    }
+
+    .infra-value {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .middleware-bar {
+      background: var(--hairline);
+      border-left: 3px solid var(--black);
+      padding: 10px 14px;
+      margin-bottom: 14px;
+    }
+
+    .middleware-bar.green {
+      border-left-color: var(--green);
+      background: #f0faf2;
+    }
+
+    .middleware-bar.amber {
+      border-left-color: var(--amber);
+      background: #fdf8f0;
+    }
+
+    .middleware-bar.red {
+      border-left-color: var(--red);
+      background: #fdf0f0;
+    }
+
+    .middleware-bar .mono {
+      color: var(--black);
+    }
+
+    .middleware-body {
+      font-family: var(--font-ui);
+      font-size: 0.8rem;
+      color: var(--caption);
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    .seo-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1px;
+      background: var(--hairline);
+      border: 1px solid var(--hairline);
+      margin: 16px 0;
+    }
+
+    @media (min-width: 600px) {
+      .seo-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (min-width: 900px) {
+      .seo-grid {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+    }
+
+    .seo-cell {
+      background: var(--paper);
+      padding: 16px;
+    }
+
+    .seo-cell-title {
+      font-family: var(--font-mono);
+      font-size: 0.69rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--black);
+      margin-bottom: 6px;
+    }
+
+    .seo-cell-body {
+      font-family: var(--font-ui);
+      font-size: 0.8rem;
+      color: var(--caption);
+      line-height: 1.5;
+    }
+
+    .site-footer {
+      background: var(--ink);
+      color: var(--paper);
+      padding: 40px 24px 24px;
+      margin-top: 64px;
+    }
+
+    .footer-logo {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--paper);
+      letter-spacing: -0.5px;
+    }
+
+    .footer-meta {
+      font-family: var(--font-mono);
+      font-size: 0.63rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--caption);
+      margin-top: 4px;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    @media (min-width: 768px) {
+      .two-col {
+        grid-template-columns: 2fr 1fr;
+      }
+    }
+
+    .toc {
+      background: var(--paper);
+      border: 2px solid var(--black);
+      padding: 20px;
+      position: sticky;
+      top: 24px;
+    }
+
+    .toc-title {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--black);
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--black);
+    }
+
+    .toc-list {
+      list-style: none;
+    }
+
+    .toc-list li {
+      border-bottom: 1px solid var(--hairline);
+      padding: 6px 0;
+    }
+
+    .toc-list li:last-child {
+      border-bottom: none;
+    }
+
+    .toc-list a {
+      font-family: var(--font-ui);
+      font-size: 0.8rem;
+      color: var(--ink);
+      display: block;
+      transition: color 120ms;
+    }
+
+    .toc-list a:hover {
+      color: var(--blue);
+    }
+
+    .toc-num {
+      font-family: var(--font-mono);
+      font-size: 0.63rem;
+      color: var(--caption);
+      margin-right: 6px;
+    }
+
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      background: var(--code-bg);
+      padding: 1px 5px;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    .page-section {
+      padding: 32px 0;
+      border-top: 1px solid var(--hairline);
+    }
+
+    .page-section:first-of-type {
+      border-top: none;
+    }
+
+    /* CHECKLIST */
+    .checklist {
+      list-style: none;
+      padding: 0;
+    }
+
+    .checklist li {
+      font-family: var(--font-ui);
+      font-size: 0.82rem;
+      color: var(--ink);
+      padding: 6px 0;
+      border-bottom: 1px solid var(--hairline);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      line-height: 1.45;
+    }
+
+    .checklist li:last-child {
+      border-bottom: none;
+    }
+
+    .checklist li .ck {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+      padding: 1px 5px;
+    }
+
+    .checklist li .ck.pass {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .checklist li .ck.fix {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .checklist li .ck.warn {
+      background: var(--amber);
+      color: #fff;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- UTILITY BAR -->
+  <div class="util-bar">
+    <span>AGENT RULES v1.0 — STRICT DEVELOPMENT DIRECTIVES</span>
+    <div class="util-bar-links">
+      <a href="#language">Language</a>
+      <a href="#seo">SEO Spec</a>
+      <a href="#netlify">Netlify</a>
+      <a href="#code">Code Standards</a>
+    </div>
+  </div>
+
+  <!-- MASTHEAD -->
+  <header>
+    <div class="wrapper">
+      <div class="masthead">
+        <div>
+          <div class="logo">AGENT DIRECTIVES</div>
+          <div class="masthead-sub">Next.js App Router · TypeScript Strict · SEO Maximized</div>
+        </div>
+        <div class="masthead-meta">
+          Rule Architecture v1.0<br>
+          Machine & Human Enforced<br>
+          Zero-Error Production
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrapper">
+    <div class="two-col" style="gap:32px; padding: 32px 0;">
+
+      <main>
+
+        <!-- ========================================
+            §1  THE LANGUAGE MANDATE
+      ========================================= -->
+        <section id="language" class="page-section">
+          <div class="section-head">
+            <div class="section-kicker">§ 01 — The Language Mandate</div>
+            <h1 class="section-title">Strict TypeScript Only</h1>
+            <p class="section-deck">There is no compromise or "mix" between JavaScript and TypeScript. For SEO
+              optimization, server uptime must be flawless. Search engine crawlers severely penalize sites that return
+              500 errors or crash during indexing. Therefore, robust type-safety is an indirect but critical SEO
+              requirement.</p>
+          </div>
+
+          <div class="middleware-bar red">
+            <span class="mono">MANDATE: NO JAVASCRIPT ALLOWED (.js / .jsx)</span>
+            <div class="middleware-body">All code generated by the agent MUST use strict TypeScript (<code>.ts</code>,
+              <code>.tsx</code>). Using <code>any</code> is strictly forbidden. Define explicit interfaces and types for
+              every data structure, API response, and component prop.</div>
+          </div>
+
+          <div class="route-grid" style="margin-top: 16px;">
+            <div class="route-card wide">
+              <div class="badge-row"><span class="badge err">Strict Rule</span><span class="badge ok">SEO +
+                  Uptime</span></div>
+              <div class="route-title">Why TypeScript for SEO?</div>
+              <div class="route-desc">TypeScript compiles to JavaScript, meaning the browser and crawler see the exact
+                same output. However, unhandled runtime errors in vanilla JS cause SSR (Server-Side Rendering) failures,
+                resulting in blank pages or 500 status codes. Googlebot immediately drops indexing scores for 500
+                errors. Strict typing guarantees data contracts and prevents these fatal SSR crashes.</div>
+              <ul class="feature-list">
+                <li>Use <code>interface</code> or <code>type</code> for all Component Props.</li>
+                <li>Type all API responses explicitly.</li>
+                <li>Configure <code>tsconfig.json</code> with <code>"strict": true</code>.</li>
+                <li>Never use <code>@ts-ignore</code>. Fix the underlying type issue.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================================
+            §2  SEO MAXIMIZATION
+      ========================================= -->
+        <section id="seo" class="page-section">
+          <div class="ribbon green">
+            <span class="ribbon-label">§ 02 — SEO Technical Specifications</span>
+            <div class="ribbon-rule-line"></div>
+          </div>
+
+          <div class="seo-grid" style="margin-top:16px;">
+            <div class="seo-cell">
+              <div class="seo-cell-title">App Router Metadata</div>
+              <div class="seo-cell-body">Use Next.js <code>generateMetadata()</code> for dynamic pages. Always include
+                <code>title</code>, <code>description</code>, <code>openGraph</code>, and <code>canonical</code> URLs.
+                Never inject meta tags via client-side effects.</div>
+            </div>
+            <div class="seo-cell">
+              <div class="seo-cell-title">JSON-LD Schema</div>
+              <div class="seo-cell-body">Inject structured data via
+                <code>&lt;script type="application/ld+json"&gt;</code>. Use standard schemas like <code>Article</code>,
+                <code>WebSite</code>, <code>BreadcrumbList</code>, and <code>FAQPage</code>.</div>
+            </div>
+            <div class="seo-cell">
+              <div class="seo-cell-title">Semantic HTML</div>
+              <div class="seo-cell-body">Strict hierarchy: Only one <code>&lt;h1&gt;</code> per page. Use
+                <code>&lt;main&gt;</code>, <code>&lt;article&gt;</code>, <code>&lt;aside&gt;</code>, and
+                <code>&lt;nav&gt;</code> appropriately. Avoid generic <code>&lt;div&gt;</code> soup.</div>
+            </div>
+            <div class="seo-cell">
+              <div class="seo-cell-title">Core Web Vitals: LCP</div>
+              <div class="seo-cell-body">The largest contentful paint (hero image) MUST use <code>next/image</code> with
+                the <code>priority={true}</code> attribute to inject a preload link into the document head.</div>
+            </div>
+            <div class="seo-cell">
+              <div class="seo-cell-title">Dynamic Sitemaps</div>
+              <div class="seo-cell-body">Use App Router's <code>sitemap.ts</code> and <code>robots.txt</code> files to
+                auto-generate indexable maps of all database-driven dynamic routes.</div>
+            </div>
+            <div class="seo-cell">
+              <div class="seo-cell-title">SSR vs SSG</div>
+              <div class="seo-cell-body">Favor Static Site Generation (SSG) with Incremental Static Regeneration (ISR)
+                using <code>revalidate</code> over pure Server-Side Rendering (SSR) for faster TTFB (Time to First
+                Byte).</div>
+            </div>
+          </div>
+
+          <div class="route-card wide green-top" style="margin-top: 16px;">
+            <div class="badge-row"><span class="badge seo">Required Pattern</span></div>
+            <div class="route-title">Metadata Implementation</div>
+            <div class="code-label green">app/blog/[slug]/page.tsx</div>
+            <div class="code-block"><span class="kw">import</span> { <span class="ty">Metadata</span> } <span
+                class="kw">from</span> <span class="st">'next'</span>
+
+              <span class="kw">interface</span> <span class="ty">PageProps</span> {
+              <span class="kw">params</span>: { slug: <span class="ty">string</span> }
+              }
+
+              <span class="kw">export async function</span> <span class="fn">generateMetadata</span>({ params }: <span
+                class="ty">PageProps</span>): <span class="ty">Promise</span>&lt;<span class="ty">Metadata</span>&gt; {
+              <span class="kw">const</span> post = <span class="kw">await</span> fetchPost(params.slug)
+
+              <span class="kw">return</span> {
+              <span class="kw">title</span>: post.title,
+              <span class="kw">description</span>: post.excerpt,
+              <span class="kw">alternates</span>: {
+              <span class="kw">canonical</span>: <span class="st">`https://yoursite.com/blog/${params.slug}`</span>
+              },
+              <span class="kw">openGraph</span>: {
+              <span class="kw">title</span>: post.title,
+              <span class="kw">images</span>: [post.coverImage]
+              }
+              }
+              }
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================================
+            §3  NETLIFY DEPLOYMENT
+      ========================================= -->
+        <section id="netlify" class="page-section">
+          <div class="ribbon blue">
+            <span class="ribbon-label">§ 03 — Netlify Configuration Directive</span>
+            <div class="ribbon-rule-line"></div>
+          </div>
+
+          <div class="middleware-bar blue" style="margin-top:16px;">
+            <span class="mono">Platform Specifics</span>
+            <div class="middleware-body">Code MUST be written to support Netlify's serverless/edge environment. This
+              means being aware of cold starts, database connection pooling, and strict build configurations.</div>
+          </div>
+
+          <div class="route-grid" style="margin-top:16px;">
+            <div class="route-card wide blue-top">
+              <div class="badge-row"><span class="badge netlify">next.config.js</span><span
+                  class="badge ok">Mandatory</span></div>
+              <div class="route-title">Netlify Bundling Rules</div>
+              <div class="route-desc">For Netlify to correctly bundle a Next.js App Router project into serverless
+                functions, the output mode must be explicitly set.</div>
+              <div class="code-label blue">next.config.js</div>
+              <div class="code-block"><span class="cm">/** @type {import('next').NextConfig} */</span>
+                <span class="kw">const</span> nextConfig = {
+                <span class="hd">// REQUIRED: Netlify needs standalone output to trace dependencies</span>
+                <span class="kw">output</span>: <span class="st">'standalone'</span>,
+                <span class="kw">images</span>: {
+                <span class="hd">// REQUIRED: Explicitly define remote domains for Next Image</span>
+                <span class="kw">remotePatterns</span>: [
+                { <span class="kw">protocol</span>: <span class="st">'https'</span>, <span class="kw">hostname</span>:
+                <span class="st">'images.unsplash.com'</span> }
+                ]
+                }
+                }
+                <span class="kw">export default</span> nextConfig
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:24px;">
+            <div class="route-card wide"
+              style="border:1px solid var(--hairline);border-top:3px solid var(--black);padding:20px;">
+              <div class="badge-row"><span class="badge">netlify.toml</span><span class="badge ok">Root File</span>
+              </div>
+              <div class="route-title">Infrastructure as Code</div>
+              <div class="route-desc">The AI agent must assume or generate a <code>netlify.toml</code> file with strict
+                Node.js runtime declarations and edge cache headers.</div>
+              <div class="code-label">netlify.toml</div>
+              <div class="code-block">[build.environment]
+                <span class="kw">NODE_VERSION</span> = <span class="st">"20"</span>
+                <span class="kw">NPM_VERSION</span> = <span class="st">"10"</span>
+
+                [[plugins]]
+                <span class="kw">package</span> = <span class="st">"@netlify/plugin-nextjs"</span>
+
+                <span class="hd"># SEO Header Hardening</span>
+                [[headers]]
+                <span class="kw">for</span> = <span class="st">"/*"</span>
+                [headers.values]
+                <span class="kw">X-Robots-Tag</span> = <span class="st">"index, follow"</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================================
+            §4  AGENT CODE STANDARDS
+      ========================================= -->
+        <section id="code" class="page-section">
+          <div class="ribbon red">
+            <span class="ribbon-label">§ 04 — Agent Checklist & Anti-Patterns</span>
+            <div class="ribbon-rule-line"></div>
+          </div>
+
+          <div style="margin-top:24px;">
+            <div class="route-card wide"
+              style="border:1px solid var(--hairline);border-top:3px solid var(--black);padding:20px;">
+              <div class="badge-row"><span class="badge err">Validation</span></div>
+              <div class="route-title">Code Generation Checklist</div>
+              <div class="route-desc">Before outputting code, the AI agent MUST internally verify these conditions are
+                met:</div>
+              <ul class="checklist">
+                <li><span class="ck pass">CHECK</span> Is the file <code>.ts</code> or <code>.tsx</code>? (No
+                  <code>.js</code>).</li>
+                <li><span class="ck pass">CHECK</span> Are all function parameters and return types explicitly defined?
+                </li>
+                <li><span class="ck pass">CHECK</span> If it is a Next.js Page, does it export
+                  <code>generateMetadata()</code> for SEO?</li>
+                <li><span class="ck pass">CHECK</span> Does the API route have a <code>try/catch</code> block to prevent
+                  unhandled 500s?</li>
+                <li><span class="ck pass">CHECK</span> If rendering an image, is <code>next/image</code> used with exact
+                  <code>width</code>, <code>height</code>, and an <code>alt</code> tag for accessibility/SEO?</li>
+                <li><span class="ck pass">CHECK</span> Are client components clearly marked with
+                  <code>"use client"</code> at the very top?</li>
+                <li><span class="ck fix">NEVER</span> Use <code>any</code>. Provide a proper Type or Interface.</li>
+                <li><span class="ck fix">NEVER</span> Leave empty catch blocks. Always log the error server-side and
+                  return a structured JSON error response.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      <!-- TOC SIDEBAR -->
+      <aside>
+        <button class="toc-toggle" onclick="this.nextElementSibling.classList.toggle('open')">
+          ☰ Table of Contents
+        </button>
+        <div class="toc toc-inner open">
+          <div class="toc-title">Directives</div>
+          <ul class="toc-list">
+            <li><a href="#language"><span class="toc-num">§01</span> Strict TypeScript</a></li>
+            <li><a href="#seo"><span class="toc-num">§02</span> SEO Specifications</a></li>
+            <li><a href="#netlify"><span class="toc-num">§03</span> Netlify Posture</a></li>
+            <li><a href="#code"><span class="toc-num">§04</span> Code Standards</a></li>
+          </ul>
+
+          <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--hairline);">
+            <div class="mono-bold" style="margin-bottom:10px;font-size:0.63rem;">Target Stack</div>
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <span class="badge netlify" style="display:inline-block;width:fit-content;">Netlify</span>
+              <span style="font-family:var(--font-mono);font-size:0.63rem;color:var(--caption);margin-top:2px;">Next.js
+                App Router</span>
+              <span style="font-family:var(--font-mono);font-size:0.63rem;color:var(--caption);">TypeScript
+                (Strict)</span>
+              <span style="font-family:var(--font-mono);font-size:0.63rem;color:var(--caption);">Node.js 20 LTS</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="wrapper">
+      <div class="footer-logo">AGENT DIRECTIVES</div>
+      <div class="footer-meta">Ruleset v1.0 · Netlify Optimized · SEO Maximized · Strict TS</div>
+    </div>
+  </footer>
+
+</body>
+
+</html>

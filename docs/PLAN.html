@@ -1,0 +1,1958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NEWS — Route Architecture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Space+Mono:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Work+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --black:        #000000;
+    --ink:          #1a1a1a;
+    --paper:        #ffffff;
+    --blue:         #057dbc;
+    --green:        #1a7a34;
+    --amber:        #7a4d00;
+    --red:          #8b0000;
+    --caption:      #757575;
+    --disabled:     #999999;
+    --hairline:     #e2e8f0;
+    --code-bg:      #f4f4f0;
+
+    --font-display: 'Playfair Display', helvetica, serif;
+    --font-body:    'Lora', helvetica, serif;
+    --font-ui:      'Work Sans', helvetica, sans-serif;
+    --font-mono:    'Space Mono', 'Monaco', 'Courier New', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; scroll-behavior: smooth; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+  a:hover { color: var(--blue); }
+  img { display: block; max-width: 100%; }
+
+  .mono {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.92px;
+    font-size: 0.75rem;
+  }
+  .mono-bold {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 1.1px;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+  .hairline { border: none; border-top: 1px solid var(--hairline); margin: 0; }
+  .rule     { border: none; border-top: 1px solid var(--black);    margin: 0; }
+  .rule2    { border: none; border-top: 2px solid var(--black);    margin: 0; }
+
+  .util-bar {
+    background: var(--black);
+    padding: 8px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .util-bar span, .util-bar a {
+    color: var(--paper);
+    font-family: var(--font-mono);
+    font-size: 0.69rem;
+    text-transform: uppercase;
+    letter-spacing: 1.1px;
+  }
+  .util-bar a:hover { color: var(--blue); }
+  .util-bar-links { display: flex; gap: 20px; flex-wrap: wrap; }
+
+  .masthead {
+    border-bottom: 2px solid var(--black);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .logo {
+    font-family: var(--font-display);
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: -1px;
+    color: var(--black);
+    line-height: 1;
+  }
+  .masthead-sub {
+    font-family: var(--font-mono);
+    font-size: 0.63rem;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--caption);
+    margin-top: 4px;
+  }
+  .masthead-meta {
+    font-family: var(--font-mono);
+    font-size: 0.69rem;
+    text-transform: uppercase;
+    letter-spacing: 0.9px;
+    color: var(--caption);
+    text-align: right;
+    line-height: 1.6;
+  }
+
+  .wrapper {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  @media (min-width: 1024px) { .wrapper { padding: 0 48px; } }
+
+  .ribbon {
+    background: var(--black);
+    padding: 8px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .ribbon-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--paper);
+  }
+  .ribbon-rule-line {
+    flex: 1;
+    height: 1px;
+    background: rgba(255,255,255,0.2);
+  }
+  .ribbon.green { background: var(--green); }
+  .ribbon.blue  { background: var(--blue);  }
+  .ribbon.amber { background: var(--amber); }
+  .ribbon.red   { background: var(--red);   }
+
+  .section-head { padding: 32px 0 16px; }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 2.25rem;
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.5px;
+    color: var(--ink);
+  }
+  .section-kicker {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.92px;
+    color: var(--caption);
+    margin-bottom: 6px;
+  }
+  .section-deck {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: var(--caption);
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+
+  .route-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  @media (min-width: 768px) {
+    .route-grid { grid-template-columns: 1fr 1fr; }
+    .route-card.wide { grid-column: 1 / -1; }
+  }
+  @media (min-width: 1024px) {
+    .route-grid { grid-template-columns: 1fr 1fr 1fr; }
+    .route-card.wide { grid-column: 1 / -1; }
+    .route-card.half { grid-column: span 2; }
+  }
+
+  .route-card {
+    border: 1px solid var(--hairline);
+    border-top: 3px solid var(--black);
+    padding: 20px;
+    background: var(--paper);
+    position: relative;
+    transition: border-top-color 150ms;
+  }
+  .route-card:hover { border-top-color: var(--blue); }
+  .route-card.green-top { border-top-color: var(--green); }
+  .route-card.amber-top { border-top-color: var(--amber); }
+  .route-card.red-top   { border-top-color: var(--red); }
+
+  .route-path {
+    font-family: var(--font-mono);
+    font-size: 0.81rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--black);
+    background: var(--hairline);
+    display: inline-block;
+    padding: 3px 8px;
+    margin-bottom: 10px;
+  }
+  .route-title {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .route-desc {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    color: var(--caption);
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+
+  .badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .badge {
+    font-family: var(--font-mono);
+    font-size: 0.63rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 2px 8px;
+    border: 1px solid var(--black);
+    background: var(--paper);
+    color: var(--black);
+  }
+  .badge.auth   { border-color: #057dbc; color: #057dbc; }
+  .badge.admin  { background: var(--black); color: var(--paper); }
+  .badge.seo    { border-color: #2d7a34; color: #2d7a34; }
+  .badge.perf   { border-color: #7a4d00; color: #7a4d00; }
+  .badge.api    { background: #057dbc; color: var(--paper); border-color: #057dbc; }
+  .badge.netlify { background: #00ad9f; color: #fff; border-color: #00ad9f; }
+  .badge.warn   { background: var(--amber); color: #fff; border-color: var(--amber); }
+  .badge.ok     { background: var(--green); color: #fff; border-color: var(--green); }
+  .badge.err    { background: var(--red); color: #fff; border-color: var(--red); }
+
+  .feature-list {
+    list-style: none;
+    padding: 0;
+    border-top: 1px solid var(--hairline);
+    padding-top: 10px;
+  }
+  .feature-list li {
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    color: var(--ink);
+    padding: 4px 0;
+    border-bottom: 1px solid var(--hairline);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .feature-list li:last-child { border-bottom: none; }
+  .feature-list li::before {
+    content: "→";
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--caption);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* CODE BLOCKS */
+  .code-block {
+    background: var(--ink);
+    color: #e8e8e0;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    line-height: 1.7;
+    padding: 18px 20px;
+    overflow-x: auto;
+    margin: 14px 0;
+    border-left: 3px solid var(--blue);
+    letter-spacing: 0;
+    text-transform: none;
+    white-space: pre;
+  }
+  .code-block .cm { color: #6a9955; }
+  .code-block .kw { color: #569cd6; }
+  .code-block .st { color: #ce9178; }
+  .code-block .nu { color: #b5cea8; }
+  .code-block .fn { color: #dcdcaa; }
+  .code-block .ty { color: #4ec9b0; }
+  .code-block .hd { color: #888; font-style: italic; }
+  .code-block .ok { color: #4ec9b0; font-weight: 700; }
+  .code-block .er { color: #f48771; font-weight: 700; }
+  .code-block .hl { background: rgba(255,255,255,0.07); display: block; margin: 0 -20px; padding: 0 20px; }
+
+  .code-label {
+    font-family: var(--font-mono);
+    font-size: 0.63rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--caption);
+    margin-bottom: 4px;
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .code-label::before {
+    content: "";
+    display: inline-block;
+    width: 8px; height: 8px;
+    background: var(--blue);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .code-label.green::before { background: var(--green); }
+  .code-label.amber::before { background: var(--amber); }
+  .code-label.red::before   { background: var(--red); }
+
+  /* ENV TABLE */
+  .env-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    margin: 16px 0;
+  }
+  .env-table th {
+    font-family: var(--font-mono);
+    font-size: 0.63rem;
+    text-transform: uppercase;
+    letter-spacing: 0.9px;
+    font-weight: 700;
+    text-align: left;
+    padding: 8px 10px;
+    background: var(--black);
+    color: var(--paper);
+  }
+  .env-table td {
+    padding: 9px 10px;
+    border-bottom: 1px solid var(--hairline);
+    vertical-align: top;
+    line-height: 1.4;
+  }
+  .env-table tr:hover td { background: #f9f9f9; }
+  .env-table .key-cell {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--black);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .env-table .req-cell {
+    font-family: var(--font-mono);
+    font-size: 0.63rem;
+    font-weight: 700;
+  }
+  .env-table .req-cell.required { color: var(--red); }
+  .env-table .req-cell.optional { color: var(--caption); }
+
+  /* ERROR TABLE */
+  .err-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+    margin: 16px 0;
+  }
+  .err-table th {
+    font-family: var(--font-mono);
+    font-size: 0.63rem;
+    text-transform: uppercase;
+    letter-spacing: 0.9px;
+    font-weight: 700;
+    text-align: left;
+    padding: 8px 10px;
+    background: var(--red);
+    color: var(--paper);
+  }
+  .err-table td {
+    padding: 9px 10px;
+    border-bottom: 1px solid var(--hairline);
+    vertical-align: top;
+    line-height: 1.5;
+    font-family: var(--font-ui);
+  }
+  .err-table tr:hover td { background: #fff8f8; }
+  .err-table .code-cell {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--red);
+    white-space: nowrap;
+  }
+  .err-table .fix-cell {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--green);
+    line-height: 1.5;
+  }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+  }
+  .data-table th {
+    font-family: var(--font-mono);
+    font-size: 0.69rem;
+    text-transform: uppercase;
+    letter-spacing: 0.9px;
+    font-weight: 700;
+    text-align: left;
+    padding: 10px 12px;
+    background: var(--black);
+    color: var(--paper);
+    border: none;
+  }
+  .data-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--hairline);
+    vertical-align: top;
+    color: var(--ink);
+    line-height: 1.4;
+  }
+  .data-table tr:hover td { background: #f9f9f9; }
+  .data-table .path-cell {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--black);
+  }
+
+  .infra-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1px;
+    background: var(--hairline);
+    border: 1px solid var(--hairline);
+    margin: 16px 0;
+  }
+  .infra-item {
+    background: var(--paper);
+    padding: 14px 18px;
+    flex: 1 1 200px;
+  }
+  .infra-label {
+    font-family: var(--font-mono);
+    font-size: 0.63rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--caption);
+    margin-bottom: 4px;
+  }
+  .infra-value {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .middleware-bar {
+    background: var(--hairline);
+    border-left: 3px solid var(--black);
+    padding: 10px 14px;
+    margin-bottom: 14px;
+  }
+  .middleware-bar.green { border-left-color: var(--green); background: #f0faf2; }
+  .middleware-bar.amber { border-left-color: var(--amber); background: #fdf8f0; }
+  .middleware-bar.red   { border-left-color: var(--red);   background: #fdf0f0; }
+  .middleware-bar .mono { color: var(--black); }
+  .middleware-body {
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    color: var(--caption);
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+
+  .numbered-section { padding: 24px 0; }
+  .numbered-item {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    align-items: start;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .numbered-item:last-child { border-bottom: none; }
+  .num-digit {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--hairline);
+    line-height: 1;
+  }
+  .num-content-title {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+  .num-content-desc {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    color: var(--caption);
+    line-height: 1.45;
+  }
+
+  .seo-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
+    background: var(--hairline);
+    border: 1px solid var(--hairline);
+    margin: 16px 0;
+  }
+  @media (min-width: 600px) { .seo-grid { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 900px) { .seo-grid { grid-template-columns: 1fr 1fr 1fr; } }
+  .seo-cell { background: var(--paper); padding: 16px; }
+  .seo-cell-title {
+    font-family: var(--font-mono);
+    font-size: 0.69rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--black);
+    margin-bottom: 6px;
+  }
+  .seo-cell-body {
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    color: var(--caption);
+    line-height: 1.5;
+  }
+
+  .api-block {
+    margin-bottom: 0;
+    border-bottom: 1px solid var(--hairline);
+    padding: 14px 0;
+  }
+  .api-block:last-child { border-bottom: none; }
+  .api-method {
+    font-family: var(--font-mono);
+    font-size: 0.63rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 2px 8px;
+    margin-right: 10px;
+    display: inline-block;
+  }
+  .method-get    { background: #2d7a34; color: #fff; }
+  .method-post   { background: #057dbc; color: #fff; }
+  .method-put    { background: #7a4d00; color: #fff; }
+  .method-delete { background: #8b0000; color: #fff; }
+  .api-path {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--black);
+    display: inline;
+  }
+  .api-desc {
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    color: var(--caption);
+    margin-top: 4px;
+    padding-left: 4px;
+  }
+
+  .flow-diagram {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0;
+    padding: 20px 0;
+  }
+  .flow-node {
+    background: var(--paper);
+    border: 2px solid var(--black);
+    padding: 10px 14px;
+    font-family: var(--font-mono);
+    font-size: 0.69rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.9px;
+    white-space: nowrap;
+    color: var(--black);
+  }
+  .flow-node.filled { background: var(--black); color: var(--paper); }
+  .flow-node.blue   { background: var(--blue);  color: var(--paper); border-color: var(--blue); }
+  .flow-node.green  { background: var(--green); color: var(--paper); border-color: var(--green); }
+  .flow-node.red    { background: var(--red);   color: var(--paper); border-color: var(--red); }
+  .flow-arrow {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--caption);
+    padding: 0 8px;
+    white-space: nowrap;
+  }
+
+  .site-footer {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 40px 24px 24px;
+    margin-top: 64px;
+  }
+  .footer-logo {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--paper);
+    letter-spacing: -0.5px;
+  }
+  .footer-meta {
+    font-family: var(--font-mono);
+    font-size: 0.63rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--caption);
+    margin-top: 4px;
+  }
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  .footer-links a {
+    font-family: var(--font-mono);
+    font-size: 0.63rem;
+    text-transform: uppercase;
+    letter-spacing: 0.9px;
+    color: rgba(255,255,255,0.5);
+    transition: color 120ms;
+  }
+  .footer-links a:hover { color: var(--blue); }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  @media (min-width: 768px) { .two-col { grid-template-columns: 2fr 1fr; } }
+
+  .toc {
+    background: var(--paper);
+    border: 2px solid var(--black);
+    padding: 20px;
+    position: sticky;
+    top: 24px;
+  }
+  .toc-title {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--black);
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--black);
+  }
+  .toc-list { list-style: none; }
+  .toc-list li {
+    border-bottom: 1px solid var(--hairline);
+    padding: 6px 0;
+  }
+  .toc-list li:last-child { border-bottom: none; }
+  .toc-list a {
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    color: var(--ink);
+    display: block;
+    transition: color 120ms;
+  }
+  .toc-list a:hover { color: var(--blue); }
+  .toc-num {
+    font-family: var(--font-mono);
+    font-size: 0.63rem;
+    color: var(--caption);
+    margin-right: 6px;
+  }
+
+  code {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    background: var(--code-bg);
+    padding: 1px 5px;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  .page-section { padding: 32px 0; border-top: 1px solid var(--hairline); }
+  .page-section:first-of-type { border-top: none; }
+
+  .toc-toggle { display: none; }
+  @media (max-width: 767px) {
+    .toc-toggle {
+      display: block;
+      width: 100%;
+      background: var(--black);
+      color: var(--paper);
+      border: none;
+      padding: 12px 20px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      text-align: left;
+      margin-bottom: 24px;
+    }
+    .toc-inner { display: none; }
+    .toc-inner.open { display: block; }
+    .two-col { display: block; }
+    .toc { position: static; margin-bottom: 24px; }
+  }
+
+  details { border-top: 1px solid var(--hairline); }
+  details + details { border-top: none; }
+  summary {
+    cursor: pointer;
+    padding: 14px 0;
+    font-family: var(--font-ui);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--ink);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    list-style: none;
+    border-bottom: 1px solid var(--hairline);
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; font-family: var(--font-mono); font-size: 1rem; color: var(--caption); }
+  details[open] summary::after { content: "−"; }
+  details[open] summary { border-bottom: 2px solid var(--black); }
+  .details-body { padding: 16px 0; }
+
+  /* CHECKLIST */
+  .checklist { list-style: none; padding: 0; }
+  .checklist li {
+    font-family: var(--font-ui);
+    font-size: 0.82rem;
+    color: var(--ink);
+    padding: 6px 0;
+    border-bottom: 1px solid var(--hairline);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    line-height: 1.45;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist li .ck {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+    padding: 1px 5px;
+  }
+  .checklist li .ck.pass { background: var(--green); color: #fff; }
+  .checklist li .ck.fix  { background: var(--red);   color: #fff; }
+  .checklist li .ck.warn { background: var(--amber);  color: #fff; }
+
+  /* TWO-PANEL */
+  .two-panel {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin: 16px 0;
+  }
+  @media (min-width: 768px) { .two-panel { grid-template-columns: 1fr 1fr; } }
+  .panel {
+    border: 2px solid var(--black);
+    padding: 20px;
+  }
+  .panel-title {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--black);
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .panel.netlify-green { border-color: #00ad9f; }
+  .panel.netlify-green .panel-title { color: #00ad9f; }
+
+  /* STEP FLOW */
+  .step-flow { margin: 16px 0; }
+  .step-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .step-row:last-child { border-bottom: none; }
+  .step-num {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: var(--black);
+    color: var(--paper);
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .step-content-title {
+    font-family: var(--font-ui);
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .step-content-body {
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    color: var(--caption);
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<!-- UTILITY BAR -->
+<div class="util-bar">
+  <span>Route Architecture v2.0 — Next.js News Platform · Netlify + Node.js</span>
+  <div class="util-bar-links">
+    <a href="#public">Public</a>
+    <a href="#auth">Auth</a>
+    <a href="#dashboard">Dashboard</a>
+    <a href="#admin">Admin</a>
+    <a href="#api">API</a>
+    <a href="#seo">SEO</a>
+    <a href="#deploy">Deploy</a>
+    <a href="#errors">No-Error</a>
+  </div>
+</div>
+
+<!-- MASTHEAD -->
+<header>
+  <div class="wrapper">
+    <div class="masthead">
+      <div>
+        <div class="logo">NEWSROOM</div>
+        <div class="masthead-sub">Next.js · Netlify · Node.js 20 LTS · Zero-Error Production</div>
+      </div>
+      <div class="masthead-meta">
+        Route Architecture v2.0<br>
+        Netlify-Optimized · Node.js<br>
+        No Errors · No Warns · No 500s
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="wrapper">
+  <div class="two-col" style="gap:32px; padding: 32px 0;">
+
+    <main>
+
+      <!-- ========================================
+           §1  PROJECT OVERVIEW
+      ========================================= -->
+      <section id="overview" class="page-section">
+        <div class="section-head">
+          <div class="section-kicker">§ 01 — Overview</div>
+          <h1 class="section-title">Project Architecture</h1>
+          <p class="section-deck">A WIRED-inspired editorial news platform built with Next.js App Router, deployed to Netlify with Node.js 20 LTS runtime. Full auth, CMS, SEO, and zero-error production posture.</p>
+        </div>
+
+        <hr class="rule2" style="margin:16px 0;" />
+
+        <div class="infra-strip">
+          <div class="infra-item">
+            <div class="infra-label">Framework</div>
+            <div class="infra-value">Next.js 14+ (App Router)</div>
+          </div>
+          <div class="infra-item">
+            <div class="infra-label">Deploy Target</div>
+            <div class="infra-value">Netlify (Node.js Runtime)</div>
+          </div>
+          <div class="infra-item">
+            <div class="infra-label">Node Version</div>
+            <div class="infra-value">20.x LTS (pinned)</div>
+          </div>
+          <div class="infra-item">
+            <div class="infra-label">Auth</div>
+            <div class="infra-value">NextAuth.js v5 / Clerk</div>
+          </div>
+          <div class="infra-item">
+            <div class="infra-label">DB / ORM</div>
+            <div class="infra-value">Supabase Postgres + Prisma</div>
+          </div>
+          <div class="infra-item">
+            <div class="infra-label">Images</div>
+            <div class="infra-value">next/image + Cloudinary</div>
+          </div>
+          <div class="infra-item">
+            <div class="infra-label">Email</div>
+            <div class="infra-value">Resend</div>
+          </div>
+          <div class="infra-item">
+            <div class="infra-label">Edge Middleware</div>
+            <div class="infra-value">Netlify Edge Functions</div>
+          </div>
+        </div>
+
+        <div class="middleware-bar">
+          <span class="mono">Middleware.ts — Route Guards</span>
+          <div class="middleware-body">All <code>/dashboard/*</code> routes require authenticated session. All <code>/admin/*</code> routes require <code>role === "ADMIN"</code>. Unauthenticated requests redirect to <code>/auth/login?callbackUrl=...</code>. Middleware runs at the Edge for zero-latency guard checks.</div>
+        </div>
+
+        <hr class="hairline" />
+
+        <h2 style="font-family:var(--font-mono);font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:20px 0 10px;">6 Content Channels</h2>
+        <table class="data-table">
+          <thead>
+            <tr><th>#</th><th>Channel</th><th>Route Slug</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="path-cell">—</td><td><strong>Latest</strong></td><td class="path-cell">/latest</td><td>Aggregates newest posts across all categories. Real-time feed.</td></tr>
+            <tr><td class="path-cell">01</td><td>Business</td><td class="path-cell">/category/business</td><td>Enterprise, strategy, economics, startups.</td></tr>
+            <tr><td class="path-cell">02</td><td>Money &amp; Markets</td><td class="path-cell">/category/money-markets</td><td>Finance, investing, crypto, commodities.</td></tr>
+            <tr><td class="path-cell">03</td><td>Tech &amp; Innovation</td><td class="path-cell">/category/tech-innovation</td><td>Hardware, software, science, engineering.</td></tr>
+            <tr><td class="path-cell">04</td><td>A.I.</td><td class="path-cell">/category/ai</td><td>Machine learning, LLMs, research, policy.</td></tr>
+            <tr><td class="path-cell">05</td><td>Lifestyle</td><td class="path-cell">/category/lifestyle</td><td>Culture, travel, health, consumer tech.</td></tr>
+            <tr><td class="path-cell">06</td><td>Politics</td><td class="path-cell">/category/politics</td><td>Policy, government, elections, geopolitics.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ========================================
+           §2  PUBLIC ROUTES
+      ========================================= -->
+      <section id="public" class="page-section">
+        <div class="ribbon">
+          <span class="ribbon-label">§ 02 — Public Routes</span>
+          <div class="ribbon-rule-line"></div>
+        </div>
+
+        <div class="route-grid" style="margin-top:16px;">
+          <div class="route-card wide">
+            <div class="badge-row"><span class="badge">Public</span><span class="badge seo">SSG + ISR</span><span class="badge perf">LCP Hero</span></div>
+            <div class="route-path">/</div>
+            <div class="route-title">Homepage — Editorial Front Page</div>
+            <div class="route-desc">Hero lead story, 3-column grid, category strips, Most Popular sidebar, newsletter signup.</div>
+            <ul class="feature-list">
+              <li>Hero: full-bleed 16:9 image, <code>priority</code> loading, 64px headline. LCP element.</li>
+              <li>Main feed: 12 latest posts in 3-column grid (hairline-separated).</li>
+              <li>Per-category strips: latest 4 posts + "View All →" ribbon link.</li>
+              <li>Most Popular: numbered 01–05 list.</li>
+              <li>Newsletter signup: Resend integration via Server Action.</li>
+              <li>Metadata: <code>title</code>, <code>description</code>, OG tags, JSON-LD <code>WebSite</code> + <code>NewsMediaOrganization</code>.</li>
+              <li>ISR: revalidates every 60 s or on-demand via <code>/api/revalidate</code> webhook.</li>
+            </ul>
+          </div>
+
+          <div class="route-card half">
+            <div class="badge-row"><span class="badge">Public</span><span class="badge seo">SSR</span></div>
+            <div class="route-path">/latest</div>
+            <div class="route-title">Latest — All Recent Posts</div>
+            <div class="route-desc">Reverse-chron feed of every post. Cursor-based "Load More". Not a category — a special aggregator view.</div>
+            <ul class="feature-list">
+              <li>Initial load: 20 posts. Load More fetches 10 more via <code>/api/posts?cursor=...</code>.</li>
+              <li>Filter chips: filter by category client-side.</li>
+              <li>Live update indicator (polling every 2 min).</li>
+              <li>JSON-LD <code>ItemList</code>.</li>
+            </ul>
+          </div>
+
+          <div class="route-card">
+            <div class="badge-row"><span class="badge">Public</span><span class="badge seo">SSG + ISR</span></div>
+            <div class="route-path">/category/[slug]</div>
+            <div class="route-title">Category Page</div>
+            <div class="route-desc">Dedicated page per category with hero, post count, and paginated list.</div>
+            <ul class="feature-list">
+              <li>Hero: top post (full-bleed image).</li>
+              <li>Initial: 12 posts. Load More appends 8 (cursor pagination).</li>
+              <li>All 6 slugs pre-rendered via <code>generateStaticParams</code>.</li>
+              <li>OG tags + JSON-LD <code>CollectionPage</code>.</li>
+            </ul>
+          </div>
+
+          <div class="route-card wide">
+            <div class="badge-row"><span class="badge">Public</span><span class="badge seo">SSG + ISR</span><span class="badge perf">Core Web Vitals</span></div>
+            <div class="route-path">/article/[slug]</div>
+            <div class="route-title">Article Detail Page</div>
+            <div class="route-desc">Full-article reader. Pull-quotes, in-article images, related stories sidebar.</div>
+            <ul class="feature-list">
+              <li>Hero image: 16:9, <code>priority</code>, WebP + AVIF srcset.</li>
+              <li>Reading time estimate above byline.</li>
+              <li>Body: 18px / 1.7 line-height.</li>
+              <li>Related posts: 3 cards from same category.</li>
+              <li>JSON-LD <code>NewsArticle</code>, OG <code>article:*</code> tags.</li>
+              <li>Author delete button if <code>session.user.id === post.authorId</code>.</li>
+              <li>Admin sees Edit + Delete utility bar.</li>
+              <li>Canonical URL, <code>robots: index, follow</code>, breadcrumb schema.</li>
+            </ul>
+          </div>
+
+          <div class="route-card">
+            <div class="badge-row"><span class="badge">Public</span><span class="badge seo">SSR</span></div>
+            <div class="route-path">/search?q=[query]</div>
+            <div class="route-title">Search Results</div>
+            <div class="route-desc">Full-text search via Postgres <code>to_tsvector</code>. <code>noindex</code> to avoid duplicate content.</div>
+            <ul class="feature-list">
+              <li>Query highlighted in result excerpts.</li>
+              <li>Filter by category, sort by date or relevance.</li>
+              <li>Empty state with suggested categories.</li>
+            </ul>
+          </div>
+
+          <div class="route-card">
+            <div class="badge-row"><span class="badge">Public</span><span class="badge seo">Static</span></div>
+            <div class="route-path">/contact</div>
+            <div class="route-title">Contact Page</div>
+            <div class="route-desc">Server Action form. Rate limited 3 / 10 min per IP at edge.</div>
+            <ul class="feature-list">
+              <li>Fields: Name, Email, Subject (dropdown), Message.</li>
+              <li>Sends via Resend + auto-reply to submitter.</li>
+              <li>Honeypot anti-spam field.</li>
+            </ul>
+          </div>
+
+          <div class="route-card">
+            <div class="badge-row"><span class="badge">Public</span><span class="badge seo">Static</span></div>
+            <div class="route-path">/about</div>
+            <div class="route-title">About Page</div>
+            <div class="route-desc">Masthead, editorial philosophy, team bios. Fully static, no DB calls.</div>
+            <ul class="feature-list">
+              <li>Team grid: circular avatars + mono bylines.</li>
+              <li>Mission statement at 36px display.</li>
+              <li>JSON-LD <code>AboutPage</code>.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================
+           §3  AUTH ROUTES
+      ========================================= -->
+      <section id="auth" class="page-section">
+        <div class="ribbon"><span class="ribbon-label">§ 03 — Authentication</span><div class="ribbon-rule-line"></div></div>
+
+        <div style="padding:20px 0 10px;">
+          <div class="mono" style="margin-bottom:12px;color:var(--caption);">Auth Flow</div>
+          <div class="flow-diagram">
+            <div class="flow-node">Visitor</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node">Login / Register</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node blue">Session Cookie</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node green">USER: /dashboard</div>
+          </div>
+          <div class="flow-diagram" style="padding-top:0;">
+            <div class="flow-node" style="visibility:hidden">x</div>
+            <div class="flow-arrow" style="visibility:hidden">→</div>
+            <div class="flow-node" style="visibility:hidden">x</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node filled">role=ADMIN</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node filled">ADMIN: /admin</div>
+          </div>
+        </div>
+
+        <hr class="rule" style="margin:8px 0 16px;" />
+
+        <div class="route-grid">
+          <div class="route-card">
+            <div class="badge-row"><span class="badge auth">Auth</span><span class="badge">Public</span></div>
+            <div class="route-path">/auth/login</div>
+            <div class="route-title">Sign In</div>
+            <div class="route-desc">Email + password. Redirects to <code>callbackUrl</code> after success. Logged-in users bounce to <code>/dashboard</code>.</div>
+            <ul class="feature-list">
+              <li>Remember me: session vs. persistent JWT.</li>
+              <li>Link to Register + Forgot Password.</li>
+              <li>CSRF token via NextAuth. No manual form handling needed.</li>
+            </ul>
+          </div>
+
+          <div class="route-card">
+            <div class="badge-row"><span class="badge auth">Auth</span><span class="badge">Public</span></div>
+            <div class="route-path">/auth/register</div>
+            <div class="route-title">Create Account</div>
+            <div class="route-desc">New user registration. Default role: <code>USER</code>. bcrypt password hashing.</div>
+            <ul class="feature-list">
+              <li>Fields: Full Name, Email, Password, Confirm Password.</li>
+              <li>Email uniqueness check (server-side, returns 409 on duplicate).</li>
+              <li>Auto-login after registration via <code>signIn()</code>.</li>
+            </ul>
+          </div>
+
+          <div class="route-card">
+            <div class="badge-row"><span class="badge auth">Auth</span><span class="badge">Public</span></div>
+            <div class="route-path">/auth/forgot-password</div>
+            <div class="route-title">Forgot Password</div>
+            <div class="route-desc">Email-based reset. Token expires 1 hr. Single-use, hashed in DB.</div>
+            <ul class="feature-list">
+              <li>Step 1: Enter email → receive link.</li>
+              <li>Step 2: <code>/auth/reset-password?token=...</code> → new password form.</li>
+              <li>Token hashed with SHA-256 before DB storage.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================
+           §4  USER DASHBOARD
+      ========================================= -->
+      <section id="dashboard" class="page-section">
+        <div class="ribbon"><span class="ribbon-label">§ 04 — User Dashboard</span><div class="ribbon-rule-line"></div></div>
+
+        <div class="middleware-bar" style="margin-top:16px;">
+          <span class="mono">Guard: session required → role: USER or ADMIN</span>
+          <div class="middleware-body">All <code>/dashboard/*</code> routes protected by middleware. Redirects to <code>/auth/login?callbackUrl=/dashboard</code>. Users can only read/write/delete their own posts.</div>
+        </div>
+
+        <div class="route-grid">
+          <div class="route-card"><div class="badge-row"><span class="badge auth">Auth Required</span></div><div class="route-path">/dashboard</div><div class="route-title">Dashboard Home</div><div class="route-desc">Overview: post stats, quick-write button, recent posts.</div><ul class="feature-list"><li>Stat tiles: Total Posts, Published, Drafts, Views.</li><li>Recent 5 posts with edit/delete.</li><li>Quick "New Post" CTA.</li></ul></div>
+          <div class="route-card"><div class="badge-row"><span class="badge auth">Auth Required</span></div><div class="route-path">/dashboard/new-post</div><div class="route-title">Create New Post</div><div class="route-desc">Rich text editor. TipTap (dynamic import). Draft or submit for review.</div><ul class="feature-list"><li>Fields: Title, Slug, Category, Cover Image, Body, Excerpt.</li><li>Cloudinary upload via <code>/api/upload</code>.</li><li>Auto-save to <code>localStorage</code> every 30 s.</li><li>SEO preview panel.</li></ul></div>
+          <div class="route-card"><div class="badge-row"><span class="badge auth">Auth Required</span></div><div class="route-path">/dashboard/my-posts</div><div class="route-title">My Posts</div><div class="route-desc">Paginated list of own posts. Filter + sort.</div><ul class="feature-list"><li>Status filter: All / Draft / Published.</li><li>Sort: Newest / Oldest / Most Views.</li><li>Inline delete with confirmation modal.</li></ul></div>
+          <div class="route-card"><div class="badge-row"><span class="badge auth">Auth Required</span></div><div class="route-path">/dashboard/edit/[id]</div><div class="route-title">Edit My Post</div><div class="route-desc">Same editor as New Post. Ownership check: 403 if not author (unless admin).</div><ul class="feature-list"><li>Ownership enforced server-side in route handler.</li><li>Republish or revert to draft.</li></ul></div>
+          <div class="route-card"><div class="badge-row"><span class="badge auth">Auth Required</span></div><div class="route-path">/dashboard/profile</div><div class="route-title">Profile &amp; Settings</div><div class="route-desc">Edit name, bio, avatar, password.</div><ul class="feature-list"><li>Avatar upload with circular crop.</li><li>Change password (requires current password).</li><li>Danger zone: delete account + posts.</li></ul></div>
+        </div>
+      </section>
+
+      <!-- ========================================
+           §5  ADMIN ROUTES
+      ========================================= -->
+      <section id="admin" class="page-section">
+        <div class="ribbon"><span class="ribbon-label">§ 05 — Admin CMS</span><div class="ribbon-rule-line"></div></div>
+
+        <div class="middleware-bar" style="margin-top:16px;border-left-color:var(--blue);">
+          <span class="mono">Guard: role === "ADMIN" — strict check at Edge</span>
+          <div class="middleware-body">Non-admin → 403 page. Role set in DB only (cannot be self-assigned). Admin has full CRUD over ALL posts.</div>
+        </div>
+
+        <div class="route-grid">
+          <div class="route-card wide"><div class="badge-row"><span class="badge admin">Admin Only</span><span class="badge seo">noindex</span></div><div class="route-path">/admin</div><div class="route-title">Admin Dashboard</div><div class="route-desc">Site-wide analytics, activity log, navigation hub.</div><ul class="feature-list"><li>Stats: posts, users, posts today, page views.</li><li>Pending moderation queue count.</li><li>Recent registrations.</li></ul></div>
+          <div class="route-card"><div class="badge-row"><span class="badge admin">Admin Only</span></div><div class="route-path">/admin/posts</div><div class="route-title">All Posts</div><div class="route-desc">Sortable/filterable table of every post. Bulk actions.</div><ul class="feature-list"><li>Bulk: Publish, Unpublish, Delete.</li><li>25 per page.</li></ul></div>
+          <div class="route-card"><div class="badge-row"><span class="badge admin">Admin Only</span></div><div class="route-path">/admin/posts/new</div><div class="route-title">Create Post (Admin)</div><div class="route-desc">Editor + Featured toggle + scheduled publish + force publish.</div><ul class="feature-list"><li>Assign to any author.</li><li>Schedule via date/time picker.</li></ul></div>
+          <div class="route-card"><div class="badge-row"><span class="badge admin">Admin Only</span></div><div class="route-path">/admin/posts/[id]/edit</div><div class="route-title">Edit Any Post</div><div class="route-desc">Full edit access. Audit trail. Hard vs. soft delete.</div><ul class="feature-list"><li>No ownership check.</li><li>Change category, reassign author.</li></ul></div>
+          <div class="route-card"><div class="badge-row"><span class="badge admin">Admin Only</span></div><div class="route-path">/admin/users</div><div class="route-title">User Management</div><div class="route-desc">All users. Promote / demote / ban.</div><ul class="feature-list"><li>Set role (USER ↔ ADMIN).</li><li>Suspend / Delete.</li></ul></div>
+          <div class="route-card"><div class="badge-row"><span class="badge admin">Admin Only</span></div><div class="route-path">/admin/categories</div><div class="route-title">Category Management</div><div class="route-desc">CRUD for 6 categories. Drag-and-drop reorder.</div><ul class="feature-list"><li>Rename slug with auto-redirect.</li><li>Cover image per category.</li></ul></div>
+          <div class="route-card"><div class="badge-row"><span class="badge admin">Admin Only</span></div><div class="route-path">/admin/media</div><div class="route-title">Media Library</div><div class="route-desc">All Cloudinary uploads. Grid view + delete orphans.</div><ul class="feature-list"><li>Copy CDN URL.</li><li>Delete orphaned media.</li></ul></div>
+          <div class="route-card"><div class="badge-row"><span class="badge admin">Admin Only</span></div><div class="route-path">/admin/settings</div><div class="route-title">Site Settings</div><div class="route-desc">Global config: name, logo, email, maintenance mode.</div><ul class="feature-list"><li>Fallback OG image, tagline.</li><li>Maintenance mode → 503 all public routes.</li></ul></div>
+        </div>
+      </section>
+
+      <!-- ========================================
+           §6  API ROUTES
+      ========================================= -->
+      <section id="api" class="page-section">
+        <div class="ribbon"><span class="ribbon-label">§ 06 — API Routes (Next.js Route Handlers)</span><div class="ribbon-rule-line"></div></div>
+
+        <div style="margin-top:16px;">
+          <details open>
+            <summary>Posts API</summary>
+            <div class="details-body">
+              <div class="api-block"><span class="api-method method-get">GET</span><span class="api-path">/api/posts</span><div class="api-desc">List posts. Query: <code>?category=ai&amp;limit=12&amp;cursor=abc&amp;status=published</code>. Paginated with next cursor.</div></div>
+              <div class="api-block"><span class="api-method method-get">GET</span><span class="api-path">/api/posts/latest</span><div class="api-desc">N most recent across all categories. <code>?limit=20</code>. Used by homepage and /latest.</div></div>
+              <div class="api-block"><span class="api-method method-get">GET</span><span class="api-path">/api/posts/[slug]</span><div class="api-desc">Single post by slug. Increments view counter. Returns post + author + category + related.</div></div>
+              <div class="api-block"><span class="api-method method-post">POST</span><span class="api-path">/api/posts</span><div class="api-desc">Create post. Auth required. Body: <code>{title, slug, body, categoryId, coverImage, excerpt, status}</code>.</div></div>
+              <div class="api-block"><span class="api-method method-put">PUT</span><span class="api-path">/api/posts/[id]</span><div class="api-desc">Update post. Auth required. Ownership check (or admin bypass).</div></div>
+              <div class="api-block"><span class="api-method method-delete">DELETE</span><span class="api-path">/api/posts/[id]</span><div class="api-desc">Delete post. Soft-delete by default (sets <code>deletedAt</code>).</div></div>
+            </div>
+          </details>
+          <details>
+            <summary>Categories, Auth, Users &amp; Upload API</summary>
+            <div class="details-body">
+              <div class="api-block"><span class="api-method method-get">GET</span><span class="api-path">/api/categories</span><div class="api-desc">All 6 categories with post counts. Edge-cached 5 min.</div></div>
+              <div class="api-block"><span class="api-method method-get">GET</span><span class="api-path">/api/categories/[slug]/posts</span><div class="api-desc">Posts for a category. Cursor pagination.</div></div>
+              <div class="api-block"><span class="api-method method-get">GET</span><span class="api-path">/api/auth/[...nextauth]</span><div class="api-desc">NextAuth catch-all: signin, signout, session, CSRF, callbacks.</div></div>
+              <div class="api-block"><span class="api-method method-post">POST</span><span class="api-path">/api/auth/register</span><div class="api-desc">Register user. Validates uniqueness, hashes password, returns session.</div></div>
+              <div class="api-block"><span class="api-method method-post">POST</span><span class="api-path">/api/auth/forgot-password</span><div class="api-desc">Generate + email reset token (1 hr TTL).</div></div>
+              <div class="api-block"><span class="api-method method-post">POST</span><span class="api-path">/api/auth/reset-password</span><div class="api-desc">Validate token + update password. Invalidates after use.</div></div>
+              <div class="api-block"><span class="api-method method-post">POST</span><span class="api-path">/api/upload</span><div class="api-desc">Upload to Cloudinary. Auth required. Max 5 MB. Returns <code>{url, width, height, format}</code>.</div></div>
+              <div class="api-block"><span class="api-method method-post">POST</span><span class="api-path">/api/contact</span><div class="api-desc">Contact form. Rate limited. Sends via Resend + auto-reply.</div></div>
+              <div class="api-block"><span class="api-method method-post">POST</span><span class="api-path">/api/newsletter</span><div class="api-desc">Subscribe email. Stores in DB + syncs to Resend audience.</div></div>
+              <div class="api-block"><span class="api-method method-post">POST</span><span class="api-path">/api/revalidate</span><div class="api-desc">On-demand ISR webhook. Secured by <code>REVALIDATE_SECRET</code> header.</div></div>
+              <div class="api-block"><span class="api-method method-get">GET</span><span class="api-path">/api/health</span><div class="api-desc">Health check. Returns <code>{"status":"ok","db":"connected","ts":"..."}</code>. Used by Netlify uptime monitoring. Always 200.</div></div>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <!-- ========================================
+           §7  SEO & PERFORMANCE
+      ========================================= -->
+      <section id="seo" class="page-section">
+        <div class="ribbon"><span class="ribbon-label">§ 07 — SEO &amp; Core Web Vitals</span><div class="ribbon-rule-line"></div></div>
+
+        <div class="seo-grid" style="margin-top:16px;">
+          <div class="seo-cell"><div class="seo-cell-title">LCP</div><div class="seo-cell-body">Hero uses <code>priority={true}</code> → injects <code>&lt;link rel="preload"&gt;</code>. Target &lt; 2.5 s. Served from Netlify CDN edge.</div></div>
+          <div class="seo-cell"><div class="seo-cell-title">CLS</div><div class="seo-cell-body">All images declare <code>width</code> + <code>height</code>. Fonts via <code>next/font</code> with <code>display:swap</code>. No layout shift on load.</div></div>
+          <div class="seo-cell"><div class="seo-cell-title">INP / FID</div><div class="seo-cell-body">TipTap loaded with <code>dynamic(import, {ssr:false})</code>. No blocking scripts. Load More uses <code>useTransition</code>.</div></div>
+          <div class="seo-cell"><div class="seo-cell-title">Images</div><div class="seo-cell-body"><code>next/image</code> → WebP + AVIF. Netlify Image CDN auto-converts. Explicit <code>sizes</code> on all responsive images.</div></div>
+          <div class="seo-cell"><div class="seo-cell-title">JSON-LD</div><div class="seo-cell-body"><code>NewsArticle</code>, <code>WebSite</code>, <code>NewsMediaOrganization</code>, <code>CollectionPage</code>, <code>Person</code>. Injected server-side via <code>&lt;Script type="application/ld+json"&gt;</code>.</div></div>
+          <div class="seo-cell"><div class="seo-cell-title">Open Graph</div><div class="seo-cell-body">Every page: <code>og:title</code>, <code>og:description</code>, <code>og:image</code> (1200×630). Articles add <code>article:published_time</code>, <code>article:section</code>.</div></div>
+          <div class="seo-cell"><div class="seo-cell-title">Sitemap</div><div class="seo-cell-body">Dynamic <code>/sitemap.xml</code> via App Router. All published slugs + category pages. Auto-submitted to Search Console on deploy via Netlify plugin.</div></div>
+          <div class="seo-cell"><div class="seo-cell-title">Robots</div><div class="seo-cell-body"><code>/robots.txt</code> disallows <code>/admin</code>, <code>/dashboard</code>, <code>/api</code>. Allows all else. Sitemap URL included.</div></div>
+          <div class="seo-cell"><div class="seo-cell-title">Mobile-First</div><div class="seo-cell-body">Viewport meta set. Touch targets ≥ 44 px. Single-col mobile → 3-col desktop. Accessible hamburger nav (<code>aria-expanded</code>).</div></div>
+        </div>
+      </section>
+
+      <!-- ========================================
+           §8  DEPLOYMENT — NETLIFY (DETAILED)
+      ========================================= -->
+      <section id="deploy" class="page-section">
+        <div class="ribbon green">
+          <span class="ribbon-label">§ 08 — Netlify Deployment — Full Configuration</span>
+          <div class="ribbon-rule-line"></div>
+        </div>
+
+        <!-- OVERVIEW FLOW -->
+        <div style="padding:20px 0 10px;">
+          <div class="mono" style="margin-bottom:12px;color:var(--caption);">Deploy Pipeline</div>
+          <div class="flow-diagram">
+            <div class="flow-node">git push</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node filled">Netlify Build</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node filled">next build</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node blue">Netlify Functions</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node green">Edge CDN Live</div>
+          </div>
+        </div>
+
+        <hr class="rule" style="margin:8px 0 20px;" />
+
+        <!-- netlify.toml -->
+        <div class="route-card wide green-top" style="border:1px solid var(--hairline);border-top:3px solid var(--green);padding:20px;margin-bottom:0;">
+          <div class="badge-row"><span class="badge netlify">netlify.toml</span><span class="badge ok">Root of Repo</span></div>
+          <div class="route-title">netlify.toml — Master Config</div>
+          <div class="route-desc">Single file that controls build, functions, edge middleware, redirects, headers, and plugin chain. Committed to repo root.</div>
+
+          <div class="code-label green">netlify.toml</div>
+<div class="code-block"><span class="hd"># ── Build ──────────────────────────────────────────────────────────</span>
+[build]
+  <span class="kw">command</span>   = <span class="st">"npm run build"</span>
+  <span class="kw">publish</span>   = <span class="st">".next"</span>
+  <span class="kw">functions</span> = <span class="st">"netlify/functions"</span>
+
+[build.environment]
+  <span class="kw">NODE_VERSION</span>    = <span class="st">"20"</span>
+  <span class="kw">NPM_VERSION</span>     = <span class="st">"10"</span>
+  <span class="kw">NEXT_TELEMETRY_DISABLED</span> = <span class="st">"1"</span>
+  <span class="kw">NODE_OPTIONS</span>    = <span class="st">"--max-old-space-size=4096"</span>
+
+<span class="hd"># ── Next.js Plugin (required for App Router) ───────────────────────</span>
+[[plugins]]
+  <span class="kw">package</span> = <span class="st">"@netlify/plugin-nextjs"</span>
+
+<span class="hd"># ── Edge Middleware ────────────────────────────────────────────────</span>
+[[edge_functions]]
+  <span class="kw">function</span> = <span class="st">"auth-guard"</span>
+  <span class="kw">path</span>     = <span class="st">"/dashboard/*"</span>
+
+[[edge_functions]]
+  <span class="kw">function</span> = <span class="st">"admin-guard"</span>
+  <span class="kw">path</span>     = <span class="st">"/admin/*"</span>
+
+[[edge_functions]]
+  <span class="kw">function</span> = <span class="st">"rate-limit"</span>
+  <span class="kw">path</span>     = <span class="st">"/api/contact"</span>
+
+[[edge_functions]]
+  <span class="kw">function</span> = <span class="st">"rate-limit"</span>
+  <span class="kw">path</span>     = <span class="st">"/api/newsletter"</span>
+
+<span class="hd"># ── Redirects ─────────────────────────────────────────────────────</span>
+[[redirects]]
+  <span class="kw">from</span>   = <span class="st">"/api/*"</span>
+  <span class="kw">to</span>     = <span class="st">"/.netlify/functions/:splat"</span>
+  <span class="kw">status</span> = <span class="nu">200</span>
+
+[[redirects]]
+  <span class="kw">from</span>   = <span class="st">"/sitemap.xml"</span>
+  <span class="kw">to</span>     = <span class="st">"/api/sitemap"</span>
+  <span class="kw">status</span> = <span class="nu">200</span>
+
+<span class="hd"># ── Security Headers ──────────────────────────────────────────────</span>
+[[headers]]
+  <span class="kw">for</span> = <span class="st">"/*"</span>
+  [headers.values]
+    <span class="kw">X-Frame-Options</span>           = <span class="st">"DENY"</span>
+    <span class="kw">X-Content-Type-Options</span>    = <span class="st">"nosniff"</span>
+    <span class="kw">Referrer-Policy</span>           = <span class="st">"strict-origin-when-cross-origin"</span>
+    <span class="kw">Permissions-Policy</span>        = <span class="st">"camera=(), microphone=(), geolocation=()"</span>
+    <span class="kw">Strict-Transport-Security</span> = <span class="st">"max-age=63072000; includeSubDomains; preload"</span>
+
+[[headers]]
+  <span class="kw">for</span> = <span class="st">"/api/*"</span>
+  [headers.values]
+    <span class="kw">Cache-Control</span> = <span class="st">"no-store, no-cache, must-revalidate"</span>
+
+[[headers]]
+  <span class="kw">for</span> = <span class="st">"/_next/static/*"</span>
+  [headers.values]
+    <span class="kw">Cache-Control</span> = <span class="st">"public, max-age=31536000, immutable"</span>
+
+<span class="hd"># ── Context overrides ─────────────────────────────────────────────</span>
+[context.production.environment]
+  <span class="kw">NODE_ENV</span> = <span class="st">"production"</span>
+
+[context.deploy-preview.environment]
+  <span class="kw">NODE_ENV</span> = <span class="st">"preview"</span>
+
+[context.branch-deploy.environment]
+  <span class="kw">NODE_ENV</span> = <span class="st">"development"</span></div>
+        </div><!-- /route-card -->
+
+        <!-- next.config.js -->
+        <div style="margin-top:24px;">
+          <div class="route-card wide amber-top" style="border:1px solid var(--hairline);border-top:3px solid var(--amber);padding:20px;">
+            <div class="badge-row"><span class="badge warn">next.config.js</span><span class="badge netlify">Netlify-Optimized</span></div>
+            <div class="route-title">next.config.js — Netlify + Node.js Hardened</div>
+            <div class="route-desc">Eliminates all deprecation warnings, enables strict mode, configures remote image domains, sets output to <code>standalone</code> for correct Netlify bundling.</div>
+
+            <div class="code-label amber">next.config.js</div>
+<div class="code-block"><span class="cm">/** @type {import('next').NextConfig} */</span>
+<span class="kw">const</span> nextConfig = {
+  <span class="hd">// Required for Netlify serverless bundling</span>
+  <span class="kw">output</span>: <span class="st">'standalone'</span>,
+
+  <span class="hd">// Catch React + Next.js bugs at build time</span>
+  <span class="kw">reactStrictMode</span>: <span class="kw">true</span>,
+
+  <span class="hd">// Suppress all deprecation warnings from dependencies</span>
+  <span class="kw">experimental</span>: {
+    <span class="kw">serverComponentsExternalPackages</span>: [<span class="st">'@prisma/client'</span>, <span class="st">'bcrypt'</span>],
+  },
+
+  <span class="hd">// next/image remote domains — required or you get 400 errors</span>
+  <span class="kw">images</span>: {
+    <span class="kw">remotePatterns</span>: [
+      { <span class="kw">protocol</span>: <span class="st">'https'</span>, <span class="kw">hostname</span>: <span class="st">'res.cloudinary.com'</span> },
+      { <span class="kw">protocol</span>: <span class="st">'https'</span>, <span class="kw">hostname</span>: <span class="st">'images.unsplash.com'</span> },
+      { <span class="kw">protocol</span>: <span class="st">'https'</span>, <span class="kw">hostname</span>: <span class="st">'avatars.githubusercontent.com'</span> },
+    ],
+    <span class="kw">formats</span>: [<span class="st">'image/avif'</span>, <span class="st">'image/webp'</span>],
+    <span class="kw">minimumCacheTTL</span>: <span class="nu">60</span>,
+  },
+
+  <span class="hd">// Silence noisy build warnings from specific packages</span>
+  <span class="kw">webpack</span>: (<span class="ty">config</span>, { <span class="ty">isServer</span> }) => {
+    <span class="kw">if</span> (isServer) {
+      <span class="hd">// Prisma: avoid "Critical dependency" warnings</span>
+      config.externals.push(<span class="st">'@prisma/client'</span>)
+    }
+    <span class="hd">// Suppress punycode deprecation (Node 22 compat)</span>
+    config.ignoreWarnings = [
+      { <span class="kw">module</span>: <span class="st">/node_modules\/punycode/</span> },
+    ]
+    <span class="kw">return</span> config
+  },
+
+  <span class="hd">// Trailing slash consistency (Netlify prefers false)</span>
+  <span class="kw">trailingSlash</span>: <span class="kw">false</span>,
+
+  <span class="hd">// Disable X-Powered-By header (security)</span>
+  <span class="kw">poweredByHeader</span>: <span class="kw">false</span>,
+
+  <span class="hd">// Compress responses</span>
+  <span class="kw">compress</span>: <span class="kw">true</span>,
+}
+
+<span class="kw">export default</span> nextConfig</div>
+          </div>
+        </div>
+
+        <!-- package.json scripts -->
+        <div style="margin-top:24px;">
+          <div class="route-card wide" style="border:1px solid var(--hairline);border-top:3px solid var(--black);padding:20px;">
+            <div class="badge-row"><span class="badge">package.json</span><span class="badge ok">Node Pinned</span></div>
+            <div class="route-title">package.json — Scripts &amp; Node Engine Pin</div>
+            <div class="route-desc">Pins Node.js engine to prevent version mismatch errors on Netlify. Clean scripts for build, dev, and DB ops.</div>
+
+            <div class="code-label">package.json (relevant sections)</div>
+<div class="code-block">{
+  <span class="st">"name"</span>: <span class="st">"newsroom"</span>,
+  <span class="st">"version"</span>: <span class="st">"1.0.0"</span>,
+  <span class="st">"private"</span>: <span class="kw">true</span>,
+  <span class="st">"engines"</span>: {
+    <span class="st">"node"</span>: <span class="st">">=20.0.0 &lt;21.0.0"</span>,
+    <span class="st">"npm"</span>:  <span class="st">">=10.0.0"</span>
+  },
+  <span class="st">"scripts"</span>: {
+    <span class="st">"dev"</span>:          <span class="st">"next dev"</span>,
+    <span class="st">"build"</span>:        <span class="st">"prisma generate &amp;&amp; next build"</span>,
+    <span class="st">"start"</span>:        <span class="st">"next start"</span>,
+    <span class="st">"lint"</span>:         <span class="st">"next lint --fix"</span>,
+    <span class="st">"type-check"</span>:   <span class="st">"tsc --noEmit"</span>,
+    <span class="st">"db:push"</span>:      <span class="st">"prisma db push"</span>,
+    <span class="st">"db:migrate"</span>:   <span class="st">"prisma migrate deploy"</span>,
+    <span class="st">"db:seed"</span>:      <span class="st">"tsx prisma/seed.ts"</span>,
+    <span class="st">"db:studio"</span>:    <span class="st">"prisma studio"</span>,
+    <span class="st">"postinstall"</span>:  <span class="st">"prisma generate"</span>
+  }
+}</div>
+
+            <div class="code-label green">.nvmrc — Node version file (also read by Netlify)</div>
+<div class="code-block">20</div>
+          </div>
+        </div>
+
+        <!-- ENV VARS -->
+        <div style="margin-top:24px;">
+          <div class="route-card wide" style="border:1px solid var(--hairline);border-top:3px solid var(--black);padding:20px;">
+            <div class="badge-row"><span class="badge netlify">Netlify Env Vars</span><span class="badge warn">Set in Dashboard → Site Configuration → Env</span></div>
+            <div class="route-title">Environment Variables — Complete List</div>
+            <div class="route-desc">Set all variables in Netlify Dashboard under <strong>Site configuration → Environment variables</strong>. Never commit secrets to the repo. Use scoping (Production / Preview / Dev) per variable.</div>
+
+            <table class="env-table">
+              <thead>
+                <tr><th>Variable</th><th>Required</th><th>Example / Notes</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="key-cell">DATABASE_URL</td><td class="req-cell required">REQUIRED</td><td>Supabase pooler URL: <code>postgresql://user:pass@db.supabase.co:6543/postgres?pgbouncer=true</code>. Use PgBouncer port for serverless.</td></tr>
+                <tr><td class="key-cell">DIRECT_URL</td><td class="req-cell required">REQUIRED</td><td>Direct Supabase URL (port 5432). Used by Prisma migrations only. Not exposed to functions.</td></tr>
+                <tr><td class="key-cell">NEXTAUTH_SECRET</td><td class="req-cell required">REQUIRED</td><td>Run <code>openssl rand -base64 32</code>. Min 32 chars. NextAuth will throw without this.</td></tr>
+                <tr><td class="key-cell">NEXTAUTH_URL</td><td class="req-cell required">REQUIRED</td><td><code>https://yourdomain.netlify.app</code> in production. Must match exact deploy URL (no trailing slash).</td></tr>
+                <tr><td class="key-cell">RESEND_API_KEY</td><td class="req-cell required">REQUIRED</td><td><code>re_xxxxxxxxxxxx</code>. From Resend dashboard. Used for contact + newsletter + password reset emails.</td></tr>
+                <tr><td class="key-cell">RESEND_FROM_EMAIL</td><td class="req-cell required">REQUIRED</td><td><code>noreply@yourdomain.com</code>. Must be a verified Resend sender domain.</td></tr>
+                <tr><td class="key-cell">CLOUDINARY_CLOUD_NAME</td><td class="req-cell required">REQUIRED</td><td>Your Cloudinary cloud name.</td></tr>
+                <tr><td class="key-cell">CLOUDINARY_API_KEY</td><td class="req-cell required">REQUIRED</td><td>Cloudinary API key.</td></tr>
+                <tr><td class="key-cell">CLOUDINARY_API_SECRET</td><td class="req-cell required">REQUIRED</td><td>Cloudinary API secret. Never expose to client.</td></tr>
+                <tr><td class="key-cell">REVALIDATE_SECRET</td><td class="req-cell required">REQUIRED</td><td>Random string to authorize <code>/api/revalidate</code> webhook calls. <code>openssl rand -hex 20</code>.</td></tr>
+                <tr><td class="key-cell">NEXT_PUBLIC_SITE_URL</td><td class="req-cell required">REQUIRED</td><td><code>https://yourdomain.com</code>. Used in OG tags, canonical URLs, JSON-LD. Must be public (<code>NEXT_PUBLIC_</code> prefix).</td></tr>
+                <tr><td class="key-cell">NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME</td><td class="req-cell required">REQUIRED</td><td>Same as <code>CLOUDINARY_CLOUD_NAME</code> — duplicated with <code>NEXT_PUBLIC_</code> prefix for client-side upload widget access.</td></tr>
+                <tr><td class="key-cell">GOOGLE_CLIENT_ID</td><td class="req-cell optional">optional</td><td>For Google OAuth. Create in Google Cloud Console.</td></tr>
+                <tr><td class="key-cell">GOOGLE_CLIENT_SECRET</td><td class="req-cell optional">optional</td><td>Google OAuth secret.</td></tr>
+                <tr><td class="key-cell">GITHUB_CLIENT_ID</td><td class="req-cell optional">optional</td><td>For GitHub OAuth.</td></tr>
+                <tr><td class="key-cell">GITHUB_CLIENT_SECRET</td><td class="req-cell optional">optional</td><td>GitHub OAuth secret.</td></tr>
+                <tr><td class="key-cell">NEXT_TELEMETRY_DISABLED</td><td class="req-cell optional">optional</td><td><code>1</code> — Disables Next.js telemetry to keep build logs clean. Also set in <code>netlify.toml</code>.</td></tr>
+              </tbody>
+            </table>
+
+            <div class="code-label green">.env.example — commit this to repo, not .env.local</div>
+<div class="code-block"><span class="hd"># Database</span>
+<span class="kw">DATABASE_URL</span>=<span class="st">"postgresql://..."</span>
+<span class="kw">DIRECT_URL</span>=<span class="st">"postgresql://..."</span>
+
+<span class="hd"># Auth</span>
+<span class="kw">NEXTAUTH_SECRET</span>=<span class="st">"your-secret-here"</span>
+<span class="kw">NEXTAUTH_URL</span>=<span class="st">"http://localhost:3000"</span>
+
+<span class="hd"># Email</span>
+<span class="kw">RESEND_API_KEY</span>=<span class="st">"re_..."</span>
+<span class="kw">RESEND_FROM_EMAIL</span>=<span class="st">"noreply@yourdomain.com"</span>
+
+<span class="hd"># Cloudinary</span>
+<span class="kw">CLOUDINARY_CLOUD_NAME</span>=<span class="st">""</span>
+<span class="kw">CLOUDINARY_API_KEY</span>=<span class="st">""</span>
+<span class="kw">CLOUDINARY_API_SECRET</span>=<span class="st">""</span>
+<span class="kw">NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME</span>=<span class="st">""</span>
+
+<span class="hd"># Revalidation</span>
+<span class="kw">REVALIDATE_SECRET</span>=<span class="st">""</span>
+
+<span class="hd"># Public</span>
+<span class="kw">NEXT_PUBLIC_SITE_URL</span>=<span class="st">"http://localhost:3000"</span></div>
+          </div>
+        </div>
+
+        <!-- Prisma + DB -->
+        <div style="margin-top:24px;">
+          <div class="route-card wide" style="border:1px solid var(--hairline);border-top:3px solid var(--black);padding:20px;">
+            <div class="badge-row"><span class="badge">Prisma + Supabase</span><span class="badge ok">Connection Pool</span></div>
+            <div class="route-title">Database — Prisma Schema &amp; Connection Pooling</div>
+            <div class="route-desc">Serverless functions open a new DB connection per invocation. Without pooling, you hit Postgres connection limits and get <code>too many clients</code> 500 errors. Use PgBouncer via Supabase's <code>pgbouncer=true</code> param and the singleton Prisma client pattern.</div>
+
+            <div class="code-label">prisma/schema.prisma — datasource block</div>
+<div class="code-block"><span class="kw">datasource</span> <span class="ty">db</span> {
+  <span class="kw">provider</span>  = <span class="st">"postgresql"</span>
+  <span class="kw">url</span>       = <span class="fn">env</span>(<span class="st">"DATABASE_URL"</span>)   <span class="cm">// PgBouncer URL — used by app functions</span>
+  <span class="kw">directUrl</span> = <span class="fn">env</span>(<span class="st">"DIRECT_URL"</span>)    <span class="cm">// Direct URL — used by prisma migrate</span>
+}
+
+<span class="kw">generator</span> <span class="ty">client</span> {
+  <span class="kw">provider</span>      = <span class="st">"prisma-client-js"</span>
+  <span class="kw">binaryTargets</span> = [<span class="st">"native"</span>, <span class="st">"rhel-openssl-3.0.x"</span>] <span class="cm">// Required for Netlify Linux env</span>
+}</div>
+
+            <div class="code-label">lib/prisma.ts — Singleton to avoid hot-reload connection spam</div>
+<div class="code-block"><span class="kw">import</span> { <span class="ty">PrismaClient</span> } <span class="kw">from</span> <span class="st">'@prisma/client'</span>
+
+<span class="kw">const</span> globalForPrisma = <span class="fn">globalThis</span> <span class="kw">as unknown as</span> {
+  <span class="kw">prisma</span>: <span class="ty">PrismaClient</span> | <span class="kw">undefined</span>
+}
+
+<span class="kw">export const</span> prisma =
+  globalForPrisma.prisma ??
+  <span class="kw">new</span> <span class="ty">PrismaClient</span>({
+    <span class="kw">log</span>: process.env.NODE_ENV === <span class="st">'development'</span>
+      ? [<span class="st">'query'</span>, <span class="st">'error'</span>, <span class="st">'warn'</span>]
+      : [<span class="st">'error'</span>],   <span class="cm">// production: log errors only</span>
+  })
+
+<span class="kw">if</span> (process.env.NODE_ENV !== <span class="st">'production'</span>) {
+  globalForPrisma.prisma = prisma
+}</div>
+          </div>
+        </div>
+
+        <!-- Netlify Deploy Steps -->
+        <div style="margin-top:24px;">
+          <div class="route-card wide netlify-green panel" style="border:2px solid #00ad9f;padding:20px;">
+            <div class="panel-title" style="color:#00ad9f;border-bottom:1px solid var(--hairline);padding-bottom:10px;margin-bottom:16px;">Step-by-Step: First Deploy to Netlify</div>
+            <div class="step-flow">
+              <div class="step-row">
+                <div class="step-num">1</div>
+                <div>
+                  <div class="step-content-title">Install Netlify Next.js plugin</div>
+                  <div class="step-content-body">Run <code>npm i -D @netlify/plugin-nextjs</code>. This is what enables full App Router, Server Actions, ISR, and Edge Middleware support on Netlify. Without it, Server Actions silently fail and ISR doesn't work.</div>
+                </div>
+              </div>
+              <div class="step-row">
+                <div class="step-num">2</div>
+                <div>
+                  <div class="step-content-title">Commit netlify.toml + .nvmrc to repo root</div>
+                  <div class="step-content-body">Both files must exist at the root. <code>.nvmrc</code> containing <code>20</code> pins Node 20. Without it Netlify may default to Node 18 or 21, causing build failures.</div>
+                </div>
+              </div>
+              <div class="step-row">
+                <div class="step-num">3</div>
+                <div>
+                  <div class="step-content-title">Connect repo in Netlify Dashboard</div>
+                  <div class="step-content-body">Dashboard → Add new site → Import from Git. Choose GitHub/GitLab. Netlify will auto-detect Next.js and the <code>netlify.toml</code> settings. Do not override build command or publish directory in the UI — the TOML takes precedence.</div>
+                </div>
+              </div>
+              <div class="step-row">
+                <div class="step-num">4</div>
+                <div>
+                  <div class="step-content-title">Add all environment variables</div>
+                  <div class="step-content-body">Site configuration → Environment variables → Add all variables from the table above. Scope <code>DATABASE_URL</code> to Production + Preview. Scope <code>NEXTAUTH_URL</code> to Production only (each preview deploy gets its own URL via <code>URL</code> env var automatically).</div>
+                </div>
+              </div>
+              <div class="step-row">
+                <div class="step-num">5</div>
+                <div>
+                  <div class="step-content-title">Run Prisma migration against production DB</div>
+                  <div class="step-content-body">Run <code>DATABASE_URL="..." npx prisma migrate deploy</code> locally or via a one-off Netlify Function. Never run <code>prisma db push</code> against production (no migration history). The <code>postinstall</code> script in <code>package.json</code> runs <code>prisma generate</code> automatically at build time.</div>
+                </div>
+              </div>
+              <div class="step-row">
+                <div class="step-num">6</div>
+                <div>
+                  <div class="step-content-title">Trigger deploy &amp; verify</div>
+                  <div class="step-content-body">Push to <code>main</code>. Monitor build log. Check for zero TS errors, zero ESLint errors, zero Prisma warnings. Visit <code>/api/health</code> — should return <code>{"status":"ok"}</code>. Check Netlify Functions log tab for any cold-start errors.</div>
+                </div>
+              </div>
+              <div class="step-row">
+                <div class="step-num">7</div>
+                <div>
+                  <div class="step-content-title">Configure custom domain + HTTPS</div>
+                  <div class="step-content-body">Domain management → Add custom domain. Netlify auto-provisions Let's Encrypt TLS. Update <code>NEXTAUTH_URL</code> and <code>NEXT_PUBLIC_SITE_URL</code> env vars to the custom domain. Redeploy.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================
+           §9  ZERO-ERROR PRODUCTION HARDENING
+      ========================================= -->
+      <section id="errors" class="page-section">
+        <div class="ribbon red">
+          <span class="ribbon-label">§ 09 — Zero Errors · Zero Warnings · No 500s</span>
+          <div class="ribbon-rule-line"></div>
+        </div>
+
+        <div class="middleware-bar red" style="margin-top:16px;">
+          <span class="mono">Production Hardening Checklist</span>
+          <div class="middleware-body">Every item below prevents a class of runtime errors, TypeScript warnings, or internal server failures. Treat each as a required fix, not an optional improvement.</div>
+        </div>
+
+        <!-- ERROR CAUSE TABLE -->
+        <h3 style="font-family:var(--font-mono);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:20px 0 10px;color:var(--red);">Common 500 Causes &amp; Fixes</h3>
+        <table class="err-table">
+          <thead>
+            <tr><th>Error / Warning</th><th>Root Cause</th><th>Fix</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="code-cell">Error: too many clients</td>
+              <td>Prisma opens a new connection per invocation in serverless. Hits Postgres max_connections.</td>
+              <td class="fix-cell">Use PgBouncer URL with <code>?pgbouncer=true&connection_limit=1</code>. Use singleton Prisma client pattern (lib/prisma.ts shown above).</td>
+            </tr>
+            <tr>
+              <td class="code-cell">NEXTAUTH_URL mismatch</td>
+              <td><code>NEXTAUTH_URL</code> set to dev URL in production, or missing. NextAuth throws a 500 on any auth callback.</td>
+              <td class="fix-cell">Set <code>NEXTAUTH_URL</code> to exact production URL in Netlify env vars. For preview deploys, use <code>NEXTAUTH_URL=$URL</code> (Netlify injects <code>$URL</code> automatically per deploy).</td>
+            </tr>
+            <tr>
+              <td class="code-cell">prisma: binaryTargets error</td>
+              <td>Prisma native binaries compiled for wrong architecture. Netlify runs on <code>rhel-openssl-3.0.x</code>.</td>
+              <td class="fix-cell">Add <code>binaryTargets = ["native", "rhel-openssl-3.0.x"]</code> to <code>schema.prisma</code> generator block.</td>
+            </tr>
+            <tr>
+              <td class="code-cell">next/image: hostname not allowed</td>
+              <td>An external image URL's hostname is not listed in <code>next.config.js</code> <code>remotePatterns</code>. Returns 400.</td>
+              <td class="fix-cell">Add every external image domain to <code>images.remotePatterns</code> in <code>next.config.js</code>. Cover Cloudinary, Unsplash, GitHub avatars etc.</td>
+            </tr>
+            <tr>
+              <td class="code-cell">Server Action: CSRF failure</td>
+              <td>Missing <code>NEXTAUTH_SECRET</code> or <code>NEXTAUTH_URL</code> causes CSRF token mismatch on Server Action POST. Returns 403 or 500.</td>
+              <td class="fix-cell">Ensure both env vars are set. Server Actions require exact <code>Origin</code> header match with <code>NEXTAUTH_URL</code>.</td>
+            </tr>
+            <tr>
+              <td class="code-cell">punycode DeprecationWarning</td>
+              <td>Node 22 / some Node 20 sub-versions deprecate built-in <code>punycode</code>. Appears in build logs as a warning.</td>
+              <td class="fix-cell">Add to webpack config: <code>config.ignoreWarnings = [{ module: /node_modules\/punycode/ }]</code>.</td>
+            </tr>
+            <tr>
+              <td class="code-cell">Dynamic server usage: cookies()</td>
+              <td>Calling <code>cookies()</code> or <code>headers()</code> in a statically-rendered route causes a build error in Next 14.</td>
+              <td class="fix-cell">Add <code>export const dynamic = 'force-dynamic'</code> to any route that reads cookies/headers at runtime (e.g. dashboard layout).</td>
+            </tr>
+            <tr>
+              <td class="code-cell">useSearchParams() + Suspense</td>
+              <td><code>useSearchParams()</code> must be wrapped in <code>&lt;Suspense&gt;</code> in App Router. Missing boundary causes build-time error.</td>
+              <td class="fix-cell">Wrap every component using <code>useSearchParams()</code> in a <code>&lt;Suspense fallback={...}&gt;</code> parent. Create a wrapper client component if needed.</td>
+            </tr>
+            <tr>
+              <td class="code-cell">Unhandled promise rejection</td>
+              <td>API routes / Server Actions without try/catch crash the function, returning a bare 500 with no useful message.</td>
+              <td class="fix-cell">All async route handlers and Server Actions must use try/catch with typed error responses. See error handler pattern below.</td>
+            </tr>
+            <tr>
+              <td class="code-cell">getServerSession() returns null</td>
+              <td>Forgetting to pass <code>authOptions</code> to <code>getServerSession()</code> in App Router. Returns null even if user is logged in.</td>
+              <td class="fix-cell">Always use <code>getServerSession(authOptions)</code> — pass your <code>authOptions</code> object explicitly. Export it from <code>lib/auth.ts</code>.</td>
+            </tr>
+            <tr>
+              <td class="code-cell">Missing error.tsx / not-found.tsx</td>
+              <td>Unhandled thrown errors and 404s show a generic Netlify error page instead of your branded UI.</td>
+              <td class="fix-cell">Create <code>app/error.tsx</code> (client component with <code>'use client'</code>) and <code>app/not-found.tsx</code>. Both required at root level.</td>
+            </tr>
+            <tr>
+              <td class="code-cell">ESLint: no-unused-vars warn</td>
+              <td>Default ESLint config treats unused vars as warnings that pollute build output.</td>
+              <td class="fix-cell">In <code>.eslintrc.json</code>: set <code>"no-unused-vars": ["error", { "argsIgnorePattern": "^_" }]</code>. Prefix intentionally unused params with <code>_</code>.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- API ERROR HANDLER -->
+        <div style="margin-top:24px;">
+          <div class="route-card wide red-top" style="border:1px solid var(--hairline);border-top:3px solid var(--red);padding:20px;">
+            <div class="badge-row"><span class="badge err">Required Pattern</span><span class="badge">All API Routes</span></div>
+            <div class="route-title">Standardized API Error Handler</div>
+            <div class="route-desc">Use this pattern in every Route Handler. Catches all thrown errors, logs them server-side, and returns a consistent JSON response — never a bare 500 with no body.</div>
+
+            <div class="code-label red">lib/api-response.ts — response helpers</div>
+<div class="code-block"><span class="kw">import</span> { <span class="ty">NextResponse</span> } <span class="kw">from</span> <span class="st">'next/server'</span>
+
+<span class="kw">export function</span> <span class="fn">ok</span>&lt;<span class="ty">T</span>&gt;(data: <span class="ty">T</span>, status = <span class="nu">200</span>) {
+  <span class="kw">return</span> NextResponse.json({ <span class="kw">success</span>: <span class="kw">true</span>, data }, { status })
+}
+
+<span class="kw">export function</span> <span class="fn">err</span>(message: <span class="ty">string</span>, status = <span class="nu">500</span>, details?: <span class="kw">unknown</span>) {
+  <span class="kw">if</span> (process.env.NODE_ENV !== <span class="st">'production'</span>) {
+    console.error(<span class="st">`[API ${status}]`</span>, message, details)
+  }
+  <span class="kw">return</span> NextResponse.json({ <span class="kw">success</span>: <span class="kw">false</span>, <span class="kw">error</span>: message }, { status })
+}
+
+<span class="kw">export function</span> <span class="fn">withErrorHandler</span>(
+  handler: (...args: <span class="kw">unknown</span>[]) => <span class="ty">Promise</span>&lt;<span class="ty">NextResponse</span>&gt;
+) {
+  <span class="kw">return async</span> (...args: <span class="kw">unknown</span>[]) => {
+    <span class="kw">try</span> {
+      <span class="kw">return await</span> handler(...args)
+    } <span class="kw">catch</span> (e) {
+      console.error(<span class="st">'[Unhandled API Error]'</span>, e)
+      <span class="kw">return</span> <span class="fn">err</span>(<span class="st">'Internal server error'</span>, <span class="nu">500</span>, e)
+    }
+  }
+}</div>
+
+            <div class="code-label red">app/api/posts/route.ts — usage example</div>
+<div class="code-block"><span class="kw">import</span> { ok, err, withErrorHandler } <span class="kw">from</span> <span class="st">'@/lib/api-response'</span>
+<span class="kw">import</span> { prisma } <span class="kw">from</span> <span class="st">'@/lib/prisma'</span>
+<span class="kw">import</span> { getServerSession } <span class="kw">from</span> <span class="st">'next-auth'</span>
+<span class="kw">import</span> { authOptions } <span class="kw">from</span> <span class="st">'@/lib/auth'</span>  <span class="cm">// always pass authOptions!</span>
+
+<span class="kw">export const</span> GET = <span class="fn">withErrorHandler</span>(<span class="kw">async</span> (req: <span class="ty">Request</span>) => {
+  <span class="kw">const</span> { searchParams } = <span class="kw">new</span> <span class="ty">URL</span>(req.url)
+  <span class="kw">const</span> limit = <span class="ty">Number</span>(searchParams.get(<span class="st">'limit'</span>)) || <span class="nu">12</span>
+
+  <span class="kw">const</span> posts = <span class="kw">await</span> prisma.post.findMany({
+    <span class="kw">where</span>: { <span class="kw">status</span>: <span class="st">'PUBLISHED'</span>, <span class="kw">deletedAt</span>: <span class="kw">null</span> },
+    <span class="kw">take</span>: limit,
+    <span class="kw">orderBy</span>: { <span class="kw">createdAt</span>: <span class="st">'desc'</span> },
+  })
+
+  <span class="kw">return</span> <span class="fn">ok</span>(posts)
+})
+
+<span class="kw">export const</span> POST = <span class="fn">withErrorHandler</span>(<span class="kw">async</span> (req: <span class="ty">Request</span>) => {
+  <span class="kw">const</span> session = <span class="kw">await</span> <span class="fn">getServerSession</span>(authOptions)
+  <span class="kw">if</span> (!session) <span class="kw">return</span> <span class="fn">err</span>(<span class="st">'Unauthorized'</span>, <span class="nu">401</span>)
+
+  <span class="kw">const</span> body = <span class="kw">await</span> req.json()
+  <span class="cm">// validate body with zod here...</span>
+
+  <span class="kw">const</span> post = <span class="kw">await</span> prisma.post.create({ <span class="kw">data</span>: { ...body, <span class="kw">authorId</span>: session.user.id } })
+  <span class="kw">return</span> <span class="fn">ok</span>(post, <span class="nu">201</span>)
+})</div>
+          </div>
+        </div>
+
+        <!-- error.tsx + not-found.tsx -->
+        <div style="margin-top:24px;">
+          <div class="two-panel">
+            <div class="route-card" style="border:1px solid var(--hairline);border-top:3px solid var(--red);padding:20px;">
+              <div class="badge-row"><span class="badge err">Required</span></div>
+              <div class="route-title">app/error.tsx</div>
+              <div class="route-desc">Catches all unhandled errors in the React tree. Must be a Client Component.</div>
+              <div class="code-label red">app/error.tsx</div>
+<div class="code-block"><span class="st">'use client'</span>
+<span class="kw">import</span> { useEffect } <span class="kw">from</span> <span class="st">'react'</span>
+
+<span class="kw">export default function</span> <span class="fn">Error</span>({
+  error, reset
+}: {
+  error: <span class="ty">Error</span> & { <span class="kw">digest</span>?: <span class="kw">string</span> }
+  reset: () => <span class="kw">void</span>
+}) {
+  useEffect(() => {
+    console.error(error)
+  }, [error])
+
+  <span class="kw">return</span> (
+    &lt;<span class="ty">div</span>&gt;
+      &lt;<span class="ty">h2</span>&gt;Something went wrong.&lt;/<span class="ty">h2</span>&gt;
+      &lt;<span class="ty">button</span> onClick={reset}&gt;Try again&lt;/<span class="ty">button</span>&gt;
+    &lt;/<span class="ty">div</span>&gt;
+  )
+}</div>
+            </div>
+            <div class="route-card" style="border:1px solid var(--hairline);border-top:3px solid var(--red);padding:20px;">
+              <div class="badge-row"><span class="badge err">Required</span></div>
+              <div class="route-title">app/not-found.tsx</div>
+              <div class="route-desc">Custom 404 page. Renders your branded UI instead of Netlify's default page.</div>
+              <div class="code-label red">app/not-found.tsx</div>
+<div class="code-block"><span class="kw">import</span> Link <span class="kw">from</span> <span class="st">'next/link'</span>
+
+<span class="kw">export default function</span> <span class="fn">NotFound</span>() {
+  <span class="kw">return</span> (
+    &lt;<span class="ty">div</span>&gt;
+      &lt;<span class="ty">h1</span>&gt;404 — Page Not Found&lt;/<span class="ty">h1</span>&gt;
+      &lt;<span class="ty">Link</span> href=<span class="st">"/"</span>&gt;← Back to Home&lt;/<span class="ty">Link</span>&gt;
+    &lt;/<span class="ty">div</span>&gt;
+  )
+}
+
+<span class="kw">export const</span> metadata = {
+  <span class="kw">title</span>: <span class="st">'404 — Not Found'</span>
+}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- HEALTH CHECK -->
+        <div style="margin-top:24px;">
+          <div class="route-card wide green-top" style="border:1px solid var(--hairline);border-top:3px solid var(--green);padding:20px;">
+            <div class="badge-row"><span class="badge ok">Always 200</span><span class="badge netlify">Netlify Monitoring</span></div>
+            <div class="route-title">app/api/health/route.ts — DB Health Check</div>
+            <div class="route-desc">Returns <code>200 OK</code> with DB ping result. Used by Netlify uptime monitors and external services. Always returns a clean JSON response even if DB is down (returns the error message instead of crashing).</div>
+            <div class="code-label green">app/api/health/route.ts</div>
+<div class="code-block"><span class="kw">import</span> { prisma } <span class="kw">from</span> <span class="st">'@/lib/prisma'</span>
+<span class="kw">import</span> { <span class="ty">NextResponse</span> } <span class="kw">from</span> <span class="st">'next/server'</span>
+
+<span class="kw">export const</span> dynamic = <span class="st">'force-dynamic'</span>
+
+<span class="kw">export async function</span> <span class="fn">GET</span>() {
+  <span class="kw">try</span> {
+    <span class="kw">await</span> prisma.$queryRaw`<span class="st">SELECT 1</span>`
+    <span class="kw">return</span> NextResponse.json({
+      <span class="kw">status</span>: <span class="ok">'ok'</span>,
+      <span class="kw">db</span>: <span class="ok">'connected'</span>,
+      <span class="kw">ts</span>: <span class="kw">new</span> <span class="ty">Date</span>().toISOString(),
+    })
+  } <span class="kw">catch</span> (e) {
+    <span class="kw">return</span> NextResponse.json({
+      <span class="kw">status</span>: <span class="er">'degraded'</span>,
+      <span class="kw">db</span>: <span class="er">'unreachable'</span>,
+      <span class="kw">error</span>: (e <span class="kw">as</span> <span class="ty">Error</span>).message,
+    }, { <span class="kw">status</span>: <span class="nu">200</span> }) <span class="cm">// 200 intentional — monitoring handles degraded</span>
+  }
+}</div>
+          </div>
+        </div>
+
+        <!-- CHECKLIST -->
+        <div style="margin-top:24px;">
+          <div class="route-card wide" style="border:1px solid var(--hairline);border-top:3px solid var(--black);padding:20px;">
+            <div class="badge-row"><span class="badge">Pre-Deploy Checklist</span></div>
+            <div class="route-title">Zero-Error Pre-Deploy Checklist</div>
+            <div class="route-desc">Run these checks locally before every deploy. All must pass before pushing to <code>main</code>.</div>
+            <ul class="checklist">
+              <li><span class="ck pass">RUN</span> <code>npm run type-check</code> — must exit 0 with no TypeScript errors.</li>
+              <li><span class="ck pass">RUN</span> <code>npm run lint</code> — must exit 0 with no ESLint errors or warnings.</li>
+              <li><span class="ck pass">RUN</span> <code>npm run build</code> locally — must complete with no errors. Check for any <code>warn</code> lines in output.</li>
+              <li><span class="ck pass">CHECK</span> All <code>useSearchParams()</code> calls are wrapped in <code>&lt;Suspense&gt;</code>.</li>
+              <li><span class="ck pass">CHECK</span> All async Server Components that throw are wrapped with <code>error.tsx</code> boundaries.</li>
+              <li><span class="ck pass">CHECK</span> <code>app/error.tsx</code> and <code>app/not-found.tsx</code> exist at root level.</li>
+              <li><span class="ck pass">CHECK</span> Every <code>getServerSession()</code> call passes <code>authOptions</code> as argument.</li>
+              <li><span class="ck pass">CHECK</span> All external image hostnames are in <code>next.config.js</code> <code>remotePatterns</code>.</li>
+              <li><span class="ck pass">CHECK</span> <code>prisma/schema.prisma</code> has <code>binaryTargets = ["native", "rhel-openssl-3.0.x"]</code>.</li>
+              <li><span class="ck pass">CHECK</span> <code>DATABASE_URL</code> uses PgBouncer port (6543) with <code>?pgbouncer=true&amp;connection_limit=1</code>.</li>
+              <li><span class="ck pass">CHECK</span> <code>DIRECT_URL</code> uses direct port (5432) — different from <code>DATABASE_URL</code>.</li>
+              <li><span class="ck pass">CHECK</span> <code>NEXTAUTH_URL</code> exactly matches production domain (no trailing slash).</li>
+              <li><span class="ck pass">CHECK</span> <code>NEXTAUTH_SECRET</code> is set and ≥ 32 chars.</li>
+              <li><span class="ck pass">CHECK</span> <code>.nvmrc</code> contains <code>20</code> and <code>netlify.toml</code> has <code>NODE_VERSION = "20"</code>.</li>
+              <li><span class="ck pass">CHECK</span> <code>@netlify/plugin-nextjs</code> is listed in <code>netlify.toml</code> <code>[[plugins]]</code> and installed as dev dep.</li>
+              <li><span class="ck pass">CHECK</span> All API route handlers are wrapped with <code>withErrorHandler</code> or have explicit try/catch.</li>
+              <li><span class="ck pass">CHECK</span> <code>/api/health</code> returns <code>{"status":"ok"}</code> locally.</li>
+              <li><span class="ck warn">AVOID</span> <code>console.log</code> in production server code — use <code>console.error</code> only (prevents log noise that can mask real errors).</li>
+              <li><span class="ck fix">NEVER</span> Commit <code>.env.local</code> or any file with real secrets. Verify <code>.gitignore</code> includes <code>.env*</code>.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================
+           §10  SHARED COMPONENTS
+      ========================================= -->
+      <section class="page-section">
+        <div class="ribbon"><span class="ribbon-label">§ 10 — Key Shared Components</span><div class="ribbon-rule-line"></div></div>
+        <div class="numbered-section">
+          <div class="numbered-item"><div class="num-digit">01</div><div><div class="num-content-title">&lt;Header /&gt; — Global Navigation</div><div class="num-content-desc">Utility bar + logo + category nav. Hamburger on mobile. Session-aware: "Sign In" vs. user avatar. Search overlay on icon click.</div></div></div>
+          <div class="numbered-item"><div class="num-digit">02</div><div><div class="num-content-title">&lt;MobileMenu /&gt; — Slide Drawer</div><div class="num-content-desc">Accessible <code>aria-dialog</code> with category + auth links. Focus trap + ESC to close. Managed by <code>useDisclosure</code> hook.</div></div></div>
+          <div class="numbered-item"><div class="num-digit">03</div><div><div class="num-content-title">&lt;PostCard /&gt; — Story Tile</div><div class="num-content-desc">Reusable card: 16:9 image, kicker, headline, byline, timestamp. No shadow, no rounded corners. Hover: headline color swap only.</div></div></div>
+          <div class="numbered-item"><div class="num-digit">04</div><div><div class="num-content-title">&lt;LoadMore /&gt; — Cursor Pagination</div><div class="num-content-desc">"LOAD MORE" button. Fetches next page via <code>useTransition</code> + <code>/api/posts?cursor=...</code>. Appends results to list.</div></div></div>
+          <div class="numbered-item"><div class="num-digit">05</div><div><div class="num-content-title">&lt;RichTextEditor /&gt;</div><div class="num-content-desc">TipTap with toolbar. Dynamically imported (<code>ssr:false</code>). Cloudinary inline image uploads. Auto-save to localStorage every 30 s.</div></div></div>
+          <div class="numbered-item"><div class="num-digit">06</div><div><div class="num-content-title">&lt;NewsletterForm /&gt;</div><div class="num-content-desc">Email input + Server Action. Toast on success. Used on homepage and article pages.</div></div></div>
+          <div class="numbered-item"><div class="num-digit">07</div><div><div class="num-content-title">&lt;CategoryRibbon /&gt;</div><div class="num-content-desc">Horizontally scrollable strip of category links in mono caps. Post count per category. Active underlined.</div></div></div>
+          <div class="numbered-item"><div class="num-digit">08</div><div><div class="num-content-title">generateMetadata() — per route</div><div class="num-content-desc">Each route exports <code>generateMetadata()</code>. Returns <code>title</code>, <code>description</code>, <code>openGraph</code>, <code>twitter</code>, <code>robots</code>, <code>canonical</code>. Injected in <code>&lt;head&gt;</code> server-side — never via client-side effect.</div></div></div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- TOC SIDEBAR -->
+    <aside>
+      <button class="toc-toggle" onclick="this.nextElementSibling.classList.toggle('open')">
+        ☰ Table of Contents
+      </button>
+      <div class="toc toc-inner open">
+        <div class="toc-title">Contents</div>
+        <ul class="toc-list">
+          <li><a href="#overview"><span class="toc-num">§01</span> Overview &amp; Categories</a></li>
+          <li><a href="#public"><span class="toc-num">§02</span> Public Routes</a></li>
+          <li><a href="#auth"><span class="toc-num">§03</span> Auth Routes</a></li>
+          <li><a href="#dashboard"><span class="toc-num">§04</span> User Dashboard</a></li>
+          <li><a href="#admin"><span class="toc-num">§05</span> Admin CMS</a></li>
+          <li><a href="#api"><span class="toc-num">§06</span> API Routes</a></li>
+          <li><a href="#seo"><span class="toc-num">§07</span> SEO &amp; Perf</a></li>
+          <li><a href="#deploy"><span class="toc-num">§08</span> Netlify Deploy</a></li>
+          <li><a href="#errors"><span class="toc-num">§09</span> Zero-Error Guide</a></li>
+        </ul>
+
+        <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--hairline);">
+          <div class="mono-bold" style="margin-bottom:10px;font-size:0.63rem;">Route Count</div>
+          <table style="width:100%;font-family:var(--font-mono);font-size:0.63rem;border-collapse:collapse;">
+            <tr style="border-bottom:1px solid var(--hairline);"><td style="padding:4px 0;color:var(--caption);">Public</td><td style="padding:4px 0;text-align:right;font-weight:700;">7</td></tr>
+            <tr style="border-bottom:1px solid var(--hairline);"><td style="padding:4px 0;color:var(--caption);">Auth</td><td style="padding:4px 0;text-align:right;font-weight:700;">3</td></tr>
+            <tr style="border-bottom:1px solid var(--hairline);"><td style="padding:4px 0;color:var(--caption);">Dashboard</td><td style="padding:4px 0;text-align:right;font-weight:700;">5</td></tr>
+            <tr style="border-bottom:1px solid var(--hairline);"><td style="padding:4px 0;color:var(--caption);">Admin</td><td style="padding:4px 0;text-align:right;font-weight:700;">8</td></tr>
+            <tr style="border-bottom:1px solid var(--hairline);"><td style="padding:4px 0;color:var(--caption);">API endpoints</td><td style="padding:4px 0;text-align:right;font-weight:700;">19</td></tr>
+            <tr><td style="padding:6px 0;font-weight:700;">Total</td><td style="padding:6px 0;text-align:right;font-weight:700;font-size:1rem;">42</td></tr>
+          </table>
+        </div>
+
+        <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--hairline);">
+          <div class="mono-bold" style="margin-bottom:10px;font-size:0.63rem;">Stack</div>
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <span class="badge netlify" style="display:inline-block;width:fit-content;">Netlify</span>
+            <span style="font-family:var(--font-mono);font-size:0.63rem;color:var(--caption);margin-top:2px;">@netlify/plugin-nextjs</span>
+            <span style="font-family:var(--font-mono);font-size:0.63rem;color:var(--caption);">Node.js 20 LTS</span>
+            <span style="font-family:var(--font-mono);font-size:0.63rem;color:var(--caption);">Supabase + Prisma</span>
+            <span style="font-family:var(--font-mono);font-size:0.63rem;color:var(--caption);">NextAuth.js v5</span>
+            <span style="font-family:var(--font-mono);font-size:0.63rem;color:var(--caption);">Resend + Cloudinary</span>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--hairline);">
+          <div class="mono-bold" style="margin-bottom:10px;font-size:0.63rem;">Badge Legend</div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div><span class="badge">Public</span> <span style="font-family:var(--font-ui);font-size:0.7rem;color:var(--caption);">No auth</span></div>
+            <div><span class="badge auth">Auth Required</span> <span style="font-family:var(--font-ui);font-size:0.7rem;color:var(--caption);">Logged-in user</span></div>
+            <div><span class="badge admin">Admin Only</span> <span style="font-family:var(--font-ui);font-size:0.7rem;color:var(--caption);">role=ADMIN</span></div>
+            <div><span class="badge seo">SSG + ISR</span> <span style="font-family:var(--font-ui);font-size:0.7rem;color:var(--caption);">Static + revalidate</span></div>
+            <div><span class="badge netlify">Netlify</span> <span style="font-family:var(--font-ui);font-size:0.7rem;color:var(--caption);">Platform specific</span></div>
+            <div><span class="badge ok">OK</span> <span style="font-family:var(--font-ui);font-size:0.7rem;color:var(--caption);">Required, pass</span></div>
+            <div><span class="badge warn">WARN</span> <span style="font-family:var(--font-ui);font-size:0.7rem;color:var(--caption);">Watch carefully</span></div>
+            <div><span class="badge err">ERR</span> <span style="font-family:var(--font-ui);font-size:0.7rem;color:var(--caption);">Must fix / never do</span></div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="wrapper">
+    <div class="footer-logo">NEWSROOM</div>
+    <div class="footer-meta">Route Architecture v2.0 · Netlify + Node.js 20 LTS · Zero-Error Production</div>
+    <div class="footer-links">
+      <a href="#overview">Overview</a>
+      <a href="#public">Public</a>
+      <a href="#auth">Auth</a>
+      <a href="#dashboard">Dashboard</a>
+      <a href="#admin">Admin</a>
+      <a href="#api">API</a>
+      <a href="#seo">SEO</a>
+      <a href="#deploy">Deploy</a>
+      <a href="#errors">Zero-Error</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
