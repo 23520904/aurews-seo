@@ -32,60 +32,55 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
 
   if (!category) {
     return (
-      <main className="wired-wrapper" style={{ padding: '100px 0', textAlign: 'center' }}>
-        <h1 className="wired-display" style={{ fontSize: 'clamp(2rem, 5vw, 4rem)' }}>Channel Not Found</h1>
-        <Link href="/" className="wired-mono hover-link" style={{ marginTop: '24px', display: 'inline-block', textDecoration: 'underline' }}>Return to Home Base</Link>
-      </main>
+      <div className="wired-wrapper" style={{ padding: '100px 0', textAlign: 'center' }}>
+        <h1 className="wired-display">Category Not Found</h1>
+        <Link href="/" className="wired-mono" style={{ textDecoration: 'underline' }}>Return to Home</Link>
+      </div>
     );
   }
 
   return (
-    <main className="wired-wrapper" style={{ paddingBottom: '80px' }}>
-      <header style={{ marginBottom: 'clamp(32px, 8vw, 64px)', paddingBottom: '24px' }} className="rule-thick">
-        <Ribbon>Channel Index</Ribbon>
-        <h1 className="wired-display" style={{ fontSize: 'clamp(3rem, 10vw, 6rem)', marginTop: '16px', letterSpacing: '-0.04em' }}>
-          {category.name}
-        </h1>
+    <div className="wired-wrapper">
+      <header style={{ marginBottom: '48px', borderBottom: '2px solid var(--wired-black)', paddingBottom: '24px' }}>
+
+        <Ribbon>Channel</Ribbon>
+        <h1 className="wired-display" style={{ fontSize: '72px', marginTop: '16px' }}>{category.name}</h1>
       </header>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(clamp(280px, 45%, 400px), 1fr))', gap: 'clamp(32px, 5vw, 64px)' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '48px' }}>
         {category.posts.map((post) => (
-          <article key={post.id} className="rule-thin" style={{ paddingBottom: '32px' }}>
+          <article key={post.id} style={{ borderBottom: '1px solid var(--hairline-tint)', paddingBottom: '32px' }}>
             {post.coverImage && (
-              <figure style={{ margin: '0 0 20px', aspectRatio: '16/9', overflow: 'hidden' }} className="rule-thick">
+              <div style={{ aspectRatio: '16/9', border: '1px solid var(--wired-black)', overflow: 'hidden', marginBottom: '16px' }}>
                 <img 
                    src={post.coverImage} 
-                   alt={`Cover for ${post.title}`}
+                   alt={post.title}
                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                   loading="lazy"
                 />
-              </figure>
+              </div>
             )}
-            <Link href={`/article/${post.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-              <h3 className="wired-display" style={{ fontSize: 'clamp(1.5rem, 3vw, 2.2rem)', marginBottom: '12px' }}>
+            <Link href={`/article/${post.slug}`}>
+              <h3 className="wired-display" style={{ fontSize: '28px', marginBottom: '12px' }}>
                 {post.title}
               </h3>
             </Link>
 
-            <p className="wired-body" style={{ fontSize: '0.95rem', color: 'var(--caption-gray)', marginBottom: '20px', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+            <p className="wired-body" style={{ fontSize: '15px', color: 'var(--caption-gray)', marginBottom: '16px' }}>
               {post.excerpt || post.body.substring(0, 150) + "..."}
             </p>
-            <div className="wired-mono" style={{ fontSize: '10px', color: 'var(--caption-gray)', display: 'flex', gap: '12px', alignItems: 'center' }}>
-              <time dateTime={post.createdAt.toISOString()}>{new Date(post.createdAt).toLocaleDateString()}</time>
-              <span className="rule-thin" style={{ width: '10px', transform: 'rotate(90deg)' }}></span>
-              <span>{post.author.name?.toUpperCase() || "STAFF"}</span>
+            <div className="wired-mono" style={{ fontSize: '11px', color: 'var(--caption-gray)' }}>
+              {new Date(post.createdAt).toLocaleDateString()} / BY {post.author.name?.toUpperCase() || "STAFF"}
             </div>
           </article>
         ))}
       </div>
       
       {category.posts.length === 0 && (
-        <div style={{ padding: '80px 0', textAlign: 'center' }} className="rule-thin">
-          <p className="wired-body" style={{ color: 'var(--disabled-gray)', fontSize: '1.25rem' }}>No active transmissions in this channel archive.</p>
+        <div style={{ padding: '64px 0', textAlign: 'center' }}>
+          <p className="wired-body" style={{ color: 'var(--disabled-gray)', fontSize: '20px' }}>No stories available in this channel yet.</p>
         </div>
       )}
-    </main>
+    </div>
   );
 }
-
 
