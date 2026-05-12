@@ -4,17 +4,9 @@
 
 [build.environment]
   NODE_VERSION = "20"
-  NPM_FLAGS = "--version"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
 [functions]
-  node_version = "20"
   external_node_modules = ["@prisma/client", "bcrypt"]
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-  condition = { Role = ["admin"] }
