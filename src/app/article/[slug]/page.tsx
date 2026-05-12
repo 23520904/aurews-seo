@@ -57,44 +57,68 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     notFound();
   }
 
-  // Update views in background (simple)
-  // await prisma.post.update({ where: { id: post.id }, data: { views: { increment: 1 } } });
+  const readingTime = Math.ceil(post.body.split(/\s+/).length / 225); // ~225 words per min
 
   return (
-    <article className="wired-wrapper">
-
+    <main className="wired-wrapper" style={{ paddingBottom: '100px' }}>
       <NewsArticleJsonLd post={post} />
 
-      <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-        <Ribbon>{post.category.name}</Ribbon>
-        <h1 className="wired-display" style={{ fontSize: '64px', margin: '24px 0' }}>
-          {post.title}
-        </h1>
+      <article style={{ maxWidth: '820px', margin: '0 auto' }}>
+        <header style={{ marginBottom: '40px' }}>
+          <Ribbon>{post.category.name}</Ribbon>
+          <h1 className="wired-display" style={{ margin: '24px 0', fontSize: 'clamp(2.5rem, 7vw, 4.5rem)' }}>
+            {post.title}
+          </h1>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', borderTop: '1px solid var(--wired-black)', borderBottom: '1px solid var(--hairline-tint)', padding: '16px 0', marginBottom: '48px' }}>
-          <div>
-            <div className="wired-ui" style={{ fontWeight: 700, fontSize: '14px' }}>BY {post.author.name?.toUpperCase() || "AUREWS"}</div>
-            <div className="wired-mono" style={{ fontSize: '11px', color: 'var(--caption-gray)' }}>
-              {new Date(post.createdAt).toLocaleDateString()} · {Math.ceil(post.body.length / 1000)} MIN READ
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', borderTop: '2px solid var(--wired-black)', borderBottom: '1px solid var(--hairline-tint)', padding: '20px 0' }}>
+            <div style={{ flex: 1 }}>
+              <address className="wired-ui" style={{ fontWeight: 800, fontStyle: 'normal', fontSize: '13px' }}>
+                BY {post.author.name?.toUpperCase() || "AUREWS EDITORIAL"}
+              </address>
+              <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
+                <time className="wired-mono" style={{ fontSize: '10px', color: 'var(--caption-gray)' }} dateTime={post.createdAt.toISOString()}>
+                  {new Date(post.createdAt).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}
+                </time>
+                <span style={{ color: 'var(--hairline-tint)' }}>·</span>
+                <span className="wired-mono" style={{ fontSize: '10px', color: 'var(--caption-gray)' }}>{readingTime} MIN READ</span>
+              </div>
             </div>
           </div>
-        </div>
+        </header>
 
         {post.coverImage && (
-          <div style={{ position: 'relative', aspectRatio: '16/9', marginBottom: '48px', border: '2px solid var(--wired-black)' }}>
+          <figure style={{ margin: '0 0 48px', position: 'relative', aspectRatio: '16/9', overflow: 'hidden' }} className="rule-thick">
             <img
               src={post.coverImage}
-              alt={post.title}
+              alt={`Lead image for: ${post.title}`}
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              loading="eager"
             />
-          </div>
+          </figure>
         )}
 
-        <div className="wired-body" style={{ fontSize: '18px', lineHeight: 1.7, color: 'var(--page-ink)', whiteSpace: 'pre-wrap' }}>
+        <div 
+          className="wired-body" 
+          style={{ 
+            fontSize: 'clamp(1.1rem, 1.5vw, 1.25rem)', 
+            lineHeight: 1.8, 
+            color: 'var(--page-ink)', 
+            whiteSpace: 'pre-wrap',
+            maxWidth: '70ch',
+            margin: '0 auto'
+          }}
+        >
           {post.body}
         </div>
-      </div>
-    </article>
+
+        <footer style={{ marginTop: '80px', paddingTop: '40px' }} className="rule-thick">
+          <div className="wired-mono" style={{ fontSize: '11px', color: 'var(--caption-gray)' }}>
+            ARCHIVE ENTRY ID: {post.id.substring(0, 8).toUpperCase()} // STATUS: PUBLISHED
+          </div>
+        </footer>
+      </article>
+    </main>
   );
 }
+
 
