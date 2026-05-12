@@ -4,8 +4,10 @@ import { signIn, signOut } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { AuthError } from "next-auth";
+import { revalidatePath } from "next/cache";
 
 export async function register(formData: FormData) {
+
   const name = formData.get("name") as string;
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
@@ -64,5 +66,7 @@ export async function login(formData: FormData) {
 
 export async function logout() {
   await signOut({ redirectTo: "/" });
+  revalidatePath("/");
 }
+
 
