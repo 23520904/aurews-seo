@@ -26,97 +26,91 @@ export default async function Home() {
   ]);
 
   return (
-    <main className="wired-wrapper" style={{ paddingBottom: '80px' }}>
+    <div className="wired-wrapper" style={{ paddingBottom: '64px' }}>
       <OrganizationJsonLd />
 
-      {/* HERO SECTION - FEATURED ARCHIVE ENTRY */}
+      {/* HERO SECTION */}
       {heroPost && (
-        <section aria-label="Featured Story" style={{ margin: 'clamp(32px, 5vw, 64px) 0', paddingBottom: 'clamp(32px, 5vw, 64px)' }} className="rule-thin">
-          <div className="hero-grid">
-            <article>
+        <section style={{ margin: '48px 0', borderBottom: '1px solid var(--wired-black)', paddingBottom: '48px' }}>
+          <div className="hero-grid" style={{ display: 'grid', gap: '48px', alignItems: 'start' }}>
+            <div>
+
               <Ribbon>Featured Story</Ribbon>
-              <Link href={`/article/${heroPost.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                <h2 className="wired-display" style={{ margin: '16px 0 24px' }}>
+              <Link href={`/article/${heroPost.slug}`}>
+                <h2 className="wired-display" style={{ fontSize: '64px', margin: '16px 0 24px' }}>
                   {heroPost.title}
                 </h2>
               </Link>
-              <p className="wired-body" style={{ color: 'var(--caption-gray)', marginBottom: '32px', maxWidth: '60ch' }}>
+              <p className="wired-body" style={{ fontSize: '19px', color: 'var(--caption-gray)', marginBottom: '24px' }}>
                 {heroPost.excerpt || heroPost.body.substring(0, 180) + "..."}
               </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <span className="wired-mono" style={{ fontSize: '11px' }}>By {heroPost.author.name?.toUpperCase() || "Aurews"}</span>
-                <span className="rule-thin" style={{ width: '20px', transform: 'rotate(90deg)' }}></span>
-                <time className="wired-mono" style={{ fontSize: '11px', color: 'var(--caption-gray)' }} dateTime={heroPost.createdAt.toISOString()}>
-                  {new Date(heroPost.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
-                </time>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <span className="wired-mono" style={{ fontSize: '12px', fontWeight: 700 }}>By {heroPost.author.name?.toUpperCase() || "Aurews"}</span>
+                <span style={{ color: 'var(--hairline-tint)' }}>|</span>
+                <span className="wired-mono" style={{ fontSize: '12px', color: 'var(--caption-gray)' }}>{new Date(heroPost.createdAt).toLocaleDateString()}</span>
               </div>
-            </article>
-
+            </div>
             {heroPost.coverImage && (
-              <figure style={{ margin: 0, position: 'relative', aspectRatio: '16/9', overflow: 'hidden' }} className="rule-thick">
+              <div style={{ position: 'relative', aspectRatio: '16/9', border: '2px solid var(--wired-black)' }}>
                 <img
                   src={heroPost.coverImage}
-                  alt={`Cover for ${heroPost.title}`}
-                  loading="eager"
+                  alt={heroPost.title}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
-              </figure>
+              </div>
             )}
           </div>
         </section>
       )}
 
-      {/* PRIMARY FEED ARCHITECTURE */}
-      <div className="home-grid" style={{ marginTop: 'clamp(48px, 8vw, 80px)' }}>
-        
-        {/* LATEST ENTRIES FEED */}
-        <section aria-label="Latest News Feed">
-          <header style={{ marginBottom: '32px', paddingBottom: '8px' }} className="rule-thick">
-            <h3 className="wired-mono" style={{ fontSize: '16px', margin: 0 }}>Latest Archive Entries</h3>
-          </header>
+      {/* MAIN CONTENT GRID */}
+      <div className="home-grid" style={{ display: 'grid', gap: '64px', marginTop: '48px' }}>
+        {/* LATEST FEED */}
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '64px' }}>
+        <section>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '24px', borderBottom: '2px solid var(--wired-black)', paddingBottom: '8px' }}>
+            <h3 className="wired-mono" style={{ fontSize: '18px', fontWeight: 700 }}>Latest Feed</h3>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '48px' }}>
             {latestPosts.map((post) => (
-              <article key={post.id} className="feed-item">
-                <div className="feed-grid">
-                  <figure style={{ margin: 0, position: 'relative', aspectRatio: '4/3', background: 'var(--paper-tint)' }} className="rule-thin">
-                    {post.coverImage && (
-                      <img
-                        src={post.coverImage}
-                        alt={`Thumbnail for ${post.title}`}
-                        loading="lazy"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      />
-                    )}
-                  </figure>
-                  <div>
-                    <span className="wired-mono" style={{ fontSize: '10px', color: 'var(--link-blue)' }}>{post.category.name.toUpperCase()}</span>
-                    <Link href={`/article/${post.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                      <h4 className="wired-display" style={{ fontSize: 'clamp(20px, 4vw, 32px)', margin: '12px 0' }}>
-                        {post.title}
-                      </h4>
-                    </Link>
-                    <p className="wired-body" style={{ fontSize: '0.95rem', color: 'var(--caption-gray)', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                      {post.excerpt || post.body.substring(0, 140) + "..."}
-                    </p>
-                  </div>
+              <article key={post.id} style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: '24px', borderBottom: '1px solid var(--hairline-tint)', paddingBottom: '32px' }}>
+                <div style={{ position: 'relative', aspectRatio: '4/3', background: '#f8f8f8', border: '1px solid var(--hairline-tint)' }}>
+                  {post.coverImage && (
+                    <img
+                      src={post.coverImage}
+                      alt={post.title}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                  )}
+                </div>
+                <div>
+                  <span className="wired-mono" style={{ fontSize: '11px', color: 'var(--link-blue)', fontWeight: 700 }}>{post.category.name.toUpperCase()}</span>
+                  <Link href={`/article/${post.slug}`}>
+                    <h4 className="wired-display" style={{ fontSize: '28px', margin: '8px 0 12px' }}>
+                      {post.title}
+                    </h4>
+                  </Link>
+                  <p className="wired-body" style={{ fontSize: '15px', color: 'var(--caption-gray)' }}>
+                    {post.excerpt || post.body.substring(0, 120) + "..."}
+                  </p>
                 </div>
               </article>
             ))}
           </div>
         </section>
 
-        {/* SIDEBAR ARCHIVE: POPULARITY METRIC */}
-        <aside aria-label="Most Popular Posts">
-          <div style={{ background: 'var(--wired-black)', color: 'white', padding: '12px 20px', marginBottom: '32px' }}>
-            <h3 className="wired-mono" style={{ fontSize: '13px', margin: 0 }}>Aggregated Popularity</h3>
+        {/* SIDEBAR: MOST POPULAR */}
+        <aside>
+          <div style={{ background: 'var(--wired-black)', color: 'white', padding: '8px 16px', marginBottom: '24px' }}>
+            <h3 className="wired-mono" style={{ fontSize: '14px', fontWeight: 700, margin: 0 }}>Most Popular</h3>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {popularPosts.map((post, i) => (
-              <div key={post.id} style={{ display: 'flex', gap: '20px', padding: '20px 0' }} className="rule-thin">
-                <span className="wired-display" style={{ fontSize: '48px', color: 'var(--hairline-tint)', lineHeight: 0.8 }}>{i + 1}</span>
-                <Link href={`/article/${post.slug}`} className="hover-link" style={{ textDecoration: 'none', color: 'inherit' }}>
-                  <h4 className="wired-ui" style={{ fontSize: '15px', fontWeight: 700, margin: 0 }}>
+              <div key={post.id} style={{ display: 'flex', gap: '16px', padding: '16px 0', borderBottom: '1px solid var(--hairline-tint)' }}>
+                <span className="wired-display" style={{ fontSize: '40px', color: 'var(--hairline-tint)', fontWeight: 700, lineHeight: 1 }}>0{i + 1}</span>
+                <Link href={`/article/${post.slug}`} className="hover-link">
+                  <h4 className="wired-ui" style={{ fontSize: '16px', fontWeight: 700, lineHeight: 1.2 }}>
                     {post.title}
                   </h4>
                 </Link>
@@ -125,21 +119,7 @@ export default async function Home() {
           </div>
         </aside>
       </div>
-
-      <style dangerouslySetInnerHTML={{ __html: `
-        .feed-grid {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 24px;
-        }
-        @media (min-width: 640px) {
-          .feed-grid {
-            grid-template-columns: 240px 1fr;
-          }
-        }
-      `}} />
-    </main>
+    </div>
   );
 }
-
 
