@@ -17,7 +17,7 @@ export function PostForm({ categories, initialData }: { categories: any[], initi
 
     setLoading(true);
     setError(null);
-    
+
     formData.append("coverImage", coverImage);
 
     let result;
@@ -31,7 +31,7 @@ export function PostForm({ categories, initialData }: { categories: any[], initi
       setError(result.error);
       setLoading(false);
     } else {
-      router.push("/dashboard");
+      router.push("/");
       router.refresh();
     }
   }
@@ -46,27 +46,27 @@ export function PostForm({ categories, initialData }: { categories: any[], initi
             SYSTEM_ERROR: {error.toUpperCase()}
           </div>
         )}
-        
+
         <div>
           <label className="wired-mono" style={{ fontSize: '11px', fontWeight: 700, display: 'block', marginBottom: '8px' }}>PRIMARY HEADLINE</label>
-          <input 
+          <input
             name="title"
             required
             defaultValue={initialData?.title}
             placeholder="ENTER HEADLINE..."
-            style={{ width: '100%', padding: '20px', border: '2px solid var(--wired-black)', fontSize: '32px', fontFamily: 'var(--font-display)', outline: 'none', background: 'transparent' }} 
+            style={{ width: '100%', padding: '20px', border: '2px solid var(--wired-black)', fontSize: '32px', fontFamily: 'var(--font-display)', outline: 'none', background: 'transparent' }}
           />
         </div>
 
         <div>
           <label className="wired-mono" style={{ fontSize: '11px', fontWeight: 700, display: 'block', marginBottom: '8px' }}>EDITORIAL BODY (MARKDOWN)</label>
-          <textarea 
+          <textarea
             name="body"
             required
             rows={20}
             defaultValue={initialData?.body}
             placeholder="BEGIN COMPOSITION..."
-            style={{ width: '100%', padding: '20px', border: '2px solid var(--wired-black)', fontSize: '18px', fontFamily: 'var(--font-body)', lineHeight: 1.6, resize: 'vertical', outline: 'none', background: 'transparent' }} 
+            style={{ width: '100%', padding: '20px', border: '2px solid var(--wired-black)', fontSize: '18px', fontFamily: 'var(--font-body)', lineHeight: 1.6, resize: 'vertical', outline: 'none', background: 'transparent' }}
           />
         </div>
       </div>
@@ -75,7 +75,7 @@ export function PostForm({ categories, initialData }: { categories: any[], initi
       <aside style={{ display: 'flex', flexDirection: 'column', gap: '32px', position: 'sticky', top: '24px' }}>
         <div style={{ border: '2px solid var(--wired-black)', padding: '24px' }}>
           <h3 className="wired-mono" style={{ fontSize: '12px', fontWeight: 700, marginBottom: '20px', borderBottom: '1px solid var(--wired-black)', paddingBottom: '8px' }}>METADATA</h3>
-          
+
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <div>
               <label className="wired-mono" style={{ fontSize: '10px', display: 'block', marginBottom: '8px' }}>COVER IMAGE</label>
@@ -84,7 +84,7 @@ export function PostForm({ categories, initialData }: { categories: any[], initi
 
             <div>
               <label className="wired-mono" style={{ fontSize: '10px', display: 'block', marginBottom: '4px' }}>CHANNEL</label>
-              <select 
+              <select
                 name="categoryId"
                 required
                 defaultValue={initialData?.categoryId}
@@ -99,7 +99,7 @@ export function PostForm({ categories, initialData }: { categories: any[], initi
 
             <div>
               <label className="wired-mono" style={{ fontSize: '10px', display: 'block', marginBottom: '4px' }}>VISIBILITY</label>
-              <select 
+              <select
                 name="status"
                 defaultValue={initialData?.status}
                 style={{ width: '100%', padding: '10px', border: '1px solid var(--wired-black)', fontFamily: 'var(--font-ui)', background: 'white' }}
