@@ -31,7 +31,7 @@ export const NewsArticleJsonLd = ({ post }: { post: any }) => {
     "dateModified": post.updatedAt,
     "author": [{
       "@type": "Person",
-      "name": post.author?.name || "Aurews Editorial",
+      "name": post.author?.name || "Aurews",
       "url": "https://aurews.id.vn/about"
     }]
   };

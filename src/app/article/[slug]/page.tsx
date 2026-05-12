@@ -14,7 +14,7 @@ import { notFound } from "next/navigation";
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const post = await prisma.post.findUnique({ where: { slug } });
-  
+
   if (!post) return { title: "Article Not Found" };
 
   const url = `https://aurews.id.vn/article/${slug}`;
@@ -70,10 +70,10 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
         <h1 className="wired-display" style={{ fontSize: '64px', margin: '24px 0' }}>
           {post.title}
         </h1>
-        
+
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', borderTop: '1px solid var(--wired-black)', borderBottom: '1px solid var(--hairline-tint)', padding: '16px 0', marginBottom: '48px' }}>
           <div>
-            <div className="wired-ui" style={{ fontWeight: 700, fontSize: '14px' }}>BY {post.author.name?.toUpperCase() || "AUREWS EDITORIAL"}</div>
+            <div className="wired-ui" style={{ fontWeight: 700, fontSize: '14px' }}>BY {post.author.name?.toUpperCase() || "AUREWS"}</div>
             <div className="wired-mono" style={{ fontSize: '11px', color: 'var(--caption-gray)' }}>
               {new Date(post.createdAt).toLocaleDateString()} · {Math.ceil(post.body.length / 1000)} MIN READ
             </div>
@@ -82,10 +82,10 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
         {post.coverImage && (
           <div style={{ position: 'relative', aspectRatio: '16/9', marginBottom: '48px', border: '2px solid var(--wired-black)' }}>
-            <img 
-              src={post.coverImage} 
-              alt={post.title} 
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+            <img
+              src={post.coverImage}
+              alt={post.title}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
           </div>
         )}

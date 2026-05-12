@@ -9,4 +9,5 @@
   package = "@netlify/plugin-nextjs"
 
 [functions]
-  external_node_modules = ["@prisma/client", "bcrypt"]
+  external_node_modules = ["@prisma/client"]
+

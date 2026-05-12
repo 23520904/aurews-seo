@@ -8,15 +8,15 @@ export const UtilityBar = async () => {
   return (
     <div className="wired-black-bg desktop-only" style={{ background: 'var(--wired-black)', color: 'var(--paper-white)', padding: '8px 0' }}>
       <div className="wired-wrapper" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span className="wired-mono" style={{ fontSize: '11px' }}>AUREWS EDITORIAL</span>
+        <span className="wired-mono" style={{ fontSize: '11px' }}>AUREWS</span>
 
         <nav style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
           <Link href="/latest" className="wired-mono" style={{ fontSize: '11px', color: 'inherit' }}>Latest</Link>
           <Link href="/about" className="wired-mono" style={{ fontSize: '11px', color: 'inherit' }}>About</Link>
           <Link href="/contact" className="wired-mono" style={{ fontSize: '11px', color: 'inherit' }}>Contact</Link>
-          
+
           <div style={{ width: '1px', height: '12px', background: '#333' }}></div>
-          
+
           {session ? (
             <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
               <Link href="/dashboard" className="wired-mono" style={{ fontSize: '11px', color: 'inherit', fontWeight: 700 }}>DASHBOARD</Link>
@@ -29,7 +29,8 @@ export const UtilityBar = async () => {
           )}
         </nav>
       </div>
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         @media (max-width: 768px) {
           .desktop-only {
             display: none !important;

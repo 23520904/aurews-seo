@@ -2,7 +2,7 @@
 
 import { signIn, signOut } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { AuthError } from "next-auth";
 
 export async function register(formData: FormData) {
