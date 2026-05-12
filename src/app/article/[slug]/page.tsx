@@ -17,11 +17,33 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   
   if (!post) return { title: "Article Not Found" };
 
+  const url = `https://aurews.id.vn/article/${slug}`;
+  const description = post.excerpt || post.body.substring(0, 160);
+
   return {
     title: post.title,
-    description: post.excerpt || post.body.substring(0, 160),
+    description: description,
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      title: post.title,
+      description: description,
+      url: url,
+      type: 'article',
+      publishedTime: post.createdAt.toISOString(),
+      authors: [post.authorId],
+      images: post.coverImage ? [post.coverImage] : [],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: description,
+      images: post.coverImage ? [post.coverImage] : [],
+    },
   };
 }
+
 
 export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
