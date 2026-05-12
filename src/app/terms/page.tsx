@@ -1,5 +1,5 @@
 import { Ribbon } from "@/components/ui/Ribbon";
-
+export const runtime = 'nodejs';
 export const metadata = {
   title: "Terms of Service",
   description: "Operational framework and legal boundaries for the Aurews platform.",
@@ -64,7 +64,8 @@ export default function TermsPage() {
         </section>
       </div>
 
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         @media (max-width: 900px) {
           .wired-wrapper > div { grid-template-columns: 1fr !important; }
         }

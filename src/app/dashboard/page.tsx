@@ -4,10 +4,10 @@ import { Ribbon } from "@/components/ui/Ribbon";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-
+export const runtime = 'nodejs';
 export default async function DashboardPage() {
   const session = await auth();
-  
+
   if (!session || !session.user?.id) {
     redirect("/auth/login");
   }
@@ -51,7 +51,7 @@ export default async function DashboardPage() {
         {/* Sidebar Statistics */}
         <aside className="dashboard-sidebar">
           <h2 className="wired-mono" style={{ fontSize: '13px', fontWeight: 700, marginBottom: '32px', letterSpacing: '1px' }}>SYSTEM METRICS</h2>
-          
+
           <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
             <div style={{ padding: '24px', border: '2px solid var(--wired-black)' }}>
               <div className="wired-display" style={{ fontSize: '48px', fontWeight: 700, lineHeight: 1 }}>{postCount}</div>
@@ -76,10 +76,10 @@ export default async function DashboardPage() {
             {recentPosts.length > 0 ? (
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 {recentPosts.map((post, index) => (
-                  <div 
-                    key={post.id} 
-                    style={{ 
-                      padding: '24px', 
+                  <div
+                    key={post.id}
+                    style={{
+                      padding: '24px',
                       borderBottom: index === recentPosts.length - 1 ? 'none' : '1px solid var(--hairline-tint)',
                       display: 'flex',
                       justifyContent: 'space-between',

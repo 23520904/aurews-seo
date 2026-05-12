@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { Ribbon } from "@/components/ui/Ribbon";
 import { PostForm } from "./PostForm";
-
+export const runtime = 'nodejs';
 export default async function NewPostPage() {
   const session = await auth();
   if (!session) {
@@ -26,7 +26,7 @@ export default async function NewPostPage() {
           MODE: DIRECT_INJECTION // AUTH_ID: {session.user?.id}
         </div>
       </header>
-      
+
       <div style={{ maxWidth: '1000px' }}>
         <PostForm categories={categories} />
       </div>

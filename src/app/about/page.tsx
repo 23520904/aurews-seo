@@ -1,5 +1,5 @@
 import { Ribbon } from "@/components/ui/Ribbon";
-
+export const runtime = 'nodejs';
 export default function AboutPage() {
   return (
     <div className="wired-wrapper" style={{ padding: '80px 0' }}>
@@ -8,20 +8,20 @@ export default function AboutPage() {
         <h1 className="wired-display" style={{ fontSize: '72px', margin: '24px 0 48px' }}>
           The Aurews Manifesto
         </h1>
-        
+
         <div className="wired-body" style={{ fontSize: '21px', lineHeight: 1.6, color: 'var(--page-ink)' }}>
           <p style={{ marginBottom: '32px' }}>
             Aurews is a next-generation news architecture designed for the intelligent age. We believe that editorial excellence requires technical precision, and that the design of information is as important as the information itself.
           </p>
-          
+
           <h2 className="wired-ui" style={{ fontSize: '28px', fontWeight: 700, margin: '64px 0 24px', borderBottom: '2px solid var(--wired-black)', paddingBottom: '12px' }}>
             Our Philosophy
           </h2>
-          
+
           <p style={{ marginBottom: '24px' }}>
             Inspired by the brutalist aesthetics of early print journalism and the high-contrast digital interfaces of the modern web, Aurews is built to be fast, clear, and uncompromising.
           </p>
-          
+
           <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '32px', marginTop: '48px' }}>
             <li style={{ borderLeft: '4px solid var(--wired-black)', paddingLeft: '24px' }}>
               <span className="wired-mono" style={{ fontSize: '13px', fontWeight: 700, display: 'block', marginBottom: '8px' }}>01. EDITORIAL INTEGRITY</span>

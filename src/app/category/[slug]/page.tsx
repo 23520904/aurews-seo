@@ -5,7 +5,7 @@ import { Ribbon } from "@/components/ui/Ribbon";
 interface PageProps {
   params: { slug: string };
 }
-
+export const runtime = 'nodejs';
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   return {
@@ -18,7 +18,7 @@ import { prisma } from "@/lib/prisma";
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  
+
   const category = await prisma.category.findUnique({
     where: { slug },
     include: {
@@ -52,10 +52,10 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           <article key={post.id} style={{ borderBottom: '1px solid var(--hairline-tint)', paddingBottom: '32px' }}>
             {post.coverImage && (
               <div style={{ aspectRatio: '16/9', border: '1px solid var(--wired-black)', overflow: 'hidden', marginBottom: '16px' }}>
-                <img 
-                   src={post.coverImage} 
-                   alt={post.title}
-                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                <img
+                  src={post.coverImage}
+                  alt={post.title}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
               </div>
             )}
@@ -74,7 +74,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           </article>
         ))}
       </div>
-      
+
       {category.posts.length === 0 && (
         <div style={{ padding: '64px 0', textAlign: 'center' }}>
           <p className="wired-body" style={{ color: 'var(--disabled-gray)', fontSize: '20px' }}>No stories available in this channel yet.</p>

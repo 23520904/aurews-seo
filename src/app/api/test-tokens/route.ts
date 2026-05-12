@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { generateAccessToken, generateRefreshToken, verifyAccessToken, verifyRefreshToken } from "@/lib/tokens";
 import { redis } from "@/lib/redis";
-
+export const runtime = 'nodejs';
 export async function GET() {
   try {
     // 1. Check Redis Connection
@@ -38,8 +38,8 @@ export async function GET() {
     });
   } catch (error: any) {
     console.error("Token test failed:", error);
-    return NextResponse.json({ 
-      error: "TEST_FAILED", 
+    return NextResponse.json({
+      error: "TEST_FAILED",
       message: error.message,
       stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     }, { status: 500 });

@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/Button";
 import { Ribbon } from "@/components/ui/Ribbon";
-
+export const runtime = 'nodejs';
 export default function ContactPage() {
   return (
     <div className="wired-wrapper" style={{ padding: '80px 0' }}>
@@ -23,18 +23,18 @@ export default function ContactPage() {
           </div>
           <div>
             <label className="wired-mono" style={{ fontSize: '12px', display: 'block', marginBottom: '8px' }}>Email Address</label>
-            <input 
-              type="email" 
-              required 
-              style={{ width: '100%', padding: '12px', border: '2px solid var(--wired-black)', fontFamily: 'var(--font-ui)' }} 
+            <input
+              type="email"
+              required
+              style={{ width: '100%', padding: '12px', border: '2px solid var(--wired-black)', fontFamily: 'var(--font-ui)' }}
             />
           </div>
           <div>
             <label className="wired-mono" style={{ fontSize: '12px', display: 'block', marginBottom: '8px' }}>Message</label>
-            <textarea 
-              rows={6} 
-              required 
-              style={{ width: '100%', padding: '12px', border: '2px solid var(--wired-black)', fontFamily: 'var(--font-body)', resize: 'none' }} 
+            <textarea
+              rows={6}
+              required
+              style={{ width: '100%', padding: '12px', border: '2px solid var(--wired-black)', fontFamily: 'var(--font-body)', resize: 'none' }}
             />
           </div>
           <Button type="submit" variant="inverted">Send Message</Button>

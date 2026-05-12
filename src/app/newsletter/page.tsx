@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/Button";
 import { Ribbon } from "@/components/ui/Ribbon";
-
+export const runtime = 'nodejs';
 export default function NewsletterPage() {
   return (
     <div className="wired-wrapper" style={{ padding: '80px 0' }}>
@@ -12,21 +12,21 @@ export default function NewsletterPage() {
         </p>
 
         <form style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          <input 
-            type="email" 
-            required 
+          <input
+            type="email"
+            required
             placeholder="EMAIL ADDRESS"
-            style={{ width: '100%', padding: '16px', border: '2px solid var(--wired-black)', fontFamily: 'var(--font-ui)', fontSize: '18px', textAlign: 'center' }} 
+            style={{ width: '100%', padding: '16px', border: '2px solid var(--wired-black)', fontFamily: 'var(--font-ui)', fontSize: '18px', textAlign: 'center' }}
           />
           <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
-             <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-               <input type="checkbox" style={{ accentColor: 'var(--wired-black)' }} />
-               <span className="wired-mono" style={{ fontSize: '11px' }}>WEEKLY BRIEFING</span>
-             </label>
-             <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-               <input type="checkbox" style={{ accentColor: 'var(--wired-black)' }} />
-               <span className="wired-mono" style={{ fontSize: '11px' }}>BREAKING ALERTS</span>
-             </label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+              <input type="checkbox" style={{ accentColor: 'var(--wired-black)' }} />
+              <span className="wired-mono" style={{ fontSize: '11px' }}>WEEKLY BRIEFING</span>
+            </label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+              <input type="checkbox" style={{ accentColor: 'var(--wired-black)' }} />
+              <span className="wired-mono" style={{ fontSize: '11px' }}>BREAKING ALERTS</span>
+            </label>
           </div>
           <Button type="submit" variant="inverted" style={{ padding: '16px 32px' }}>JOIN THE LIST</Button>
         </form>

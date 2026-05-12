@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { Suspense } from "react";
 
 export const dynamic = 'force-dynamic';
-
+export const runtime = 'nodejs';
 async function SearchResults({ query }: { query: string }) {
   if (!query) return null;
 
@@ -63,19 +63,19 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
       <header style={{ marginBottom: '64px', borderBottom: '2px solid var(--wired-black)', paddingBottom: '32px' }}>
         <Ribbon>Search Archive</Ribbon>
         <form action="/search" style={{ marginTop: '32px', display: 'flex', gap: '16px' }}>
-          <input 
+          <input
             name="q"
             defaultValue={query}
-            placeholder="ENTER SEARCH QUERY..." 
-            style={{ 
-              flex: 1, 
-              padding: '16px', 
-              border: '2px solid var(--wired-black)', 
-              fontSize: '24px', 
-              fontFamily: 'var(--font-display)', 
+            placeholder="ENTER SEARCH QUERY..."
+            style={{
+              flex: 1,
+              padding: '16px',
+              border: '2px solid var(--wired-black)',
+              fontSize: '24px',
+              fontFamily: 'var(--font-display)',
               outline: 'none',
               background: 'transparent'
-            }} 
+            }}
           />
           <button type="submit" className="wired-button inverted">SEARCH</button>
         </form>
