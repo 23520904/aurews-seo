@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Lora, Work_Sans, Space_Mono } from "next/font/google";
 import "./globals.css";
+import { BASE_URL } from "@/lib/constants";
 
 const playfair = Playfair_Display({
   variable: "--font-display",
@@ -29,11 +30,11 @@ export const metadata: Metadata = {
     template: "%s | Aurews"
   },
   description: "A WIRED-inspired editorial news platform built with Next.js App Router, optimized for SEO and performance.",
-  metadataBase: new URL("https://aurews.id.vn"),
+  metadataBase: new URL(BASE_URL),
   openGraph: {
     title: "Aurews",
     description: "Editorial News Platform",
-    url: "https://aurews.id.vn",
+    url: BASE_URL,
     siteName: "Aurews",
     locale: "en_US",
     type: "website",

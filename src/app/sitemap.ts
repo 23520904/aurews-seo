@@ -1,7 +1,8 @@
+import { BASE_URL } from "@/lib/constants";
 import { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://aurews.id.vn";
+  const baseUrl = BASE_URL;
 
   const categories = [
     "business",

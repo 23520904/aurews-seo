@@ -10,6 +10,7 @@ import { NewsArticleJsonLd } from "@/components/seo/JsonLd";
 
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
+import { BASE_URL } from "@/lib/constants";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -17,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   if (!post) return { title: "Article Not Found" };
 
-  const url = `https://aurews.id.vn/article/${slug}`;
+  const url = `${BASE_URL}/article/${slug}`;
   const description = post.excerpt || post.body.substring(0, 160);
 
   return {

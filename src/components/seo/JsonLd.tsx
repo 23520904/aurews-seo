@@ -1,12 +1,13 @@
 import React from "react";
+import { BASE_URL } from "@/lib/constants";
 
 export const OrganizationJsonLd = () => {
   const schema = {
     "@context": "https://schema.org",
     "@type": "NewsMediaOrganization",
     "name": "Aurews",
-    "url": "https://aurews.id.vn",
-    "logo": "https://aurews.id.vn/logo.png",
+    "url": BASE_URL,
+    "logo": `${BASE_URL}/logo.png`,
     "sameAs": [
       "https://twitter.com/aurews_news",
       "https://github.com/aurews"
@@ -32,7 +33,7 @@ export const NewsArticleJsonLd = ({ post }: { post: any }) => {
     "author": [{
       "@type": "Person",
       "name": post.author?.name || "Aurews",
-      "url": "https://aurews.id.vn/about"
+      "url": `${BASE_URL}/about`
     }]
   };
 
