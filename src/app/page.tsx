@@ -26,56 +26,56 @@ export default async function Home() {
   ]);
 
   return (
-    <div className="wired-wrapper" style={{ paddingBottom: '64px' }}>
+    <div className="wired-wrapper" style={{ paddingBottom: 'var(--space-16)' }}>
       <OrganizationJsonLd />
 
       {/* HERO SECTION */}
       {heroPost && (
-        <section style={{ margin: '48px 0', borderBottom: '1px solid var(--wired-black)', paddingBottom: '48px' }}>
-          <div className="hero-grid" style={{ display: 'grid', gap: '48px', alignItems: 'start' }}>
-            <div>
-
+        <section style={{ margin: 'var(--space-12) 0', borderBottom: '2px solid var(--black)', paddingBottom: 'var(--space-12)' }}>
+          <div className="responsive-grid hero-grid" style={{ gap: 'var(--space-12)', alignItems: 'center' }}>
+            <div style={{ order: 2 }}>
+              {heroPost.coverImage && (
+                <div style={{ position: 'relative', aspectRatio: '16/9', border: '2px solid var(--black)', background: '#f0f0f0' }}>
+                  <img
+                    src={heroPost.coverImage}
+                    alt={heroPost.title}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                </div>
+              )}
+            </div>
+            <div style={{ order: 1 }}>
               <Ribbon>Featured Story</Ribbon>
               <Link href={`/article/${heroPost.slug}`}>
-                <h2 className="wired-display" style={{ fontSize: '64px', margin: '16px 0 24px' }}>
+                <h2 className="wired-display" style={{ margin: 'var(--space-4) 0 var(--space-6)' }}>
                   {heroPost.title}
                 </h2>
               </Link>
-              <p className="wired-body" style={{ fontSize: '19px', color: 'var(--caption-gray)', marginBottom: '24px' }}>
+              <p className="wired-body" style={{ color: 'var(--caption)', marginBottom: 'var(--space-6)', maxWidth: 'var(--max-w-prose)' }}>
                 {heroPost.excerpt || heroPost.body.substring(0, 180) + "..."}
               </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <span className="wired-mono" style={{ fontSize: '12px', fontWeight: 700 }}>By {heroPost.author.name?.toUpperCase() || "Aurews"}</span>
-                <span style={{ color: 'var(--hairline-tint)' }}>|</span>
-                <span className="wired-mono" style={{ fontSize: '12px', color: 'var(--caption-gray)' }}>{new Date(heroPost.createdAt).toLocaleDateString()}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+                <span className="wired-mono" style={{ fontWeight: 700 }}>By {heroPost.author.name?.toUpperCase() || "Aurews"}</span>
+                <span style={{ color: 'var(--hairline)' }}>|</span>
+                <span className="wired-mono" style={{ color: 'var(--caption)' }}>{new Date(heroPost.createdAt).toLocaleDateString()}</span>
               </div>
             </div>
-            {heroPost.coverImage && (
-              <div style={{ position: 'relative', aspectRatio: '16/9', border: '2px solid var(--wired-black)' }}>
-                <img
-                  src={heroPost.coverImage}
-                  alt={heroPost.title}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-              </div>
-            )}
           </div>
         </section>
       )}
 
       {/* MAIN CONTENT GRID */}
-      <div className="home-grid" style={{ display: 'grid', gap: '64px', marginTop: '48px' }}>
+      <div className="feature-layout" style={{ marginTop: 'var(--space-12)' }}>
         {/* LATEST FEED */}
-
         <section>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '24px', borderBottom: '2px solid var(--wired-black)', paddingBottom: '8px' }}>
-            <h3 className="wired-mono" style={{ fontSize: '18px', fontWeight: 700 }}>Latest Feed</h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 'var(--space-6)', borderBottom: '2px solid var(--black)', paddingBottom: 'var(--space-2)' }}>
+            <h3 className="wired-mono" style={{ fontWeight: 700 }}>Latest Feed</h3>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '48px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-12)' }}>
             {latestPosts.map((post) => (
-              <article key={post.id} style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: '24px', borderBottom: '1px solid var(--hairline-tint)', paddingBottom: '32px' }}>
-                <div style={{ position: 'relative', aspectRatio: '4/3', background: '#f8f8f8', border: '1px solid var(--hairline-tint)' }}>
+              <article key={post.id} style={{ display: 'grid', gridTemplateColumns: 'minmax(120px, 1fr) 2fr', gap: 'var(--space-6)', borderBottom: '1px solid var(--hairline)', paddingBottom: 'var(--space-8)' }}>
+                <div style={{ position: 'relative', aspectRatio: '4/3', background: '#f8f8f8', border: '1px solid var(--hairline)' }}>
                   {post.coverImage && (
                     <img
                       src={post.coverImage}
@@ -85,13 +85,13 @@ export default async function Home() {
                   )}
                 </div>
                 <div>
-                  <span className="wired-mono" style={{ fontSize: '11px', color: 'var(--link-blue)', fontWeight: 700 }}>{post.category.name.toUpperCase()}</span>
+                  <span className="wired-mono" style={{ color: 'var(--blue)', fontWeight: 700 }}>{post.category.name.toUpperCase()}</span>
                   <Link href={`/article/${post.slug}`}>
-                    <h4 className="wired-display" style={{ fontSize: '28px', margin: '8px 0 12px' }}>
+                    <h4 className="wired-display grid-headline" style={{ margin: 'var(--space-2) 0 var(--space-3)' }}>
                       {post.title}
                     </h4>
                   </Link>
-                  <p className="wired-body" style={{ fontSize: '15px', color: 'var(--caption-gray)' }}>
+                  <p className="wired-body hide-mobile" style={{ color: 'var(--caption)' }}>
                     {post.excerpt || post.body.substring(0, 120) + "..."}
                   </p>
                 </div>
@@ -101,16 +101,16 @@ export default async function Home() {
         </section>
 
         {/* SIDEBAR: MOST POPULAR */}
-        <aside>
-          <div style={{ background: 'var(--wired-black)', color: 'white', padding: '8px 16px', marginBottom: '24px' }}>
-            <h3 className="wired-mono" style={{ fontSize: '14px', fontWeight: 700, margin: 0 }}>Most Popular</h3>
+        <aside style={{ marginTop: 'var(--space-12)' }}>
+          <div style={{ background: 'var(--black)', color: 'white', padding: 'var(--space-2) var(--space-4)', marginBottom: 'var(--space-6)' }}>
+            <h3 className="wired-mono" style={{ fontWeight: 700, margin: 0 }}>Most Popular</h3>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {popularPosts.map((post, i) => (
-              <div key={post.id} style={{ display: 'flex', gap: '16px', padding: '16px 0', borderBottom: '1px solid var(--hairline-tint)' }}>
-                <span className="wired-display" style={{ fontSize: '40px', color: 'var(--hairline-tint)', fontWeight: 700, lineHeight: 1 }}>0{i + 1}</span>
+              <div key={post.id} style={{ display: 'flex', gap: 'var(--space-4)', padding: 'var(--space-4) 0', borderBottom: '1px solid var(--hairline)' }}>
+                <span className="wired-display" style={{ fontSize: '40px', color: 'var(--hairline)', fontWeight: 700, lineHeight: 1 }}>0{i + 1}</span>
                 <Link href={`/article/${post.slug}`} className="hover-link">
-                  <h4 className="wired-ui" style={{ fontSize: '16px', fontWeight: 700, lineHeight: 1.2 }}>
+                  <h4 className="wired-ui" style={{ lineHeight: 1.2 }}>
                     {post.title}
                   </h4>
                 </Link>
@@ -119,6 +119,17 @@ export default async function Home() {
           </div>
         </aside>
       </div>
+
+      <style dangerouslySetInnerHTML={{ __html: `
+        @media (max-width: 1023px) {
+          .feature-layout aside {
+            margin-top: var(--space-16) !important;
+          }
+          .hero-grid > div {
+            order: initial !important;
+          }
+        }
+      `}} />
     </div>
   );
 }

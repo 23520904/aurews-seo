@@ -59,31 +59,44 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     notFound();
   }
 
-  // Update views in background (simple)
-  // await prisma.post.update({ where: { id: post.id }, data: { views: { increment: 1 } } });
-
   return (
-    <article className="wired-wrapper">
-
+    <article className="wired-wrapper" style={{ paddingBottom: 'var(--space-16)' }}>
       <NewsArticleJsonLd post={post} />
 
-      <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-        <Ribbon>{post.category.name}</Ribbon>
-        <h1 className="wired-display" style={{ fontSize: '64px', margin: '24px 0' }}>
+      <div style={{ maxWidth: 'var(--max-w-prose)', margin: '0 auto' }}>
+        <div style={{ marginTop: 'var(--space-12)' }}>
+          <Ribbon>{post.category.name}</Ribbon>
+        </div>
+        
+        <h1 className="wired-display" style={{ margin: 'var(--space-6) 0' }}>
           {post.title}
         </h1>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', borderTop: '1px solid var(--wired-black)', borderBottom: '1px solid var(--hairline-tint)', padding: '16px 0', marginBottom: '48px' }}>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: 'var(--space-4)', 
+          borderTop: '2px solid var(--black)', 
+          borderBottom: '1px solid var(--hairline)', 
+          padding: 'var(--space-4) 0', 
+          marginBottom: 'var(--space-12)' 
+        }}>
           <div>
-            <div className="wired-ui" style={{ fontWeight: 700, fontSize: '14px' }}>BY {post.author.name?.toUpperCase() || "AUREWS"}</div>
-            <div className="wired-mono" style={{ fontSize: '11px', color: 'var(--caption-gray)' }}>
+            <div className="wired-ui">BY {post.author.name?.toUpperCase() || "AUREWS"}</div>
+            <div className="wired-mono" style={{ color: 'var(--caption)', marginTop: 'var(--space-1)' }}>
               {new Date(post.createdAt).toLocaleDateString()} · {Math.ceil(post.body.length / 1000)} MIN READ
             </div>
           </div>
         </div>
 
         {post.coverImage && (
-          <div style={{ position: 'relative', aspectRatio: '16/9', marginBottom: '48px', border: '2px solid var(--wired-black)' }}>
+          <div style={{ 
+            position: 'relative', 
+            aspectRatio: '16/9', 
+            marginBottom: 'var(--space-12)', 
+            border: '2px solid var(--black)',
+            background: '#f8f8f8'
+          }}>
             <img
               src={post.coverImage}
               alt={post.title}
@@ -92,7 +105,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           </div>
         )}
 
-        <div className="wired-body" style={{ fontSize: '18px', lineHeight: 1.7, color: 'var(--page-ink)', whiteSpace: 'pre-wrap' }}>
+        <div className="wired-body" style={{ whiteSpace: 'pre-wrap', color: 'var(--ink)' }}>
           {post.body}
         </div>
       </div>

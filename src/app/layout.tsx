@@ -59,10 +59,9 @@ export default function RootLayout({
       <body className="wired-body">
         <UtilityBar />
         <Masthead />
-        <main style={{ minHeight: '80vh', padding: '80px 0' }}>
+        <main style={{ minHeight: '80vh', padding: 'var(--space-12) 0' }}>
           {children}
         </main>
-
         <Footer />
       </body>
     </html>

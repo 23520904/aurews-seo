@@ -1,0 +1,3270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ══════════════════════════════════════════════
+     SEO PRIMARY META
+══════════════════════════════════════════════ -->
+    <title>Responsive · SEO · UX/UI Rules — NEWSROOM Design System</title>
+    <meta name="description"
+        content="Complete responsive breakpoint rules, SEO optimization checklist, and UX/UI design principles for the NEWSROOM Next.js editorial platform. Covers all viewports from 320px to 1440px+." />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="NEWSROOM Engineering" />
+    <link rel="canonical" href="https://yourdomain.com/docs/responsive-seo-uxui" />
+
+    <!-- ══════════════════════════════════════════════
+     OPEN GRAPH
+══════════════════════════════════════════════ -->
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Responsive · SEO · UX/UI Rules — NEWSROOM Design System" />
+    <meta property="og:description"
+        content="Complete responsive breakpoint rules, SEO optimization checklist, and UX/UI principles for the NEWSROOM Next.js platform." />
+    <meta property="og:url" content="https://yourdomain.com/docs/responsive-seo-uxui" />
+    <meta property="og:image" content="https://yourdomain.com/og/responsive-rules.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="NEWSROOM" />
+    <meta property="article:published_time" content="2026-05-13T00:00:00Z" />
+    <meta property="article:section" content="Engineering" />
+
+    <!-- ══════════════════════════════════════════════
+     TWITTER / X CARD
+══════════════════════════════════════════════ -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Responsive · SEO · UX/UI Rules — NEWSROOM" />
+    <meta name="twitter:description"
+        content="Every breakpoint, every SEO rule, every UX/UI principle. The complete front-end playbook." />
+    <meta name="twitter:image" content="https://yourdomain.com/og/responsive-rules.png" />
+
+    <!-- ══════════════════════════════════════════════
+     JSON-LD STRUCTURED DATA
+══════════════════════════════════════════════ -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Responsive · SEO · UX/UI Rules — NEWSROOM Design System",
+  "description": "Complete responsive breakpoint rules, SEO optimization checklist, and UX/UI design principles for the NEWSROOM Next.js editorial platform.",
+  "author": { "@type": "Organization", "name": "NEWSROOM Engineering" },
+  "publisher": {
+    "@type": "Organization",
+    "name": "NEWSROOM",
+    "logo": { "@type": "ImageObject", "url": "https://yourdomain.com/logo.png" }
+  },
+  "datePublished": "2026-05-13",
+  "dateModified": "2026-05-13",
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "https://yourdomain.com/docs/responsive-seo-uxui" },
+  "articleSection": "Engineering",
+  "keywords": ["responsive design", "SEO", "UX", "UI", "Next.js", "breakpoints", "Core Web Vitals"]
+}
+</script>
+
+    <!-- ══════════════════════════════════════════════
+     FONTS
+══════════════════════════════════════════════ -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Space+Mono:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Work+Sans:wght@400;600;700&display=swap"
+        rel="stylesheet" />
+
+    <style>
+        /* ════════════════════════════════════════════
+   DESIGN TOKENS — WIRED SYSTEM
+════════════════════════════════════════════ */
+        :root {
+            --black: #000000;
+            --ink: #1a1a1a;
+            --paper: #ffffff;
+            --blue: #057dbc;
+            --green: #1a7a34;
+            --amber: #7a4d00;
+            --red: #8b0000;
+            --caption: #757575;
+            --disabled: #999999;
+            --hairline: #e2e8f0;
+            --code-bg: #f4f4f0;
+
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-body: 'Lora', Georgia, serif;
+            --font-ui: 'Work Sans', Helvetica, sans-serif;
+            --font-mono: 'Space Mono', 'Monaco', 'Courier New', monospace;
+
+            --max-w: 1440px;
+            --gutter-xl: 80px;
+            --gutter-lg: 48px;
+            --gutter-md: 32px;
+            --gutter-sm: 24px;
+            --gutter-xs: 16px;
+        }
+
+        /* ════════════════════════════════════════════
+   RESET & BASE
+════════════════════════════════════════════ */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+            /* Improves tap responsiveness on iOS */
+            -webkit-tap-highlight-color: transparent;
+            /* Prevent font size inflation on landscape mobile */
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        body {
+            background: var(--paper);
+            color: var(--ink);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            /* Prevent horizontal scroll blowout */
+            overflow-x: hidden;
+        }
+
+        /* Focus visible — keyboard accessibility */
+        :focus-visible {
+            outline: 2px solid var(--blue);
+            outline-offset: 2px;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: var(--blue);
+        }
+
+        img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* ════════════════════════════════════════════
+   TYPOGRAPHY UTILITIES
+════════════════════════════════════════════ */
+        .mono {
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            letter-spacing: 0.92px;
+            font-size: 0.75rem;
+        }
+
+        .mono-bold {
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            letter-spacing: 1.1px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .hairline {
+            border: none;
+            border-top: 1px solid var(--hairline);
+            margin: 0;
+        }
+
+        .rule {
+            border: none;
+            border-top: 1px solid var(--black);
+            margin: 0;
+        }
+
+        .rule2 {
+            border: none;
+            border-top: 2px solid var(--black);
+            margin: 0;
+        }
+
+        /* ════════════════════════════════════════════
+   LAYOUT — WRAPPER
+   Max 1440px, fluid below, gutters scale
+════════════════════════════════════════════ */
+        .wrapper {
+            width: 100%;
+            max-width: var(--max-w);
+            margin-inline: auto;
+            padding-inline: var(--gutter-xs);
+        }
+
+        /* ── Responsive gutter scale ── */
+        @media (min-width: 480px) {
+            .wrapper {
+                padding-inline: var(--gutter-sm);
+            }
+        }
+
+        @media (min-width: 768px) {
+            .wrapper {
+                padding-inline: var(--gutter-md);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .wrapper {
+                padding-inline: var(--gutter-lg);
+            }
+        }
+
+        @media (min-width: 1280px) {
+            .wrapper {
+                padding-inline: var(--gutter-xl);
+            }
+        }
+
+        /* ════════════════════════════════════════════
+   UTILITY BAR
+════════════════════════════════════════════ */
+        .util-bar {
+            background: var(--black);
+            padding: 8px var(--gutter-xs);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            /* Min 44px touch row */
+            min-height: 44px;
+        }
+
+        .util-bar span,
+        .util-bar a {
+            color: var(--paper);
+            font-family: var(--font-mono);
+            font-size: 0.63rem;
+            text-transform: uppercase;
+            letter-spacing: 1.1px;
+        }
+
+        .util-bar a:hover {
+            color: var(--blue);
+        }
+
+        .util-bar a {
+            transition: color 120ms;
+        }
+
+        .util-bar-links {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        /* Hide "Published" text on very small screens */
+        @media (max-width: 479px) {
+            .util-hide {
+                display: none;
+            }
+        }
+
+        @media (min-width: 480px) {
+            .util-bar {
+                padding: 8px var(--gutter-sm);
+            }
+
+            .util-bar-links {
+                gap: 20px;
+            }
+        }
+
+        /* ════════════════════════════════════════════
+   MASTHEAD / HEADER
+════════════════════════════════════════════ */
+        .masthead {
+            border-bottom: 2px solid var(--black);
+            padding: 14px var(--gutter-xs);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            /* Sticky nav — UX principle: persistent orientation */
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--paper);
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: clamp(1.4rem, 4vw, 2.4rem);
+            font-weight: 700;
+            letter-spacing: -1px;
+            color: var(--black);
+            line-height: 1;
+            /* Prevent logo shrinking on narrow screens */
+            flex-shrink: 0;
+        }
+
+        .masthead-sub {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1.1px;
+            color: var(--caption);
+            margin-top: 4px;
+            /* Hide sub on mobile to avoid clutter */
+            display: none;
+        }
+
+        .masthead-meta {
+            font-family: var(--font-mono);
+            font-size: 0.63rem;
+            text-transform: uppercase;
+            letter-spacing: 0.9px;
+            color: var(--caption);
+            text-align: right;
+            line-height: 1.6;
+            /* Hide on mobile */
+            display: none;
+        }
+
+        /* Hamburger */
+        .nav-toggle {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            width: 44px;
+            height: 44px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background: none;
+            border: none;
+            flex-shrink: 0;
+        }
+
+        .nav-toggle span {
+            display: block;
+            width: 22px;
+            height: 2px;
+            background: var(--black);
+            transition: transform 200ms, opacity 150ms;
+        }
+
+        .nav-toggle[aria-expanded="true"] span:nth-child(1) {
+            transform: translateY(7px) rotate(45deg);
+        }
+
+        .nav-toggle[aria-expanded="true"] span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .nav-toggle[aria-expanded="true"] span:nth-child(3) {
+            transform: translateY(-7px) rotate(-45deg);
+        }
+
+        /* Mobile drawer */
+        .nav-drawer {
+            display: none;
+            background: var(--paper);
+            border-bottom: 2px solid var(--black);
+            padding: 16px var(--gutter-xs);
+        }
+
+        .nav-drawer.open {
+            display: block;
+        }
+
+        .nav-drawer a {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--ink);
+            padding: 12px 0;
+            border-bottom: 1px solid var(--hairline);
+            transition: color 120ms;
+            /* Min 44px touch target */
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-drawer a:hover {
+            color: var(--blue);
+        }
+
+        .nav-drawer a:last-child {
+            border-bottom: none;
+        }
+
+        @media (min-width: 768px) {
+            .masthead {
+                padding: 16px var(--gutter-md);
+            }
+
+            .masthead-sub {
+                display: block;
+            }
+
+            .nav-toggle {
+                display: none;
+            }
+
+            .nav-drawer {
+                display: none !important;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .masthead {
+                padding: 16px var(--gutter-lg);
+            }
+
+            .masthead-meta {
+                display: block;
+            }
+        }
+
+        @media (min-width: 1280px) {
+            .masthead {
+                padding: 16px var(--gutter-xl);
+            }
+        }
+
+        /* ════════════════════════════════════════════
+   SECTION NAV BAR (desktop category strip)
+════════════════════════════════════════════ */
+        .section-nav {
+            border-bottom: 1px solid var(--hairline);
+            padding: 0 var(--gutter-xs);
+            display: none;
+            overflow-x: auto;
+            /* Hide scrollbar but keep functionality */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .section-nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .section-nav-inner {
+            display: flex;
+            gap: 0;
+            max-width: var(--max-w);
+            margin-inline: auto;
+        }
+
+        .section-nav a {
+            font-family: var(--font-mono);
+            font-size: 0.69rem;
+            text-transform: uppercase;
+            letter-spacing: 0.9px;
+            color: var(--ink);
+            padding: 12px 16px;
+            white-space: nowrap;
+            transition: color 120ms, border-bottom-color 120ms;
+            border-bottom: 2px solid transparent;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-nav a:hover {
+            color: var(--blue);
+            border-bottom-color: var(--blue);
+        }
+
+        .section-nav a.active {
+            color: var(--black);
+            border-bottom-color: var(--black);
+            font-weight: 700;
+        }
+
+        @media (min-width: 768px) {
+            .section-nav {
+                display: block;
+                padding: 0 var(--gutter-md);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .section-nav {
+                padding: 0 var(--gutter-lg);
+            }
+        }
+
+        @media (min-width: 1280px) {
+            .section-nav {
+                padding: 0 var(--gutter-xl);
+            }
+        }
+
+        /* ════════════════════════════════════════════
+   RIBBON / SECTION LABELS
+════════════════════════════════════════════ */
+        .ribbon {
+            background: var(--black);
+            padding: 9px var(--gutter-xs);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            /* Full bleed */
+            margin-inline: calc(-1 * var(--gutter-xs));
+        }
+
+        .ribbon-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--paper);
+            white-space: nowrap;
+        }
+
+        .ribbon-line {
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, .2);
+        }
+
+        .ribbon.green {
+            background: var(--green);
+        }
+
+        .ribbon.blue {
+            background: var(--blue);
+        }
+
+        .ribbon.amber {
+            background: var(--amber);
+        }
+
+        .ribbon.red {
+            background: var(--red);
+        }
+
+        @media (min-width: 480px) {
+            .ribbon {
+                padding: 9px var(--gutter-sm);
+                margin-inline: calc(-1 * var(--gutter-sm));
+            }
+        }
+
+        @media (min-width: 768px) {
+            .ribbon {
+                padding: 9px var(--gutter-md);
+                margin-inline: calc(-1 * var(--gutter-md));
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .ribbon {
+                padding: 9px var(--gutter-lg);
+                margin-inline: calc(-1 * var(--gutter-lg));
+            }
+        }
+
+        @media (min-width: 1280px) {
+            .ribbon {
+                padding: 9px var(--gutter-xl);
+                margin-inline: calc(-1 * var(--gutter-xl));
+            }
+        }
+
+        /* ════════════════════════════════════════════
+   PAGE LAYOUT — TWO COLUMN + TOC
+════════════════════════════════════════════ */
+        .doc-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0;
+            padding-block: 32px;
+        }
+
+        @media (min-width: 1024px) {
+            .doc-layout {
+                grid-template-columns: 1fr 280px;
+                gap: 48px;
+                align-items: start;
+            }
+        }
+
+        @media (min-width: 1280px) {
+            .doc-layout {
+                grid-template-columns: 1fr 300px;
+                gap: 64px;
+            }
+        }
+
+        /* ════════════════════════════════════════════
+   TOC SIDEBAR
+════════════════════════════════════════════ */
+        .toc {
+            border: 2px solid var(--black);
+            padding: 20px;
+        }
+
+        .toc-title {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.1px;
+            color: var(--black);
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--black);
+            margin-bottom: 12px;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-list li {
+            border-bottom: 1px solid var(--hairline);
+        }
+
+        .toc-list li:last-child {
+            border-bottom: none;
+        }
+
+        .toc-list a {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            padding: 8px 0;
+            font-family: var(--font-ui);
+            font-size: 0.8rem;
+            color: var(--ink);
+            transition: color 120ms;
+            /* Min touch target height */
+            min-height: 40px;
+            align-items: center;
+        }
+
+        .toc-list a:hover {
+            color: var(--blue);
+        }
+
+        .toc-num {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            color: var(--caption);
+            flex-shrink: 0;
+        }
+
+        /* Sticky TOC on desktop */
+        @media (min-width: 1024px) {
+            .toc {
+                position: sticky;
+                top: 80px;
+            }
+        }
+
+        /* Collapsible TOC on mobile */
+        .toc-mobile-toggle {
+            display: none;
+        }
+
+        @media (max-width: 1023px) {
+            .toc {
+                margin-bottom: 32px;
+            }
+
+            .toc-mobile-toggle {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
+                background: none;
+                border: none;
+                cursor: pointer;
+                padding: 0;
+            }
+
+            .toc-mobile-toggle .toc-title {
+                margin-bottom: 0;
+                padding-bottom: 0;
+                border-bottom: none;
+            }
+
+            .toc-mobile-toggle .toc-chevron {
+                font-family: var(--font-mono);
+                font-size: 0.8rem;
+                color: var(--caption);
+                transition: transform 200ms;
+            }
+
+            .toc-mobile-toggle[aria-expanded="true"] .toc-chevron {
+                transform: rotate(180deg);
+            }
+
+            .toc-body {
+                display: none;
+                padding-top: 12px;
+                border-top: 2px solid var(--black);
+                margin-top: 12px;
+            }
+
+            .toc-body.open {
+                display: block;
+            }
+        }
+
+        /* ════════════════════════════════════════════
+   PAGE SECTIONS
+════════════════════════════════════════════ */
+        .page-section {
+            padding-block: 40px;
+            border-top: 1px solid var(--hairline);
+        }
+
+        .page-section:first-child {
+            border-top: none;
+            padding-top: 0;
+        }
+
+        .section-kicker {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.92px;
+            color: var(--caption);
+            margin-bottom: 8px;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(1.6rem, 4vw, 2.5rem);
+            font-weight: 700;
+            line-height: 1.05;
+            letter-spacing: -0.5px;
+            color: var(--ink);
+        }
+
+        .section-deck {
+            font-family: var(--font-body);
+            font-size: 1rem;
+            color: var(--caption);
+            margin-top: 10px;
+            line-height: 1.55;
+            max-width: 72ch;
+        }
+
+        /* ════════════════════════════════════════════
+   BREAKPOINT TABLE
+════════════════════════════════════════════ */
+        .bp-table-wrap {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-block: 20px;
+            /* Scroll hint shadow on right */
+            background: linear-gradient(to right, var(--paper) 0%, var(--paper) 80%, rgba(0, 0, 0, .06) 100%);
+            background-attachment: local, scroll;
+        }
+
+        .bp-table {
+            width: 100%;
+            min-width: 640px;
+            /* prevent text collapse below this */
+            border-collapse: collapse;
+            font-family: var(--font-ui);
+            font-size: 0.82rem;
+        }
+
+        .bp-table th {
+            font-family: var(--font-mono);
+            font-size: 0.63rem;
+            text-transform: uppercase;
+            letter-spacing: 0.9px;
+            font-weight: 700;
+            text-align: left;
+            padding: 10px 12px;
+            background: var(--black);
+            color: var(--paper);
+            white-space: nowrap;
+        }
+
+        .bp-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--hairline);
+            vertical-align: top;
+            color: var(--ink);
+            line-height: 1.45;
+        }
+
+        .bp-table tr:hover td {
+            background: #f9f9f9;
+        }
+
+        .bp-table .bp-cell {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--black);
+            white-space: nowrap;
+        }
+
+        .bp-table .name-cell {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        /* ════════════════════════════════════════════
+   RESPONSIVE RULE CARDS (grid)
+════════════════════════════════════════════ */
+        .rule-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            margin-block: 20px;
+        }
+
+        @media (min-width: 600px) {
+            .rule-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .rule-grid {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+        }
+
+        @media (min-width: 1280px) {
+            .rule-grid.four-col {
+                grid-template-columns: 1fr 1fr 1fr 1fr;
+            }
+        }
+
+        .rule-card {
+            border: 1px solid var(--hairline);
+            border-top: 3px solid var(--black);
+            padding: 18px 16px;
+            background: var(--paper);
+            transition: border-top-color 150ms;
+        }
+
+        .rule-card:hover {
+            border-top-color: var(--blue);
+        }
+
+        .rule-card.green-top {
+            border-top-color: var(--green);
+        }
+
+        .rule-card.amber-top {
+            border-top-color: var(--amber);
+        }
+
+        .rule-card.red-top {
+            border-top-color: var(--red);
+        }
+
+        .rule-card.blue-top {
+            border-top-color: var(--blue);
+        }
+
+        .card-label {
+            font-family: var(--font-mono);
+            font-size: 0.63rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--caption);
+            margin-bottom: 8px;
+        }
+
+        .card-title {
+            font-family: var(--font-display);
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--ink);
+            line-height: 1.2;
+            margin-bottom: 8px;
+        }
+
+        .card-body {
+            font-family: var(--font-body);
+            font-size: 0.82rem;
+            color: var(--caption);
+            line-height: 1.55;
+        }
+
+        /* ════════════════════════════════════════════
+   BADGES
+════════════════════════════════════════════ */
+        .badge-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .badge {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 2px 8px;
+            border: 1px solid var(--black);
+            color: var(--black);
+            background: var(--paper);
+            white-space: nowrap;
+        }
+
+        .badge.green {
+            border-color: var(--green);
+            color: var(--green);
+        }
+
+        .badge.blue {
+            background: var(--blue);
+            color: #fff;
+            border-color: var(--blue);
+        }
+
+        .badge.amber {
+            border-color: var(--amber);
+            color: var(--amber);
+        }
+
+        .badge.red {
+            background: var(--red);
+            color: #fff;
+            border-color: var(--red);
+        }
+
+        .badge.filled {
+            background: var(--black);
+            color: var(--paper);
+        }
+
+        .badge.ok {
+            background: var(--green);
+            color: #fff;
+            border-color: var(--green);
+        }
+
+        .badge.warn {
+            background: var(--amber);
+            color: #fff;
+            border-color: var(--amber);
+        }
+
+        /* ════════════════════════════════════════════
+   FEATURE LIST (inside cards)
+════════════════════════════════════════════ */
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            border-top: 1px solid var(--hairline);
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        .feature-list li {
+            font-family: var(--font-ui);
+            font-size: 0.8rem;
+            color: var(--ink);
+            padding: 5px 0;
+            border-bottom: 1px solid var(--hairline);
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            line-height: 1.45;
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-list li::before {
+            content: "→";
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--caption);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* ════════════════════════════════════════════
+   CODE BLOCKS
+════════════════════════════════════════════ */
+        .code-label {
+            font-family: var(--font-mono);
+            font-size: 0.63rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--caption);
+            margin-bottom: 4px;
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .code-label::before {
+            content: "";
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--blue);
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .code-label.green::before {
+            background: var(--green);
+        }
+
+        .code-label.amber::before {
+            background: var(--amber);
+        }
+
+        .code-label.red::before {
+            background: var(--red);
+        }
+
+        .code-label.black::before {
+            background: var(--black);
+        }
+
+        .code-block {
+            background: var(--ink);
+            color: #e8e8e0;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            line-height: 1.75;
+            padding: 18px 20px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 4px 0 14px;
+            border-left: 3px solid var(--blue);
+            letter-spacing: 0;
+            text-transform: none;
+            white-space: pre;
+            /* Responsive horizontal scroll on small screens */
+            max-width: 100%;
+        }
+
+        .code-block.green-left {
+            border-left-color: var(--green);
+        }
+
+        .code-block.amber-left {
+            border-left-color: var(--amber);
+        }
+
+        .code-block.red-left {
+            border-left-color: var(--red);
+        }
+
+        .code-block .cm {
+            color: #6a9955;
+        }
+
+        .code-block .kw {
+            color: #569cd6;
+        }
+
+        .code-block .st {
+            color: #ce9178;
+        }
+
+        .code-block .nu {
+            color: #b5cea8;
+        }
+
+        .code-block .fn {
+            color: #dcdcaa;
+        }
+
+        .code-block .ty {
+            color: #4ec9b0;
+        }
+
+        .code-block .hd {
+            color: #777;
+            font-style: italic;
+        }
+
+        .code-block .ok {
+            color: #4ec9b0;
+            font-weight: 700;
+        }
+
+        .code-block .er {
+            color: #f48771;
+            font-weight: 700;
+        }
+
+        /* ════════════════════════════════════════════
+   MIDDLEWARE / CALLOUT BARS
+════════════════════════════════════════════ */
+        .callout {
+            background: var(--hairline);
+            border-left: 3px solid var(--black);
+            padding: 12px 16px;
+            margin-block: 16px;
+        }
+
+        .callout.green {
+            border-left-color: var(--green);
+            background: #f0faf2;
+        }
+
+        .callout.amber {
+            border-left-color: var(--amber);
+            background: #fdf8f0;
+        }
+
+        .callout.red {
+            border-left-color: var(--red);
+            background: #fdf0f0;
+        }
+
+        .callout.blue {
+            border-left-color: var(--blue);
+            background: #f0f7fc;
+        }
+
+        .callout .mono {
+            color: var(--black);
+        }
+
+        .callout-body {
+            font-family: var(--font-ui);
+            font-size: 0.82rem;
+            color: var(--caption);
+            margin-top: 5px;
+            line-height: 1.55;
+        }
+
+        .callout-body code {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            background: rgba(0, 0, 0, .06);
+            padding: 1px 5px;
+        }
+
+        /* ════════════════════════════════════════════
+   NUMBERED LIST (UX principles)
+════════════════════════════════════════════ */
+        .numbered-list {
+            margin-block: 16px;
+        }
+
+        .numbered-item {
+            display: grid;
+            grid-template-columns: 52px 1fr;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--hairline);
+            align-items: start;
+        }
+
+        .numbered-item:last-child {
+            border-bottom: none;
+        }
+
+        .num-digit {
+            font-family: var(--font-display);
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--hairline);
+            line-height: 1;
+            user-select: none;
+        }
+
+        .num-title {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--ink);
+            line-height: 1.2;
+            margin-bottom: 5px;
+        }
+
+        .num-desc {
+            font-family: var(--font-body);
+            font-size: 0.82rem;
+            color: var(--caption);
+            line-height: 1.55;
+        }
+
+        .num-desc code {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            background: var(--code-bg);
+            padding: 1px 5px;
+        }
+
+        /* ════════════════════════════════════════════
+   CHECKLIST
+════════════════════════════════════════════ */
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checklist li {
+            font-family: var(--font-ui);
+            font-size: 0.82rem;
+            color: var(--ink);
+            padding: 7px 0;
+            border-bottom: 1px solid var(--hairline);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            line-height: 1.5;
+        }
+
+        .checklist li:last-child {
+            border-bottom: none;
+        }
+
+        .ck {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            padding: 2px 6px;
+            margin-top: 1px;
+        }
+
+        .ck.pass {
+            background: var(--green);
+            color: #fff;
+        }
+
+        .ck.fix {
+            background: var(--red);
+            color: #fff;
+        }
+
+        .ck.warn {
+            background: var(--amber);
+            color: #fff;
+        }
+
+        /* ════════════════════════════════════════════
+   SEO CELLS GRID
+════════════════════════════════════════════ */
+        .seo-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1px;
+            background: var(--hairline);
+            border: 1px solid var(--hairline);
+            margin-block: 20px;
+        }
+
+        @media (min-width: 480px) {
+            .seo-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (min-width: 900px) {
+            .seo-grid {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .seo-grid.four {
+                grid-template-columns: 1fr 1fr 1fr 1fr;
+            }
+        }
+
+        .seo-cell {
+            background: var(--paper);
+            padding: 16px;
+        }
+
+        .seo-cell-title {
+            font-family: var(--font-mono);
+            font-size: 0.69rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--black);
+            margin-bottom: 7px;
+        }
+
+        .seo-cell-body {
+            font-family: var(--font-ui);
+            font-size: 0.8rem;
+            color: var(--caption);
+            line-height: 1.55;
+        }
+
+        .seo-cell-body code {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            background: var(--code-bg);
+            padding: 1px 5px;
+        }
+
+        /* ════════════════════════════════════════════
+   INFRA STRIP (key-value tiles)
+════════════════════════════════════════════ */
+        .infra-strip {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1px;
+            background: var(--hairline);
+            border: 1px solid var(--hairline);
+            margin-block: 16px;
+        }
+
+        .infra-item {
+            background: var(--paper);
+            padding: 14px 16px;
+            flex: 1 1 160px;
+        }
+
+        .infra-label {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--caption);
+            margin-bottom: 4px;
+        }
+
+        .infra-value {
+            font-family: var(--font-display);
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--ink);
+        }
+
+        /* ════════════════════════════════════════════
+   FLOW DIAGRAM
+════════════════════════════════════════════ */
+        .flow-diagram {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0;
+            padding: 16px 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .flow-node {
+            background: var(--paper);
+            border: 2px solid var(--black);
+            padding: 8px 12px;
+            font-family: var(--font-mono);
+            font-size: 0.63rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.9px;
+            white-space: nowrap;
+            color: var(--black);
+        }
+
+        .flow-node.filled {
+            background: var(--black);
+            color: var(--paper);
+        }
+
+        .flow-node.blue {
+            background: var(--blue);
+            color: var(--paper);
+            border-color: var(--blue);
+        }
+
+        .flow-node.green {
+            background: var(--green);
+            color: var(--paper);
+            border-color: var(--green);
+        }
+
+        .flow-node.red {
+            background: var(--red);
+            color: var(--paper);
+            border-color: var(--red);
+        }
+
+        .flow-arrow {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            color: var(--caption);
+            padding: 0 8px;
+            white-space: nowrap;
+        }
+
+        /* ════════════════════════════════════════════
+   WIDE CONTENT CARD
+════════════════════════════════════════════ */
+        .wide-card {
+            border: 1px solid var(--hairline);
+            border-top: 3px solid var(--black);
+            padding: 20px;
+            margin-block: 20px;
+        }
+
+        .wide-card.green-top {
+            border-top-color: var(--green);
+        }
+
+        .wide-card.amber-top {
+            border-top-color: var(--amber);
+        }
+
+        .wide-card.red-top {
+            border-top-color: var(--red);
+        }
+
+        .wide-card.blue-top {
+            border-top-color: var(--blue);
+        }
+
+        .wide-card-title {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 6px;
+        }
+
+        .wide-card-desc {
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            color: var(--caption);
+            line-height: 1.55;
+            margin-bottom: 4px;
+        }
+
+        /* ════════════════════════════════════════════
+   INLINE CODE
+════════════════════════════════════════════ */
+        code {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            background: var(--code-bg);
+            padding: 1px 5px;
+            letter-spacing: 0;
+            text-transform: none;
+            /* Prevent code from breaking layout */
+            word-break: break-all;
+        }
+
+        /* ════════════════════════════════════════════
+   TWO-PANEL
+════════════════════════════════════════════ */
+        .two-panel {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            margin-block: 16px;
+        }
+
+        @media (min-width: 600px) {
+            .two-panel {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .panel {
+            border: 2px solid var(--black);
+            padding: 18px;
+        }
+
+        .panel-title {
+            font-family: var(--font-mono);
+            font-size: 0.69rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--black);
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--hairline);
+        }
+
+        /* ════════════════════════════════════════════
+   FOOTER
+════════════════════════════════════════════ */
+        .site-footer {
+            background: var(--ink);
+            color: var(--paper);
+            padding: 40px var(--gutter-xs) 28px;
+            margin-top: 64px;
+        }
+
+        .footer-inner {
+            max-width: var(--max-w);
+            margin-inline: auto;
+        }
+
+        .footer-logo {
+            font-family: var(--font-display);
+            font-size: clamp(1.2rem, 3vw, 1.6rem);
+            font-weight: 700;
+            color: var(--paper);
+            letter-spacing: -0.5px;
+        }
+
+        .footer-meta {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--caption);
+            margin-top: 4px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 20px;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255, 255, 255, .1);
+        }
+
+        .footer-links a {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.9px;
+            color: rgba(255, 255, 255, .5);
+            transition: color 120ms;
+            /* Min touch target */
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .footer-links a:hover {
+            color: var(--blue);
+        }
+
+        @media (min-width: 480px) {
+            .site-footer {
+                padding: 40px var(--gutter-sm) 28px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .site-footer {
+                padding: 40px var(--gutter-md) 28px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .site-footer {
+                padding: 40px var(--gutter-lg) 28px;
+            }
+        }
+
+        @media (min-width: 1280px) {
+            .site-footer {
+                padding: 40px var(--gutter-xl) 28px;
+            }
+        }
+
+        /* ════════════════════════════════════════════
+   SKIP TO CONTENT — A11Y
+════════════════════════════════════════════ */
+        .skip-link {
+            position: absolute;
+            top: -9999px;
+            left: 16px;
+            background: var(--blue);
+            color: #fff;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.9px;
+            padding: 10px 16px;
+            z-index: 9999;
+            transition: top 100ms;
+        }
+
+        .skip-link:focus {
+            top: 8px;
+        }
+
+        /* ════════════════════════════════════════════
+   SCROLL PROGRESS BAR — UX
+════════════════════════════════════════════ */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: var(--blue);
+            width: 0%;
+            z-index: 9999;
+            transition: width 100ms linear;
+        }
+
+        /* ════════════════════════════════════════════
+   PRINT STYLES
+════════════════════════════════════════════ */
+        @media print {
+
+            .util-bar,
+            .masthead,
+            .section-nav,
+            .site-footer,
+            .nav-toggle,
+            .toc-mobile-toggle,
+            .progress-bar {
+                display: none !important;
+            }
+
+            body {
+                font-size: 11pt;
+            }
+
+            .wrapper {
+                max-width: 100%;
+                padding: 0;
+            }
+
+            .doc-layout {
+                display: block;
+            }
+
+            .page-section {
+                page-break-inside: avoid;
+            }
+
+            a[href]::after {
+                content: " (" attr(href) ")";
+                font-size: 0.7em;
+                color: var(--caption);
+            }
+        }
+
+        /* ════════════════════════════════════════════
+   REDUCED MOTION
+════════════════════════════════════════════ */
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+
+            html {
+                scroll-behavior: auto;
+            }
+        }
+
+        /* ════════════════════════════════════════════
+   HIGH CONTRAST MODE
+════════════════════════════════════════════ */
+        @media (forced-colors: active) {
+
+            .ribbon,
+            .util-bar {
+                border: 2px solid ButtonText;
+            }
+
+            .badge {
+                border: 1px solid ButtonText;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SKIP TO CONTENT — WCAG 2.4.1 -->
+    <a href="#main-content" class="skip-link">Skip to content</a>
+
+    <!-- SCROLL PROGRESS -->
+    <div class="progress-bar" id="progressBar" role="progressbar" aria-hidden="true"></div>
+
+    <!-- ═══════════════════════════════════════════
+     UTILITY BAR
+═══════════════════════════════════════════ -->
+    <div class="util-bar" role="banner">
+        <span class="util-hide">NEWSROOM Design System · Responsive + SEO + UX/UI Rules</span>
+        <nav class="util-bar-links" aria-label="Quick navigation">
+            <a href="#responsive">Responsive</a>
+            <a href="#seo">SEO</a>
+            <a href="#uxui">UX/UI</a>
+            <a href="#typography">Typography</a>
+            <a href="#checklist">Checklist</a>
+        </nav>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+     MASTHEAD
+═══════════════════════════════════════════ -->
+    <header>
+        <div class="masthead">
+            <div>
+                <div class="logo" aria-label="NEWSROOM">NEWSROOM</div>
+                <div class="masthead-sub">Responsive · SEO · UX/UI — Complete Rules Reference</div>
+            </div>
+            <div class="masthead-meta" aria-hidden="true">
+                Design System v2.0<br>
+                All screens 320px → 1440px+<br>
+                WCAG AA Compliant
+            </div>
+            <!-- Mobile hamburger -->
+            <button class="nav-toggle" aria-expanded="false" aria-controls="mobileNav" aria-label="Toggle navigation">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+        <!-- Mobile nav drawer -->
+        <nav id="mobileNav" class="nav-drawer" aria-label="Mobile navigation">
+            <a href="#responsive">§01 Responsive Rules</a>
+            <a href="#seo">§02 SEO Optimization</a>
+            <a href="#uxui">§03 UX/UI Principles</a>
+            <a href="#typography">§04 Responsive Typography</a>
+            <a href="#images">§05 Image Strategy</a>
+            <a href="#performance">§06 Performance</a>
+            <a href="#accessibility">§07 Accessibility</a>
+            <a href="#checklist">§08 Pre-Launch Checklist</a>
+        </nav>
+
+        <!-- Section nav (desktop) -->
+        <nav class="section-nav" aria-label="Section navigation">
+            <div class="section-nav-inner">
+                <a href="#responsive" class="active">§01 Responsive</a>
+                <a href="#seo">§02 SEO</a>
+                <a href="#uxui">§03 UX/UI</a>
+                <a href="#typography">§04 Typography</a>
+                <a href="#images">§05 Images</a>
+                <a href="#performance">§06 Performance</a>
+                <a href="#accessibility">§07 Accessibility</a>
+                <a href="#checklist">§08 Checklist</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ═══════════════════════════════════════════
+     MAIN CONTENT
+═══════════════════════════════════════════ -->
+    <div class="wrapper">
+        <div class="doc-layout">
+
+            <!-- ─── MAIN COLUMN ─── -->
+            <main id="main-content">
+
+                <!-- ══════════════════════════════════
+           §01  RESPONSIVE RULES
+      ══════════════════════════════════ -->
+                <section id="responsive" class="page-section" aria-labelledby="responsive-title">
+                    <div class="section-kicker">§ 01 — Responsive Rules</div>
+                    <h1 id="responsive-title" class="section-title">Breakpoints &amp; Layout Rules</h1>
+                    <p class="section-deck">Every CSS rule that governs how NEWSROOM adapts from 320px feature phones to
+                        1440px wide-screen monitors. Mobile-first cascade — define the smallest viewport, override
+                        upward.</p>
+
+                    <hr class="rule2" style="margin:20px 0;" />
+
+                    <!-- Core breakpoint table -->
+                    <h2
+                        style="font-family:var(--font-mono);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:0 0 10px;color:var(--black);">
+                        Breakpoint Scale</h2>
+                    <div class="bp-table-wrap" role="region" aria-label="Breakpoint table" tabindex="0">
+                        <table class="bp-table">
+                            <caption style="display:none">Responsive breakpoints for the NEWSROOM platform</caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Min-Width</th>
+                                    <th scope="col">Max-Width</th>
+                                    <th scope="col">Columns</th>
+                                    <th scope="col">Gutter</th>
+                                    <th scope="col">Container Padding</th>
+                                    <th scope="col">Key Layout Change</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="name-cell" style="color:var(--red);">XS — Phone</td>
+                                    <td class="bp-cell">0px</td>
+                                    <td class="bp-cell">479px</td>
+                                    <td>1 col</td>
+                                    <td>—</td>
+                                    <td>16px</td>
+                                    <td>Single stack. Hero image full-width. Util-bar text hidden. Hamburger only.</td>
+                                </tr>
+                                <tr>
+                                    <td class="name-cell" style="color:var(--amber);">SM — Phablet</td>
+                                    <td class="bp-cell">480px</td>
+                                    <td class="bp-cell">599px</td>
+                                    <td>1 col</td>
+                                    <td>16px</td>
+                                    <td>24px</td>
+                                    <td>Util-bar text visible. Story tiles wider. Newsletter form widens.</td>
+                                </tr>
+                                <tr>
+                                    <td class="name-cell" style="color:var(--amber);">SM-MD — Tablet Portrait</td>
+                                    <td class="bp-cell">600px</td>
+                                    <td class="bp-cell">767px</td>
+                                    <td>2 col</td>
+                                    <td>20px</td>
+                                    <td>24px</td>
+                                    <td>2-col grid activates. SEO cells split to 2 wide.</td>
+                                </tr>
+                                <tr>
+                                    <td class="name-cell" style="color:var(--blue);">MD — Tablet Landscape</td>
+                                    <td class="bp-cell">768px</td>
+                                    <td class="bp-cell">1023px</td>
+                                    <td>2 col</td>
+                                    <td>24px</td>
+                                    <td>32px</td>
+                                    <td>Section nav bar appears. Masthead sub visible. TOC appears above main.</td>
+                                </tr>
+                                <tr>
+                                    <td class="name-cell" style="color:var(--blue);">LG — Desktop</td>
+                                    <td class="bp-cell">1024px</td>
+                                    <td class="bp-cell">1279px</td>
+                                    <td>3 col</td>
+                                    <td>32px</td>
+                                    <td>48px</td>
+                                    <td>3-col rule grid. TOC sidebar sticks. Masthead meta visible. Hero headline
+                                        scales.</td>
+                                </tr>
+                                <tr>
+                                    <td class="name-cell" style="color:var(--green);">XL — Wide Desktop</td>
+                                    <td class="bp-cell">1280px</td>
+                                    <td class="bp-cell">1439px</td>
+                                    <td>3–4 col</td>
+                                    <td>40px</td>
+                                    <td>80px</td>
+                                    <td>4-col grids unlock. Generous outer margins. Typography at max scale.</td>
+                                </tr>
+                                <tr>
+                                    <td class="name-cell" style="color:var(--green);">2XL — Max Canvas</td>
+                                    <td class="bp-cell">1440px</td>
+                                    <td class="bp-cell">∞</td>
+                                    <td>4 col</td>
+                                    <td>40px</td>
+                                    <td>auto (centered)</td>
+                                    <td>Container caps at 1440px. Page centers. Outer whitespace expands. No further
+                                        scaling.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="callout blue" role="note">
+                        <span class="mono">Mobile-First Cascade Rule</span>
+                        <p class="callout-body">Write base styles for XS (0px) first. Use <code>min-width</code> media
+                            queries to override upward. Never use <code>max-width</code> for layout — it creates
+                            specificity conflicts and negates mobile-first intent. The exception is the utility bar
+                            text-hide at <code>max-width: 479px</code> which is a cosmetic trim, not a structural rule.
+                        </p>
+                    </div>
+
+                    <!-- CSS tokens -->
+                    <div class="wide-card" style="margin-top:24px;">
+                        <div class="badge-row"><span class="badge filled">CSS Tokens</span><span class="badge ok">Copy
+                                Into :root</span></div>
+                        <div class="wide-card-title">Responsive CSS Custom Properties</div>
+                        <div class="wide-card-desc">Paste into your <code>:root</code> block. Every spacing value,
+                            max-width, and gutter is a token — never hard-coded in component CSS.</div>
+                        <div class="code-label">tokens.css — paste into :root</div>
+                        <div class="code-block"><span class="kw">:root</span> {
+                            <span class="hd">/* ── Breakpoints (reference only — use in @media queries) ────────
+                                */</span>
+                            <span class="cm">--bp-xs: 0px;
+                                --bp-sm: 480px;
+                                --bp-sm-md:600px;
+                                --bp-md: 768px;
+                                --bp-lg: 1024px;
+                                --bp-xl: 1280px;
+                                --bp-2xl: 1440px;</span>
+
+                            <span class="hd">/* ── Container ───────────────────────────────────────────────────
+                                */</span>
+                            <span class="kw">--max-w</span>: <span class="nu">1440px</span>;
+                            <span class="kw">--max-w-text</span>: <span class="nu">72ch</span>; <span class="cm">/* max
+                                readable line length */</span>
+                            <span class="kw">--max-w-prose</span>: <span class="nu">65ch</span>; <span class="cm">/*
+                                article body */</span>
+
+                            <span class="hd">/* ── Gutters (page padding-inline) ───────────────────────────────
+                                */</span>
+                            <span class="kw">--gutter-xs</span>: <span class="nu">16px</span>; <span class="cm">/*
+                                0–479px */</span>
+                            <span class="kw">--gutter-sm</span>: <span class="nu">24px</span>; <span class="cm">/*
+                                480–767px */</span>
+                            <span class="kw">--gutter-md</span>: <span class="nu">32px</span>; <span class="cm">/*
+                                768–1023px */</span>
+                            <span class="kw">--gutter-lg</span>: <span class="nu">48px</span>; <span class="cm">/*
+                                1024–1279px */</span>
+                            <span class="kw">--gutter-xl</span>: <span class="nu">80px</span>; <span class="cm">/*
+                                1280px+ */</span>
+
+                            <span class="hd">/* ── Spacing Scale (8px base) ─────────────────────────────────────
+                                */</span>
+                            <span class="kw">--space-1</span>: <span class="nu">4px</span>;
+                            <span class="kw">--space-2</span>: <span class="nu">8px</span>;
+                            <span class="kw">--space-3</span>: <span class="nu">12px</span>;
+                            <span class="kw">--space-4</span>: <span class="nu">16px</span>;
+                            <span class="kw">--space-6</span>: <span class="nu">24px</span>;
+                            <span class="kw">--space-8</span>: <span class="nu">32px</span>;
+                            <span class="kw">--space-10</span>: <span class="nu">40px</span>;
+                            <span class="kw">--space-12</span>: <span class="nu">48px</span>;
+                            <span class="kw">--space-16</span>: <span class="nu">64px</span>;
+                            <span class="kw">--space-20</span>: <span class="nu">80px</span>;
+
+                            <span class="hd">/* ── Touch Target (WCAG 2.5.5) ────────────────────────────────────
+                                */</span>
+                            <span class="kw">--touch-min</span>: <span class="nu">44px</span>;
+
+                            <span class="hd">/* ── Z-index Scale ────────────────────────────────────────────────
+                                */</span>
+                            <span class="kw">--z-base</span>: <span class="nu">0</span>;
+                            <span class="kw">--z-above</span>: <span class="nu">10</span>;
+                            <span class="kw">--z-nav</span>: <span class="nu">100</span>;
+                            <span class="kw">--z-overlay</span>: <span class="nu">200</span>;
+                            <span class="kw">--z-modal</span>: <span class="nu">300</span>;
+                            <span class="kw">--z-toast</span>: <span class="nu">400</span>;
+                            }</span>
+                        </div>
+                    </div>
+
+                    <!-- Responsive patterns -->
+                    <h2
+                        style="font-family:var(--font-mono);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:32px 0 10px;">
+                        Component-Level Responsive Rules</h2>
+                    <div class="rule-grid">
+                        <article class="rule-card">
+                            <div class="badge-row"><span class="badge filled">Layout</span></div>
+                            <h3 class="card-title">Wrapper + Container</h3>
+                            <p class="card-body">Always use <code>max-width: 1440px</code> with
+                                <code>margin-inline: auto</code>. Padding scales via CSS variable per breakpoint. Never
+                                use fixed pixel widths on containers — use <code>width: 100%</code> inside the wrapper.
+                            </p>
+                        </article>
+                        <article class="rule-card green-top">
+                            <div class="badge-row"><span class="badge green">Grid</span></div>
+                            <h3 class="card-title">CSS Grid — Story Tiles</h3>
+                            <p class="card-body">Default: <code>1fr</code>. At 600px: <code>1fr 1fr</code>. At 1024px:
+                                <code>1fr 1fr 1fr</code>. At 1280px wide grids get a 4th column. Use <code>gap</code>
+                                tokens, never margin hacks between grid children.</p>
+                        </article>
+                        <article class="rule-card amber-top">
+                            <div class="badge-row"><span class="badge amber">Navigation</span></div>
+                            <h3 class="card-title">Nav — Mobile Drawer</h3>
+                            <p class="card-body">Below 768px: hamburger + slide drawer. The drawer uses
+                                <code>aria-expanded</code>, traps focus, and closes on ESC. Section nav strip is hidden
+                                on mobile — category links live in the drawer instead.</p>
+                        </article>
+                        <article class="rule-card blue-top">
+                            <div class="badge-row"><span class="badge blue">Sticky</span></div>
+                            <h3 class="card-title">Sticky Header</h3>
+                            <p class="card-body">Masthead uses <code>position: sticky; top: 0; z-index: 100</code>. This
+                                provides persistent orientation — a core UX principle. Background must be opaque
+                                (<code>background: var(--paper)</code>) or content scrolls under it visibly.</p>
+                        </article>
+                        <article class="rule-card">
+                            <div class="badge-row"><span class="badge filled">Tables</span></div>
+                            <h3 class="card-title">Table Overflow</h3>
+                            <p class="card-body">Wrap every <code>&lt;table&gt;</code> in
+                                <code>overflow-x: auto; -webkit-overflow-scrolling: touch</code>. Set
+                                <code>min-width</code> on the table itself (e.g. 640px) to prevent text collapse. Add
+                                <code>tabindex="0"</code> for keyboard scrolling.</p>
+                        </article>
+                        <article class="rule-card green-top">
+                            <div class="badge-row"><span class="badge green">Code</span></div>
+                            <h3 class="card-title">Code Block Overflow</h3>
+                            <p class="card-body">Code blocks use
+                                <code>overflow-x: auto; white-space: pre; max-width: 100%</code>. On mobile they become
+                                horizontally scrollable rather than wrapping, preserving code structure. Never use
+                                <code>white-space: pre-wrap</code> — it breaks indentation.</p>
+                        </article>
+                        <article class="rule-card amber-top">
+                            <div class="badge-row"><span class="badge amber">Sidebar</span></div>
+                            <h3 class="card-title">TOC Sidebar</h3>
+                            <p class="card-body">Below 1024px: TOC renders above main content with a collapsible toggle.
+                                At 1024px+: TOC moves to the right column with <code>position: sticky; top: 80px</code>.
+                                Two-column layout switches at 1024px via CSS Grid.</p>
+                        </article>
+                        <article class="rule-card blue-top">
+                            <div class="badge-row"><span class="badge blue">Touch</span></div>
+                            <h3 class="card-title">Touch Targets</h3>
+                            <p class="card-body">Every interactive element (links, buttons, inputs) must have a minimum
+                                tap area of <code>44×44px</code> per WCAG 2.5.5. Use padding to expand the target
+                                without changing visual size. Drawer nav links use
+                                <code>min-height: 44px; display: flex; align-items: center</code>.</p>
+                        </article>
+                        <article class="rule-card">
+                            <div class="badge-row"><span class="badge filled">Forms</span></div>
+                            <h3 class="card-title">Responsive Inputs</h3>
+                            <p class="card-body">Newsletter form: input + button stacked on XS, inline on SM+. Input
+                                <code>width: 100%</code> on mobile. On desktop: <code>display: flex; gap: 0</code> with
+                                button attached. Never use <code>font-size &lt; 16px</code> on inputs — iOS Safari zooms
+                                on focus below 16px.</p>
+                        </article>
+                    </div>
+
+                    <!-- Fluid type box -->
+                    <div class="wide-card amber-top" style="margin-top:8px;">
+                        <div class="badge-row"><span class="badge warn">CSS Clamp</span><span class="badge">Fluid
+                                Typography</span></div>
+                        <div class="wide-card-title">Fluid Type — <code>clamp()</code> Formula</div>
+                        <div class="wide-card-desc">Use <code>clamp(min, preferred, max)</code> for headings. The
+                            preferred value is a viewport unit that scales smoothly between breakpoints. No
+                            step-function jumps.</div>
+                        <div class="code-label amber">fluid type scale</div>
+                        <div class="code-block amber-left"><span class="hd">/* ── Hero headline: 26px → 64px between
+                                320px and 1440px ────── */</span>
+                            <span class="kw">font-size</span>: <span class="fn">clamp</span>(<span
+                                class="nu">1.625rem</span>, <span class="st">1.0rem + 3.5vw</span>, <span
+                                class="nu">4.0rem</span>);
+
+                            <span class="hd">/* ── Section title: 22px → 40px ─────────────────────────────── */</span>
+                            <span class="kw">font-size</span>: <span class="fn">clamp</span>(<span
+                                class="nu">1.375rem</span>, <span class="st">0.9rem + 2.5vw</span>, <span
+                                class="nu">2.5rem</span>);
+
+                            <span class="hd">/* ── Story headline (grid): 18px → 26px ─────────────────────── */</span>
+                            <span class="kw">font-size</span>: <span class="fn">clamp</span>(<span
+                                class="nu">1.125rem</span>, <span class="st">0.85rem + 1.4vw</span>, <span
+                                class="nu">1.625rem</span>);
+
+                            <span class="hd">/* ── Body: lock at 16px — never scale body text ─────────────── */</span>
+                            <span class="kw">font-size</span>: <span class="nu">1rem</span>; <span class="cm">/* fixed —
+                                clamp not needed */</span>
+
+                            <span class="hd">/* ── Logo: 22px → 38px ───────────────────────────────────────── */</span>
+                            <span class="kw">font-size</span>: <span class="fn">clamp</span>(<span
+                                class="nu">1.375rem</span>, <span class="st">0.8rem + 3vw</span>, <span
+                                class="nu">2.375rem</span>);
+                        </div>
+                    </div>
+                </section>
+
+
+                <!-- ══════════════════════════════════
+           §02  SEO OPTIMIZATION
+      ══════════════════════════════════ -->
+                <section id="seo" class="page-section" aria-labelledby="seo-title">
+                    <div class="ribbon"><span class="ribbon-label">§ 02 — SEO Optimization</span>
+                        <div class="ribbon-line"></div>
+                    </div>
+
+                    <div style="padding-top:20px;">
+                        <div class="section-kicker">Search Engine Optimization</div>
+                        <h2 id="seo-title" class="section-title">SEO Rules — Every Layer</h2>
+                        <p class="section-deck">From HTML <code>&lt;head&gt;</code> meta tags through JSON-LD structured
+                            data, sitemap configuration, and Core Web Vitals. Each rule maps to a ranking signal.</p>
+                    </div>
+
+                    <!-- Meta tags -->
+                    <h3
+                        style="font-family:var(--font-mono);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:24px 0 10px;">
+                        Head Meta — Every Page Must Have</h3>
+                    <div class="seo-grid four">
+                        <div class="seo-cell">
+                            <div class="seo-cell-title">title</div>
+                            <div class="seo-cell-body">60–65 chars. Format: <code>Article Title — NEWSROOM</code>.
+                                Primary keyword first. Never duplicate across pages. Generated by
+                                <code>generateMetadata()</code> per route.</div>
+                        </div>
+                        <div class="seo-cell">
+                            <div class="seo-cell-title">meta description</div>
+                            <div class="seo-cell-body">120–158 chars. Summarize the page value proposition. Include
+                                primary keyword naturally. Used as snippet in SERPs. Not a ranking factor but drives
+                                CTR.</div>
+                        </div>
+                        <div class="seo-cell">
+                            <div class="seo-cell-title">canonical</div>
+                            <div class="seo-cell-body"><code>&lt;link rel="canonical" href="..."&gt;</code> on every
+                                page. Prevents duplicate content penalties from URL parameters, trailing slashes, or
+                                pagination variants.</div>
+                        </div>
+                        <div class="seo-cell">
+                            <div class="seo-cell-title">robots</div>
+                            <div class="seo-cell-body"><code>index, follow</code> on all public pages.
+                                <code>noindex</code> on <code>/admin</code>, <code>/dashboard</code>,
+                                <code>/search</code>, <code>/auth/*</code>. Set via Next.js <code>metadata.robots</code>
+                                export.</div>
+                        </div>
+                        <div class="seo-cell">
+                            <div class="seo-cell-title">og:title + og:description</div>
+                            <div class="seo-cell-body">Open Graph tags for social sharing previews.
+                                <code>og:title</code> can differ from <code>&lt;title&gt;</code> — make it more
+                                conversational for social. Required for Facebook, LinkedIn.</div>
+                        </div>
+                        <div class="seo-cell">
+                            <div class="seo-cell-title">og:image</div>
+                            <div class="seo-cell-body">1200×630px minimum. Include <code>og:image:width</code> and
+                                <code>og:image:height</code>. Use Cloudinary for on-demand OG image generation. Without
+                                this, platforms pick a random image.</div>
+                        </div>
+                        <div class="seo-cell">
+                            <div class="seo-cell-title">twitter:card</div>
+                            <div class="seo-cell-body"><code>summary_large_image</code> for articles (full-width
+                                preview). <code>summary</code> for utility pages. Always set even if you don't use
+                                X/Twitter — it affects other platforms too.</div>
+                        </div>
+                        <div class="seo-cell">
+                            <div class="seo-cell-title">lang attribute</div>
+                            <div class="seo-cell-body"><code>&lt;html lang="en"&gt;</code> — or the correct BCP 47 code.
+                                Google uses this for language targeting. Screen readers use it for pronunciation.
+                                Missing = SEO and a11y fail.</div>
+                        </div>
+                        <div class="seo-cell">
+                            <div class="seo-cell-title">charset + viewport</div>
+                            <div class="seo-cell-body"><code>&lt;meta charset="UTF-8"&gt;</code> must be the first tag
+                                in <code>&lt;head&gt;</code>.
+                                <code>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</code>
+                                is required for mobile-first indexing.</div>
+                        </div>
+                        <div class="seo-cell">
+                            <div class="seo-cell-title">preconnect</div>
+                            <div class="seo-cell-body">
+                                <code>&lt;link rel="preconnect" href="https://fonts.googleapis.com"&gt;</code> for any
+                                external origin used in the critical path. Reduces DNS + TCP + TLS latency for LCP
+                                resources.</div>
+                        </div>
+                        <div class="seo-cell">
+                            <div class="seo-cell-title">article:published_time</div>
+                            <div class="seo-cell-body">On article pages: <code>og:type="article"</code>,
+                                <code>article:published_time</code>, <code>article:modified_time</code>,
+                                <code>article:section</code>. Enables Google News freshness signals.</div>
+                        </div>
+                        <div class="seo-cell">
+                            <div class="seo-cell-title">hreflang</div>
+                            <div class="seo-cell-body">If serving multiple languages or regions:
+                                <code>&lt;link rel="alternate" hreflang="..."&gt;</code>. Use <code>x-default</code> for
+                                the fallback. Missing hreflang causes duplicate content across locales.</div>
+                        </div>
+                    </div>
+
+                    <!-- JSON-LD -->
+                    <div class="wide-card blue-top" style="margin-top:8px;">
+                        <div class="badge-row"><span class="badge blue">JSON-LD</span><span class="badge">Structured
+                                Data</span></div>
+                        <div class="wide-card-title">JSON-LD Schema — By Page Type</div>
+                        <div class="wide-card-desc">Inject via <code>&lt;Script type="application/ld+json"&gt;</code>
+                            server-side in Next.js layout or page. Do NOT use Microdata or RDFa — JSON-LD is Google's
+                            preferred format and is decoupled from HTML structure.</div>
+                        <div class="code-label">JSON-LD — Article page</div>
+                        <div class="code-block"><span class="hd">// app/article/[slug]/page.tsx</span>
+                            <span class="kw">const</span> jsonLd = {
+                            <span class="st">"@context"</span>: <span class="st">"https://schema.org"</span>,
+                            <span class="st">"@type"</span>: <span class="st">"NewsArticle"</span>,
+                            <span class="st">"headline"</span>: post.title, <span class="cm">// Max 110 chars</span>
+                            <span class="st">"description"</span>: post.excerpt, <span class="cm">// 120–158
+                                chars</span>
+                            <span class="st">"image"</span>: [post.coverImage], <span class="cm">// Array, 1200×630
+                                minimum</span>
+                            <span class="st">"datePublished"</span>: post.createdAt, <span class="cm">// ISO 8601</span>
+                            <span class="st">"dateModified"</span>: post.updatedAt,
+                            <span class="st">"author"</span>: [{
+                            <span class="st">"@type"</span>: <span class="st">"Person"</span>,
+                            <span class="st">"name"</span>: post.author.name,
+                            <span class="st">"url"</span>: <span
+                                class="fn">`${siteUrl}/author/${post.author.slug}`</span>
+                            }],
+                            <span class="st">"publisher"</span>: {
+                            <span class="st">"@type"</span>: <span class="st">"Organization"</span>,
+                            <span class="st">"name"</span>: <span class="st">"NEWSROOM"</span>,
+                            <span class="st">"logo"</span>: { <span class="st">"@type"</span>: <span
+                                class="st">"ImageObject"</span>, <span class="st">"url"</span>: <span
+                                class="fn">`${siteUrl}/logo.png`</span> }
+                            },
+                            <span class="st">"mainEntityOfPage"</span>: { <span class="st">"@type"</span>: <span
+                                class="st">"WebPage"</span>, <span class="st">"@id"</span>: canonicalUrl },
+                            <span class="st">"articleSection"</span>: post.category.name,
+                            <span class="st">"keywords"</span>: post.tags.join(<span class="st">", "</span>),
+                            <span class="st">"wordCount"</span>: post.wordCount,
+                            <span class="st">"isAccessibleForFree"</span>: <span class="kw">true</span>,
+                            <span class="st">"breadcrumb"</span>: {
+                            <span class="st">"@type"</span>: <span class="st">"BreadcrumbList"</span>,
+                            <span class="st">"itemListElement"</span>: [
+                            { <span class="st">"@type"</span>: <span class="st">"ListItem"</span>, <span
+                                class="st">"position"</span>: <span class="nu">1</span>, <span class="st">"name"</span>:
+                            <span class="st">"Home"</span>, <span class="st">"item"</span>: siteUrl },
+                            { <span class="st">"@type"</span>: <span class="st">"ListItem"</span>, <span
+                                class="st">"position"</span>: <span class="nu">2</span>, <span class="st">"name"</span>:
+                            post.category.name, <span class="st">"item"</span>: categoryUrl },
+                            { <span class="st">"@type"</span>: <span class="st">"ListItem"</span>, <span
+                                class="st">"position"</span>: <span class="nu">3</span>, <span class="st">"name"</span>:
+                            post.title, <span class="st">"item"</span>: canonicalUrl }
+                            ]
+                            }
+                            }
+                        </div>
+                        <div class="code-label">JSON-LD — Homepage (WebSite + Sitelinks Searchbox)</div>
+                        <div class="code-block"><span class="hd">// app/page.tsx</span>
+                            {
+                            <span class="st">"@context"</span>: <span class="st">"https://schema.org"</span>,
+                            <span class="st">"@type"</span>: <span class="st">"WebSite"</span>,
+                            <span class="st">"name"</span>: <span class="st">"NEWSROOM"</span>,
+                            <span class="st">"url"</span>: siteUrl,
+                            <span class="st">"description"</span>: <span class="st">"Editorial news platform..."</span>,
+                            <span class="st">"potentialAction"</span>: {
+                            <span class="st">"@type"</span>: <span class="st">"SearchAction"</span>,
+                            <span class="st">"target"</span>: { <span class="st">"@type"</span>: <span
+                                class="st">"EntryPoint"</span>, <span class="st">"urlTemplate"</span>: <span
+                                class="fn">`${siteUrl}/search?q={search_term_string}`</span> },
+                            <span class="st">"query-input"</span>: <span class="st">"required
+                                name=search_term_string"</span>
+                            }
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Sitemap + robots.txt -->
+                    <div class="two-panel">
+                        <div class="panel">
+                            <div class="panel-title">sitemap.xml — Dynamic</div>
+                            <div class="code-label green" style="margin-top:0;">app/sitemap.ts</div>
+                            <div class="code-block green-left"><span class="kw">import</span> { <span
+                                    class="ty">MetadataRoute</span> } <span class="kw">from</span> <span
+                                    class="st">'next'</span>
+
+                                <span class="kw">export default async function</span> <span class="fn">sitemap</span>():
+                                Promise&lt;<span class="ty">MetadataRoute.Sitemap</span>&gt; {
+                                <span class="kw">const</span> posts = <span class="kw">await</span> <span
+                                    class="fn">getAllPublishedPosts</span>()
+
+                                <span class="kw">return</span> [
+                                { <span class="kw">url</span>: siteUrl, <span class="kw">changeFrequency</span>: <span
+                                    class="st">'hourly'</span>, <span class="kw">priority</span>: <span
+                                    class="nu">1.0</span> },
+                                { <span class="kw">url</span>: <span class="fn">`${siteUrl}/latest`</span>, <span
+                                    class="kw">changeFrequency</span>: <span class="st">'hourly'</span>, <span
+                                    class="kw">priority</span>: <span class="nu">0.9</span> },
+                                ...categories.map(c => ({
+                                <span class="kw">url</span>: <span class="fn">`${siteUrl}/category/${c.slug}`</span>,
+                                <span class="kw">changeFrequency</span>: <span class="st">'daily'</span>,
+                                <span class="kw">priority</span>: <span class="nu">0.8</span>
+                                })),
+                                ...posts.map(p => ({
+                                <span class="kw">url</span>: <span class="fn">`${siteUrl}/article/${p.slug}`</span>,
+                                <span class="kw">lastModified</span>: p.updatedAt,
+                                <span class="kw">changeFrequency</span>: <span class="st">'weekly'</span>,
+                                <span class="kw">priority</span>: <span class="nu">0.7</span>
+                                })),
+                                ]
+                                }
+                            </div>
+                        </div>
+                        <div class="panel">
+                            <div class="panel-title">robots.txt — App Router</div>
+                            <div class="code-label red" style="margin-top:0;">app/robots.ts</div>
+                            <div class="code-block red-left"><span class="kw">import</span> { <span
+                                    class="ty">MetadataRoute</span> } <span class="kw">from</span> <span
+                                    class="st">'next'</span>
+
+                                <span class="kw">export default function</span> <span class="fn">robots</span>(): <span
+                                    class="ty">MetadataRoute.Robots</span> {
+                                <span class="kw">return</span> {
+                                <span class="kw">rules</span>: [
+                                {
+                                <span class="kw">userAgent</span>: <span class="st">'*'</span>,
+                                <span class="kw">allow</span>: <span class="st">'/'</span>,
+                                <span class="kw">disallow</span>: [
+                                <span class="st">'/admin/'</span>,
+                                <span class="st">'/dashboard/'</span>,
+                                <span class="st">'/api/'</span>,
+                                <span class="st">'/auth/'</span>,
+                                <span class="st">'/search'</span>, <span class="cm">// noindex — duplicate
+                                    content</span>
+                                ],
+                                },
+                                ],
+                                <span class="kw">sitemap</span>: <span class="fn">`${siteUrl}/sitemap.xml`</span>,
+                                <span class="kw">host</span>: siteUrl,
+                                }
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Core Web Vitals -->
+                    <h3
+                        style="font-family:var(--font-mono);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:32px 0 10px;">
+                        Core Web Vitals — Targets &amp; Fixes</h3>
+                    <div class="seo-grid">
+                        <div class="seo-cell">
+                            <div class="seo-cell-title">LCP &lt; 2.5s</div>
+                            <div class="seo-cell-body">Hero image: <code>priority={true}</code> on
+                                <code>next/image</code> injects <code>&lt;link rel="preload"&gt;</code>. Serve from
+                                Netlify CDN edge. Avoid above-the-fold CSS background images — use
+                                <code>&lt;img&gt;</code> so preload can find it.</div>
+                        </div>
+                        <div class="seo-cell">
+                            <div class="seo-cell-title">CLS &lt; 0.1</div>
+                            <div class="seo-cell-body">All <code>next/image</code> must declare <code>width</code> +
+                                <code>height</code> — reserves space before image loads. Use <code>next/font</code> with
+                                <code>display: swap</code> for zero font-induced layout shift. No
+                                <code>aspect-ratio</code> CSS hacks needed.</div>
+                        </div>
+                        <div class="seo-cell">
+                            <div class="seo-cell-title">INP &lt; 200ms</div>
+                            <div class="seo-cell-body">Heavy components (TipTap editor) use
+                                <code>dynamic(import, {ssr:false})</code>. Load More uses <code>useTransition</code> to
+                                keep UI responsive during fetch. No synchronous localStorage reads in render path.</div>
+                        </div>
+                        <div class="seo-cell">
+                            <div class="seo-cell-title">TTFB &lt; 800ms</div>
+                            <div class="seo-cell-body">Homepage + category pages use ISR (revalidate 60s). Static assets
+                                served from CDN. Database queries use Prisma connection pooling via PgBouncer to
+                                eliminate cold-start DB latency.</div>
+                        </div>
+                        <div class="seo-cell">
+                            <div class="seo-cell-title">FCP &lt; 1.8s</div>
+                            <div class="seo-cell-body">Inline critical CSS for above-the-fold content. Preconnect to
+                                Google Fonts. <code>font-display: swap</code> prevents invisible text during font load.
+                                No render-blocking scripts in <code>&lt;head&gt;</code>.</div>
+                        </div>
+                        <div class="seo-cell">
+                            <div class="seo-cell-title">Accessibility Score</div>
+                            <div class="seo-cell-body">Google uses a11y as a ranking signal. Semantic HTML, ARIA labels,
+                                colour contrast ≥ 4.5:1 (black on white = 21:1 ✓), skip link, focus indicators. Run
+                                Lighthouse on every deploy.</div>
+                        </div>
+                    </div>
+                </section>
+
+
+                <!-- ══════════════════════════════════
+           §03  UX/UI PRINCIPLES
+      ══════════════════════════════════ -->
+                <section id="uxui" class="page-section" aria-labelledby="uxui-title">
+                    <div class="ribbon blue"><span class="ribbon-label">§ 03 — UX/UI Design Principles</span>
+                        <div class="ribbon-line"></div>
+                    </div>
+
+                    <div style="padding-top:20px;">
+                        <div class="section-kicker">User Experience &amp; Interface Design</div>
+                        <h2 id="uxui-title" class="section-title">The 12 UX/UI Principles Applied to NEWSROOM</h2>
+                        <p class="section-deck">Every principle below is implemented in CSS, component logic, or content
+                            structure — not aspirational theory. Each maps to a concrete rule in the codebase.</p>
+                    </div>
+
+                    <div class="numbered-list" style="margin-top:24px;">
+                        <div class="numbered-item">
+                            <div class="num-digit" aria-hidden="true">01</div>
+                            <div>
+                                <h3 class="num-title">Hierarchy — The Eye Follows Type Weight, Not Color</h3>
+                                <p class="num-desc">WIRED's design achieves hierarchy with size and ink alone. Hero
+                                    headline at <code>clamp(1.625rem, 1rem + 3.5vw, 4rem)</code>. Grid headlines at
+                                    <code>clamp(1.125rem, 0.85rem + 1.4vw, 1.625rem)</code>. Kickers at 0.72rem mono.
+                                    Color never signals importance — only grayscale + blue for links. This forces
+                                    readers' eyes down the intended path without distraction.</p>
+                            </div>
+                        </div>
+                        <div class="numbered-item">
+                            <div class="num-digit" aria-hidden="true">02</div>
+                            <div>
+                                <h3 class="num-title">Progressive Disclosure — Show Less, Reveal More</h3>
+                                <p class="num-desc">Category pages load 12 posts. "LOAD MORE" reveals 8 more via cursor
+                                    pagination using <code>useTransition</code> — never a full page reload. The TOC on
+                                    mobile is collapsed by default — one tap reveals all sections. The admin accordion
+                                    in the API docs hides child details until needed. Each disclosure removes cognitive
+                                    load from the initial view.</p>
+                            </div>
+                        </div>
+                        <div class="numbered-item">
+                            <div class="num-digit" aria-hidden="true">03</div>
+                            <div>
+                                <h3 class="num-title">Feedback — Every Action Has a Response</h3>
+                                <p class="num-desc">Buttons animate on hover:
+                                    <code>background/color transition: 150ms</code>. Links animate:
+                                    <code>color transition: 120ms</code>. The scroll progress bar gives continuous
+                                    reading progress feedback. Forms show toast on newsletter signup success. The
+                                    hamburger icon transforms (3 bars → X) on open. Feedback latency under 200ms is
+                                    invisible; over 500ms is friction.</p>
+                            </div>
+                        </div>
+                        <div class="numbered-item">
+                            <div class="num-digit" aria-hidden="true">04</div>
+                            <div>
+                                <h3 class="num-title">Consistency — Same Pattern, Same Result, Everywhere</h3>
+                                <p class="num-desc">The mono kicker pattern appears above every story headline across
+                                    homepage, category pages, article page, and search results. The ribbon header
+                                    appears before every module section. Black → white button inversion is the same
+                                    behavior on every button. If a user learns one pattern, they've learned all
+                                    instances. Inconsistency forces re-learning and erodes trust.</p>
+                            </div>
+                        </div>
+                        <div class="numbered-item">
+                            <div class="num-digit" aria-hidden="true">05</div>
+                            <div>
+                                <h3 class="num-title">Affordance — Things That Look Clickable Are Clickable</h3>
+                                <p class="num-desc">Buttons have <code>2px solid #000000</code> borders — they look like
+                                    physical buttons, not flat text. Links in body copy have
+                                    <code>text-decoration: underline</code> at all times (not just hover). Nav items
+                                    underline on hover. Round icon buttons suggest rotational actions. No element fakes
+                                    affordance without being interactive — a cardinal sin of flat design overreach.</p>
+                            </div>
+                        </div>
+                        <div class="numbered-item">
+                            <div class="num-digit" aria-hidden="true">06</div>
+                            <div>
+                                <h3 class="num-title">Orientation — The User Always Knows Where They Are</h3>
+                                <p class="num-desc">Sticky header persists at all scroll depths. Active section nav link
+                                    is underlined with <code>border-bottom: 2px solid var(--black)</code>. Scroll
+                                    progress bar reads 0–100%. Breadcrumb JSON-LD signals position in site hierarchy.
+                                    TOC highlights the current section (implementable with
+                                    <code>IntersectionObserver</code>). Every page has a unique, descriptive
+                                    <code>&lt;h1&gt;</code>. Users should never ask "where am I?"</p>
+                            </div>
+                        </div>
+                        <div class="numbered-item">
+                            <div class="num-digit" aria-hidden="true">07</div>
+                            <div>
+                                <h3 class="num-title">Cognitive Load — Reduce the Number of Decisions Per Screen</h3>
+                                <p class="num-desc">The color palette has exactly two functional colors: black
+                                    (ink/structure) and <code>#057dbc</code> (links/interactive). Adding a third color
+                                    forces users to decode meaning. Story tiles show three pieces of information:
+                                    kicker, headline, byline — not five. Mobile nav hides category sub-nav until the
+                                    drawer opens. Whitespace between sections is not decoration — it's a pause that
+                                    reduces processing load.</p>
+                            </div>
+                        </div>
+                        <div class="numbered-item">
+                            <div class="num-digit" aria-hidden="true">08</div>
+                            <div>
+                                <h3 class="num-title">Error Prevention — Validate Before Submit, Not After</h3>
+                                <p class="num-desc">Registration form checks email uniqueness on blur (server-side, 409
+                                    response) before form submission. Newsletter form shows inline validation before
+                                    calling the Server Action. Contact form has a honeypot field. Password fields use
+                                    browser-native type validation. CSRF tokens (NextAuth) prevent cross-site POST. Rate
+                                    limiting at the edge prevents spam before it reaches the DB. Catch errors before
+                                    they become user-visible failures.</p>
+                            </div>
+                        </div>
+                        <div class="numbered-item">
+                            <div class="num-digit" aria-hidden="true">09</div>
+                            <div>
+                                <h3 class="num-title">Speed Perception — Perceived Performance &gt; Actual Performance
+                                </h3>
+                                <p class="num-desc">Optimistic UI: "LOAD MORE" adds items to the list before the fetch
+                                    confirms. Skeleton loaders (height-matched placeholders) prevent CLS and signal
+                                    content is coming. The <code>loading="lazy"</code> attribute on below-fold images
+                                    prevents bandwidth waste. <code>priority={true}</code> on the hero image makes the
+                                    first visible thing load first. A page that feels fast converts better than one that
+                                    is fast but looks slow.</p>
+                            </div>
+                        </div>
+                        <div class="numbered-item">
+                            <div class="num-digit" aria-hidden="true">10</div>
+                            <div>
+                                <h3 class="num-title">Scannability — Readers Don't Read, They Scan</h3>
+                                <p class="num-desc">Every section has a mono ALL-CAPS kicker, a display headline, and an
+                                    optional deck — the F-pattern hierarchy. "Most Popular" uses 40px numerals as
+                                    anchors. Hairline rules separate stories without requiring the eye to decode spatial
+                                    distance. Bold is rare (Apercu 700 only for UI) so when it appears, it genuinely
+                                    signals importance. Reading time estimate above the byline lets readers self-select
+                                    before committing.</p>
+                            </div>
+                        </div>
+                        <div class="numbered-item">
+                            <div class="num-digit" aria-hidden="true">11</div>
+                            <div>
+                                <h3 class="num-title">Mobile Context — Thumb Zones &amp; Touch Intent</h3>
+                                <p class="num-desc">Primary CTA buttons are positioned in the natural thumb zone on
+                                    mobile (bottom-center or full-width). Nav links in the drawer use
+                                    <code>min-height: 44px</code>. Form inputs use <code>font-size: 16px</code> to
+                                    prevent iOS auto-zoom. Swipeable horizontal scrolls (category strip) have
+                                    <code>-webkit-overflow-scrolling: touch</code> and hide scrollbars. The hero image
+                                    is full-width (no margin compression) on XS — screens are small, make images count.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="numbered-item">
+                            <div class="num-digit" aria-hidden="true">12</div>
+                            <div>
+                                <h3 class="num-title">Forgiveness — Let Users Undo &amp; Recover</h3>
+                                <p class="num-desc">The post editor auto-saves to <code>localStorage</code> every 30
+                                    seconds — surviving page refreshes. Delete actions require a confirmation modal
+                                    (inline, not a native browser <code>confirm()</code>). Admin soft-deletes posts
+                                    (sets <code>deletedAt</code>) rather than permanently removing them. Password reset
+                                    uses a single-use, hashed, time-limited token. Users who make mistakes should have a
+                                    clear, fast path back.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+
+                <!-- ══════════════════════════════════
+           §04  RESPONSIVE TYPOGRAPHY
+      ══════════════════════════════════ -->
+                <section id="typography" class="page-section" aria-labelledby="type-title">
+                    <div class="ribbon amber"><span class="ribbon-label">§ 04 — Responsive Typography</span>
+                        <div class="ribbon-line"></div>
+                    </div>
+
+                    <div style="padding-top:20px;">
+                        <div class="section-kicker">Typography Rules</div>
+                        <h2 id="type-title" class="section-title">Type Scale &amp; Responsive Rules</h2>
+                        <p class="section-deck">The four typefaces each have exactly one job. These rules prevent
+                            role-swapping and ensure the design system survives responsive collapse.</p>
+                    </div>
+
+                    <div class="rule-grid" style="margin-top:20px;">
+                        <article class="rule-card">
+                            <div class="badge-row"><span class="badge filled">WiredDisplay → Playfair</span></div>
+                            <h3 class="card-title">Display / Hero Headlines</h3>
+                            <p class="card-body">Only for hero headlines and major section titles. <code>clamp()</code>
+                                from 26px to 64px. Letter-spacing: <code>-0.5px</code> at large sizes. Line-height: 1.05
+                                at 64px (tight for print feel). <strong>Never</strong> use for body, UI, or kickers.</p>
+                        </article>
+                        <article class="rule-card green-top">
+                            <div class="badge-row"><span class="badge green">BreveText → Lora</span></div>
+                            <h3 class="card-title">Body / Deck / Long-form</h3>
+                            <p class="card-body">Article body at 16px / 1.7 line-height. Decks at 19px / 1.47. Captions
+                                at 12.73px / 2.20 (generous leading for print-photo feel). Max-width: <code>65ch</code>
+                                on article body — optimal reading line length.</p>
+                        </article>
+                        <article class="rule-card blue-top">
+                            <div class="badge-row"><span class="badge blue">Apercu → Work Sans</span></div>
+                            <h3 class="card-title">UI Labels / Buttons / Nav</h3>
+                            <p class="card-body">Buttons, nav items, section headings, "Most Popular" numbers. Weight
+                                700 for emphasis, 400 for secondary UI. <strong>Never</strong> lowercase in kicker
+                                position — that's WiredMono's role. Letter-spacing: <code>0.3px</code> on buttons.</p>
+                        </article>
+                        <article class="rule-card amber-top">
+                            <div class="badge-row"><span class="badge amber">WiredMono → Space Mono</span></div>
+                            <h3 class="card-title">Kickers / Eyebrows / Labels</h3>
+                            <p class="card-body"><strong>Always uppercase.</strong> Always 0.9–1.2px letter-spacing.
+                                12–13px size — never scale down further or it becomes unreadable. Used for: section
+                                kickers, timestamps, ribbon labels, "X HOURS AGO". Lowercase mono = design error.</p>
+                        </article>
+                    </div>
+
+                    <div class="callout amber" role="note" style="margin-top:8px;">
+                        <span class="mono">Substitution Warning — Font Metric Compensation</span>
+                        <p class="callout-body">Playfair Display (substituting WiredDisplay) has wider metrics. Loosen
+                            hero line-height from 0.93 to approximately 1.05 to prevent ascender/descender collisions on
+                            wrapping lines. Lora and Work Sans substitute without adjustment. Space Mono substitutes
+                            without adjustment.</p>
+                    </div>
+
+                    <!-- Type sizes table -->
+                    <div class="bp-table-wrap" style="margin-top:20px;">
+                        <table class="bp-table">
+                            <caption style="display:none">Responsive type size by breakpoint</caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Role</th>
+                                    <th scope="col">320–479px</th>
+                                    <th scope="col">480–767px</th>
+                                    <th scope="col">768–1023px</th>
+                                    <th scope="col">1024–1279px</th>
+                                    <th scope="col">1280px+</th>
+                                    <th scope="col">Clamp / Rule</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Hero Headline</td>
+                                    <td class="bp-cell">26px</td>
+                                    <td class="bp-cell">32px</td>
+                                    <td class="bp-cell">42px</td>
+                                    <td class="bp-cell">54px</td>
+                                    <td class="bp-cell">64px</td>
+                                    <td><code>clamp(1.625rem, 1rem + 3.5vw, 4rem)</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Section Title (h2)</td>
+                                    <td class="bp-cell">22px</td>
+                                    <td class="bp-cell">26px</td>
+                                    <td class="bp-cell">32px</td>
+                                    <td class="bp-cell">38px</td>
+                                    <td class="bp-cell">40px</td>
+                                    <td><code>clamp(1.375rem, 0.9rem + 2.5vw, 2.5rem)</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Grid Headline (h3)</td>
+                                    <td class="bp-cell">18px</td>
+                                    <td class="bp-cell">19px</td>
+                                    <td class="bp-cell">22px</td>
+                                    <td class="bp-cell">24px</td>
+                                    <td class="bp-cell">26px</td>
+                                    <td><code>clamp(1.125rem, 0.85rem + 1.4vw, 1.625rem)</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Body (article)</td>
+                                    <td class="bp-cell">16px</td>
+                                    <td class="bp-cell">16px</td>
+                                    <td class="bp-cell">16px</td>
+                                    <td class="bp-cell">16px</td>
+                                    <td class="bp-cell">16px</td>
+                                    <td>Fixed — never scale body text</td>
+                                </tr>
+                                <tr>
+                                    <td>Mono Kicker</td>
+                                    <td class="bp-cell">12px</td>
+                                    <td class="bp-cell">12px</td>
+                                    <td class="bp-cell">13px</td>
+                                    <td class="bp-cell">13px</td>
+                                    <td class="bp-cell">13px</td>
+                                    <td>Locked — minimum readable; never below 12px</td>
+                                </tr>
+                                <tr>
+                                    <td>Logo</td>
+                                    <td class="bp-cell">22px</td>
+                                    <td class="bp-cell">26px</td>
+                                    <td class="bp-cell">30px</td>
+                                    <td class="bp-cell">36px</td>
+                                    <td class="bp-cell">38px</td>
+                                    <td><code>clamp(1.375rem, 0.8rem + 3vw, 2.375rem)</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+
+                <!-- ══════════════════════════════════
+           §05  IMAGE STRATEGY
+      ══════════════════════════════════ -->
+                <section id="images" class="page-section" aria-labelledby="images-title">
+                    <div class="ribbon green"><span class="ribbon-label">§ 05 — Responsive Image Strategy</span>
+                        <div class="ribbon-line"></div>
+                    </div>
+
+                    <div style="padding-top:20px;">
+                        <div class="section-kicker">Image Handling</div>
+                        <h2 id="images-title" class="section-title">Images — Every Rule</h2>
+                    </div>
+
+                    <div class="infra-strip" style="margin-top:20px;">
+                        <div class="infra-item">
+                            <div class="infra-label">Hero Aspect Ratio</div>
+                            <div class="infra-value">16:9</div>
+                        </div>
+                        <div class="infra-item">
+                            <div class="infra-label">Grid Tile Ratio</div>
+                            <div class="infra-value">4:3</div>
+                        </div>
+                        <div class="infra-item">
+                            <div class="infra-label">Thumbnail</div>
+                            <div class="infra-value">1:1</div>
+                        </div>
+                        <div class="infra-item">
+                            <div class="infra-label">OG Image</div>
+                            <div class="infra-value">1200×630</div>
+                        </div>
+                        <div class="infra-item">
+                            <div class="infra-label">Border Radius</div>
+                            <div class="infra-value">0 (square)</div>
+                        </div>
+                        <div class="infra-item">
+                            <div class="infra-label">Formats</div>
+                            <div class="infra-value">AVIF → WebP → JPEG</div>
+                        </div>
+                        <div class="infra-item">
+                            <div class="infra-label">Hero Loading</div>
+                            <div class="infra-value">eager + preload</div>
+                        </div>
+                        <div class="infra-item">
+                            <div class="infra-label">Below Fold</div>
+                            <div class="infra-value">lazy</div>
+                        </div>
+                    </div>
+
+                    <div class="wide-card green-top">
+                        <div class="badge-row"><span class="badge ok">next/image</span><span class="badge">Correct
+                                Usage</span></div>
+                        <div class="wide-card-title">next/image — Complete Responsive Pattern</div>
+                        <div class="code-label green">Hero image — LCP critical path</div>
+                        <div class="code-block green-left"><span class="hd">// app/components/HeroImage.tsx</span>
+                            <span class="kw">import</span> Image <span class="kw">from</span> <span
+                                class="st">'next/image'</span>
+
+                            <span class="cm">// Hero: 16:9, full-width, LCP element — MUST have priority</span>
+                            &lt;<span class="ty">Image</span>
+                            src={post.coverImage}
+                            alt={post.title} <span class="cm">// Descriptive alt — SEO + a11y signal</span>
+                            width={<span class="nu">1920</span>} <span class="cm">// Actual source width</span>
+                            height={<span class="nu">1080</span>} <span class="cm">// Maintains 16:9 — prevents
+                                CLS</span>
+                            priority={<span class="kw">true</span>} <span class="cm">// Injects &lt;link
+                                rel="preload"&gt; — critical for LCP</span>
+                            quality={<span class="nu">85</span>} <span class="cm">// 85 is sweet spot: quality vs. file
+                                size</span>
+                            sizes={<span class="st">"(max-width: 768px) 100vw, (max-width: 1280px) 80vw, 1440px"</span>}
+                            style={{ objectFit: <span class="st">'cover'</span>, borderRadius: <span class="nu">0</span>
+                            }}
+                            /&gt;
+
+                            <span class="cm">// Grid tile: 4:3, 3-col on desktop</span>
+                            &lt;<span class="ty">Image</span>
+                            src={post.coverImage}
+                            alt={post.imageAlt || post.title}
+                            width={<span class="nu">800</span>}
+                            height={<span class="nu">600</span>} <span class="cm">// 4:3 — prevents CLS in grid</span>
+                            loading={<span class="st">"lazy"</span>} <span class="cm">// Below fold: defer load</span>
+                            quality={<span class="nu">75</span>}
+                            sizes={<span class="st">"(max-width: 600px) 100vw, (max-width: 1024px) 50vw, 33vw"</span>}
+                            style={{ objectFit: <span class="st">'cover'</span>, borderRadius: <span class="nu">0</span>
+                            }}
+                            /&gt;
+
+                            <span class="cm">// Thumbnail: 1:1 for Most Popular list</span>
+                            &lt;<span class="ty">Image</span>
+                            src={post.coverImage}
+                            alt={post.title}
+                            width={<span class="nu">80</span>}
+                            height={<span class="nu">80</span>}
+                            loading={<span class="st">"lazy"</span>}
+                            sizes={<span class="st">"80px"</span>} <span class="cm">// Fixed size — no responsive
+                                needed</span>
+                            style={{ objectFit: <span class="st">'cover'</span>, borderRadius: <span class="nu">0</span>
+                            }}
+                            /&gt;
+
+                            <span class="cm">// Author avatar: circular only — the one exception to
+                                border-radius:0</span>
+                            &lt;<span class="ty">Image</span>
+                            src={author.avatar}
+                            alt={author.name}
+                            width={<span class="nu">40</span>}
+                            height={<span class="nu">40</span>}
+                            style={{ objectFit: <span class="st">'cover'</span>, borderRadius: <span
+                                class="st">'50%'</span> }}
+                            /&gt;
+                        </div>
+                    </div>
+
+                    <div class="callout" role="note">
+                        <span class="mono">alt Text Rules — SEO + Accessibility</span>
+                        <p class="callout-body"><strong>Decorative images:</strong> <code>alt=""</code> (empty string,
+                            not missing). Screen readers skip it. <strong>Content images:</strong> describe what the
+                            image shows, not "image of..." — e.g.
+                            <code>alt="Protestors outside the Capitol building"</code>. <strong>Never</strong> use the
+                            filename as alt text. <strong>Never</strong> repeat the caption as alt text. Google uses alt
+                            text as an image ranking signal for Google Images.</p>
+                    </div>
+                </section>
+
+
+                <!-- ══════════════════════════════════
+           §06  PERFORMANCE
+      ══════════════════════════════════ -->
+                <section id="performance" class="page-section" aria-labelledby="perf-title">
+                    <div class="ribbon"><span class="ribbon-label">§ 06 — Performance Rules</span>
+                        <div class="ribbon-line"></div>
+                    </div>
+
+                    <div style="padding-top:20px;">
+                        <div class="section-kicker">Performance Optimization</div>
+                        <h2 id="perf-title" class="section-title">Zero-Bloat Performance</h2>
+                    </div>
+
+                    <div class="rule-grid" style="margin-top:20px;">
+                        <article class="rule-card green-top">
+                            <div class="badge-row"><span class="badge ok">SSG + ISR</span></div>
+                            <h3 class="card-title">Rendering Strategy Per Route</h3>
+                            <ul class="feature-list">
+                                <li>Homepage, categories: ISR (60s revalidate). Fastest possible TTFB from CDN.</li>
+                                <li>Article pages: ISR (on-demand via webhook). Near-static speed with fresh content.
+                                </li>
+                                <li>Dashboard, admin: SSR with <code>force-dynamic</code>. Must be session-fresh.</li>
+                                <li>Search: SSR. Query-dependent, can't be cached.</li>
+                                <li>Static pages (About, Contact): <code>export const dynamic = 'force-static'</code> —
+                                    pure CDN.</li>
+                            </ul>
+                        </article>
+                        <article class="rule-card blue-top">
+                            <div class="badge-row"><span class="badge blue">Bundle</span></div>
+                            <h3 class="card-title">Bundle Size Rules</h3>
+                            <ul class="feature-list">
+                                <li>TipTap editor: <code>dynamic(import, {ssr:false})</code> — never in initial bundle.
+                                </li>
+                                <li>Date-fns: import individual functions, not the full library.</li>
+                                <li>No lodash full import — use <code>lodash/get</code> etc.</li>
+                                <li>Run <code>npx @next/bundle-analyzer</code> monthly. Target &lt;200kb first-load JS.
+                                </li>
+                                <li>Use <code>next/dynamic</code> for any component &gt;50kb that's not above-the-fold.
+                                </li>
+                            </ul>
+                        </article>
+                        <article class="rule-card amber-top">
+                            <div class="badge-row"><span class="badge warn">Cache</span></div>
+                            <h3 class="card-title">Cache Headers</h3>
+                            <ul class="feature-list">
+                                <li><code>/_next/static/*</code>: <code>public, max-age=31536000, immutable</code>.
+                                    Hashed filenames guarantee freshness.</li>
+                                <li><code>/api/*</code>: <code>no-store, no-cache, must-revalidate</code>. API responses
+                                    must never be stale.</li>
+                                <li>Cloudinary images: 1yr CDN cache. Transformations are URL-versioned.</li>
+                                <li>HTML pages: Netlify CDN cache + stale-while-revalidate via ISR.</li>
+                            </ul>
+                        </article>
+                        <article class="rule-card">
+                            <div class="badge-row"><span class="badge filled">Fonts</span></div>
+                            <h3 class="card-title">Font Loading Strategy</h3>
+                            <ul class="feature-list">
+                                <li>Use <code>next/font/google</code> — self-hosted, zero layout shift, automatic
+                                    preloading.</li>
+                                <li><code>display: 'swap'</code> on all fonts — text visible immediately in fallback.
+                                </li>
+                                <li>Preconnect to <code>fonts.googleapis.com</code> and <code>fonts.gstatic.com</code>
+                                    in <code>&lt;head&gt;</code>.</li>
+                                <li>Load only the weights you use. Playfair: 400+700. Space Mono: 400+700.</li>
+                            </ul>
+                        </article>
+                    </div>
+                </section>
+
+
+                <!-- ══════════════════════════════════
+           §07  ACCESSIBILITY
+      ══════════════════════════════════ -->
+                <section id="accessibility" class="page-section" aria-labelledby="a11y-title">
+                    <div class="ribbon red"><span class="ribbon-label">§ 07 — Accessibility (WCAG AA)</span>
+                        <div class="ribbon-line"></div>
+                    </div>
+
+                    <div style="padding-top:20px;">
+                        <div class="section-kicker">Accessibility Rules</div>
+                        <h2 id="a11y-title" class="section-title">WCAG AA — Non-Negotiable Rules</h2>
+                        <p class="section-deck">Accessibility is not a separate concern — it's the foundation of good
+                            UX. Every rule here also improves SEO and keyboard usability.</p>
+                    </div>
+
+                    <div class="rule-grid" style="margin-top:20px;">
+                        <article class="rule-card red-top">
+                            <div class="badge-row"><span class="badge red">1.4.3</span></div>
+                            <h3 class="card-title">Colour Contrast — 4.5:1 Min</h3>
+                            <p class="card-body">Black on white = 21:1. Blue <code>#057dbc</code> on white = 4.6:1
+                                (passes AA). Caption grey <code>#757575</code> on white = 4.6:1. Never use
+                                <code>#999999</code> for body text — 2.85:1 fails. Check every custom colour with WebAIM
+                                Contrast Checker before shipping.</p>
+                        </article>
+                        <article class="rule-card red-top">
+                            <div class="badge-row"><span class="badge red">2.4.1</span></div>
+                            <h3 class="card-title">Skip Navigation Link</h3>
+                            <p class="card-body"><code>&lt;a href="#main-content" class="skip-link"&gt;</code> as the
+                                first element in <code>&lt;body&gt;</code>. Visually hidden until focused
+                                (<code>top: -9999px</code>, visible on <code>:focus</code>). Allows keyboard-only users
+                                to bypass repeated nav on every page.</p>
+                        </article>
+                        <article class="rule-card red-top">
+                            <div class="badge-row"><span class="badge red">2.4.7</span></div>
+                            <h3 class="card-title">Focus Indicators</h3>
+                            <p class="card-body">
+                                <code>:focus-visible { outline: 2px solid #057dbc; outline-offset: 2px; }</code>. Never
+                                <code>outline: none</code> without a replacement. Focus indicators must be visible
+                                against all backgrounds. The 2px blue outline satisfies 3:1 contrast requirement.</p>
+                        </article>
+                        <article class="rule-card red-top">
+                            <div class="badge-row"><span class="badge red">1.1.1</span></div>
+                            <h3 class="card-title">Alt Text on Every Image</h3>
+                            <p class="card-body">Content images: descriptive alt text. Decorative images:
+                                <code>alt=""</code>. Icons in buttons: add <code>aria-label</code> to the button. The
+                                hamburger button must have <code>aria-label="Toggle navigation"</code> and
+                                <code>aria-expanded</code> state toggled via JS.</p>
+                        </article>
+                        <article class="rule-card red-top">
+                            <div class="badge-row"><span class="badge red">4.1.2</span></div>
+                            <h3 class="card-title">Semantic HTML Structure</h3>
+                            <p class="card-body">One <code>&lt;h1&gt;</code> per page. Heading hierarchy: h1 → h2 → h3
+                                (no skipping). <code>&lt;main&gt;</code>, <code>&lt;header&gt;</code>,
+                                <code>&lt;nav aria-label&gt;</code>, <code>&lt;footer&gt;</code>,
+                                <code>&lt;article&gt;</code>. Tables have <code>&lt;caption&gt;</code> and
+                                <code>scope</code> on <code>&lt;th&gt;</code>. Form inputs have associated
+                                <code>&lt;label&gt;</code> elements.</p>
+                        </article>
+                        <article class="rule-card red-top">
+                            <div class="badge-row"><span class="badge red">2.1.1</span></div>
+                            <h3 class="card-title">Full Keyboard Navigation</h3>
+                            <p class="card-body">All interactive elements reachable via Tab. Mobile drawer: focus trap
+                                while open (first item → last item → first item). ESC closes drawer, modals, and
+                                overlays. Dropdowns navigable via arrow keys. Custom components use correct ARIA roles
+                                (<code>role="dialog"</code>, <code>role="navigation"</code>).</p>
+                        </article>
+                    </div>
+                </section>
+
+
+                <!-- ══════════════════════════════════
+           §08  PRE-LAUNCH CHECKLIST
+      ══════════════════════════════════ -->
+                <section id="checklist" class="page-section" aria-labelledby="checklist-title">
+                    <div class="ribbon"><span class="ribbon-label">§ 08 — Pre-Launch Checklist</span>
+                        <div class="ribbon-line"></div>
+                    </div>
+
+                    <div style="padding-top:20px;">
+                        <div class="section-kicker">Quality Gate</div>
+                        <h2 id="checklist-title" class="section-title">Every Item Must Pass Before Deploy</h2>
+                    </div>
+
+                    <div class="wide-card" style="margin-top:20px;">
+                        <div class="badge-row"><span class="badge filled">Responsive</span></div>
+                        <div class="wide-card-title">Responsive — Device Testing</div>
+                        <ul class="checklist" aria-label="Responsive checklist">
+                            <li><span class="ck pass">TEST</span> Open Chrome DevTools → Device Toolbar. Test: iPhone SE
+                                (375px), iPhone 14 Pro (393px), iPad mini (768px), iPad Pro (1024px), MacBook (1280px),
+                                1440px wide. Check every page at each size.</li>
+                            <li><span class="ck pass">TEST</span> Horizontal scroll at 320px: no element bleeds beyond
+                                viewport width. Check with <code>document.querySelectorAll('*')</code> filter for
+                                <code>scrollWidth &gt; window.innerWidth</code>.</li>
+                            <li><span class="ck pass">CHECK</span> All images maintain correct aspect ratios (no
+                                stretching) at every breakpoint. <code>next/image</code> with declared width+height
+                                prevents this.</li>
+                            <li><span class="ck pass">CHECK</span> Nav hamburger appears below 768px. Drawer
+                                opens/closes. ESC closes it. Focus trapped inside while open.</li>
+                            <li><span class="ck pass">CHECK</span> Section nav appears at 768px+. All links visible
+                                without truncation. Active state visible.</li>
+                            <li><span class="ck pass">CHECK</span> Tables scroll horizontally on mobile with visible
+                                scroll affordance. <code>tabindex="0"</code> allows keyboard scrolling.</li>
+                            <li><span class="ck pass">CHECK</span> Code blocks scroll horizontally on mobile. Text does
+                                not wrap. Border-left stripe visible at left edge.</li>
+                            <li><span class="ck pass">CHECK</span> Footer links wrap cleanly on XS. No link text
+                                truncation. All links remain tappable at ≥44px height.</li>
+                            <li><span class="ck warn">VERIFY</span> Form inputs never trigger iOS zoom (font-size ≥ 16px
+                                on all inputs). Test by focusing an input on iPhone Safari.</li>
+                            <li><span class="ck pass">CHECK</span> Max-width container (1440px) is centered correctly at
+                                1600px+ viewport. No content touches screen edge.</li>
+                        </ul>
+                    </div>
+
+                    <div class="wide-card green-top" style="margin-top:16px;">
+                        <div class="badge-row"><span class="badge ok">SEO</span></div>
+                        <div class="wide-card-title">SEO — Audit Every Page</div>
+                        <ul class="checklist">
+                            <li><span class="ck pass">RUN</span>
+                                <code>npx lighthouse https://yourdomain.com --output html</code>. Target: Performance
+                                ≥90, SEO ≥100, Accessibility ≥90, Best Practices ≥90.</li>
+                            <li><span class="ck pass">CHECK</span> Each page has a unique <code>&lt;title&gt;</code>
+                                (max 65 chars) and <code>&lt;meta name="description"&gt;</code> (max 158 chars).</li>
+                            <li><span class="ck pass">CHECK</span> Each page has a
+                                <code>&lt;link rel="canonical"&gt;</code> pointing to the correct canonical URL.</li>
+                            <li><span class="ck pass">CHECK</span> Article pages have JSON-LD <code>NewsArticle</code>
+                                schema. Validate at <a href="https://search.google.com/test/rich-results"
+                                    style="color:var(--blue);">Rich Results Test</a>.</li>
+                            <li><span class="ck pass">CHECK</span> Homepage has JSON-LD <code>WebSite</code> with
+                                <code>SearchAction</code> (Sitelinks Searchbox).</li>
+                            <li><span class="ck pass">CHECK</span> <code>/sitemap.xml</code> is accessible, returns 200,
+                                and all URLs are indexed-eligible (no <code>noindex</code> pages in sitemap).</li>
+                            <li><span class="ck pass">CHECK</span> <code>/robots.txt</code> is accessible, returns 200.
+                                Disallows <code>/admin</code>, <code>/dashboard</code>, <code>/api</code>. Includes
+                                sitemap URL.</li>
+                            <li><span class="ck pass">CHECK</span> Every <code>&lt;img&gt;</code> has an
+                                <code>alt</code> attribute (descriptive or <code>""</code>). Run:
+                                <code>document.querySelectorAll('img:not([alt])')</code> in console — must return empty
+                                NodeList.</li>
+                            <li><span class="ck pass">CHECK</span> All internal links use relative URLs or
+                                <code>NEXT_PUBLIC_SITE_URL</code> — no hardcoded staging domain in production HTML.</li>
+                            <li><span class="ck warn">VERIFY</span> Google Search Console: submit sitemap, check for
+                                crawl errors 48h after deploy.</li>
+                            <li><span class="ck fix">NEVER</span> Ship <code>robots: noindex</code> on public editorial
+                                pages. Check every <code>generateMetadata()</code> export has correct
+                                <code>robots</code> value.</li>
+                        </ul>
+                    </div>
+
+                    <div class="wide-card blue-top" style="margin-top:16px;">
+                        <div class="badge-row"><span class="badge blue">UX/UI</span></div>
+                        <div class="wide-card-title">UX/UI — Visual &amp; Interaction Audit</div>
+                        <ul class="checklist">
+                            <li><span class="ck pass">CHECK</span> Every story tile has a mono ALL-CAPS kicker above the
+                                headline. No exceptions. Missing kicker = generic blog, not NEWSROOM.</li>
+                            <li><span class="ck pass">CHECK</span> All images are square-cornered
+                                (<code>border-radius: 0</code>). Except author avatars (<code>border-radius: 50%</code>)
+                                and text pills (<code>border-radius: 1920px</code>).</li>
+                            <li><span class="ck pass">CHECK</span> No <code>box-shadow</code> on any story tile, card,
+                                or container. Search codebase: <code>grep -r "box-shadow" src/</code> and verify each
+                                result is intentional (e.g. focus ring only).</li>
+                            <li><span class="ck pass">CHECK</span> Hover on story headline: color transitions from
+                                <code>#1a1a1a</code> to <code>#057dbc</code> in 120–150ms. Image does not scale, lift,
+                                or change opacity.</li>
+                            <li><span class="ck pass">CHECK</span> All primary buttons: <code>2px solid #000000</code>
+                                border, <code>border-radius: 0</code>, Apercu/Work Sans 700. Hover inverts to black bg +
+                                white text.</li>
+                            <li><span class="ck pass">CHECK</span> Scroll progress bar appears and increments correctly
+                                on article pages. Hidden on short pages (&lt;100vh).</li>
+                            <li><span class="ck pass">CHECK</span> Tab through the page with keyboard only. Every
+                                interactive element reachable. Focus indicator visible at all times.</li>
+                            <li><span class="ck pass">CHECK</span> Sticky header stays fixed at top during scroll.
+                                Background remains opaque — content does not bleed through.</li>
+                            <li><span class="ck pass">CHECK</span> Color palette audit: run
+                                <code>getComputedStyle</code> on all elements. Only <code>#000</code>,
+                                <code>#1a1a1a</code>, <code>#757575</code>, <code>#e2e8f0</code>, <code>#fff</code>,
+                                <code>#057dbc</code> in chrome (not photography).</li>
+                            <li><span class="ck warn">VERIFY</span> Test with
+                                <code>prefers-reduced-motion: reduce</code> (Chrome DevTools → Rendering). All
+                                animations and transitions should be disabled or instant.</li>
+                            <li><span class="ck fix">NEVER</span> Use gradients, glass effects, blurs, or drop shadows
+                                anywhere in the UI layer. These break the printerly contract of the WIRED design system.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="wide-card amber-top" style="margin-top:16px;">
+                        <div class="badge-row"><span class="badge warn">Accessibility</span></div>
+                        <div class="wide-card-title">Accessibility — WCAG AA Gate</div>
+                        <ul class="checklist">
+                            <li><span class="ck pass">RUN</span> axe DevTools browser extension on every page template.
+                                Zero critical violations before deploy.</li>
+                            <li><span class="ck pass">TEST</span> Navigate entire site with keyboard only (Tab,
+                                Shift+Tab, Enter, Space, ESC). Every action completable.</li>
+                            <li><span class="ck pass">TEST</span> Run NVDA (Windows) or VoiceOver (Mac) on article page.
+                                Headings announce correctly. Images announce alt text. Table headers read before cells.
+                            </li>
+                            <li><span class="ck pass">CHECK</span> <code>&lt;html lang="en"&gt;</code> present. If
+                                multi-language: correct BCP 47 codes on each page.</li>
+                            <li><span class="ck pass">CHECK</span> One <code>&lt;h1&gt;</code> per page. Heading levels
+                                don't skip (no h2 → h4).</li>
+                            <li><span class="ck pass">CHECK</span> All form inputs have associated
+                                <code>&lt;label&gt;</code> elements (not just placeholder text).</li>
+                            <li><span class="ck pass">CHECK</span> All modals and dialogs trap focus and restore focus
+                                to trigger on close.</li>
+                            <li><span class="ck warn">VERIFY</span> WebAIM contrast checker: every foreground/background
+                                combination ≥4.5:1 for normal text, ≥3:1 for large text (18px+ regular or 14px+ bold).
+                            </li>
+                        </ul>
+                    </div>
+
+                </section>
+
+            </main>
+
+            <!-- ─── TOC SIDEBAR ─── -->
+            <aside aria-label="Table of contents">
+                <div class="toc">
+                    <button class="toc-mobile-toggle" aria-expanded="false" aria-controls="tocBody">
+                        <div class="toc-title">Contents</div>
+                        <span class="toc-chevron" aria-hidden="true">▾</span>
+                    </button>
+                    <div class="toc-body open" id="tocBody">
+                        <ul class="toc-list" role="list">
+                            <li><a href="#responsive"><span class="toc-num">§01</span> Breakpoints &amp; Layout</a></li>
+                            <li><a href="#seo"><span class="toc-num">§02</span> SEO Optimization</a></li>
+                            <li><a href="#uxui"><span class="toc-num">§03</span> UX/UI Principles</a></li>
+                            <li><a href="#typography"><span class="toc-num">§04</span> Responsive Typography</a></li>
+                            <li><a href="#images"><span class="toc-num">§05</span> Image Strategy</a></li>
+                            <li><a href="#performance"><span class="toc-num">§06</span> Performance Rules</a></li>
+                            <li><a href="#accessibility"><span class="toc-num">§07</span> Accessibility</a></li>
+                            <li><a href="#checklist"><span class="toc-num">§08</span> Pre-Launch Checklist</a></li>
+                        </ul>
+
+                        <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--hairline);">
+                            <div class="mono-bold" style="font-size:0.6rem;margin-bottom:10px;">Breakpoint Quick Ref
+                            </div>
+                            <table
+                                style="width:100%;font-family:var(--font-mono);font-size:0.6rem;border-collapse:collapse;"
+                                aria-label="Breakpoint quick reference">
+                                <tr style="border-bottom:1px solid var(--hairline);">
+                                    <td style="padding:4px 0;color:var(--caption);">XS</td>
+                                    <td style="padding:4px;text-align:right;font-weight:700;">0px</td>
+                                </tr>
+                                <tr style="border-bottom:1px solid var(--hairline);">
+                                    <td style="padding:4px 0;color:var(--caption);">SM</td>
+                                    <td style="padding:4px;text-align:right;font-weight:700;">480px</td>
+                                </tr>
+                                <tr style="border-bottom:1px solid var(--hairline);">
+                                    <td style="padding:4px 0;color:var(--caption);">SM-MD</td>
+                                    <td style="padding:4px;text-align:right;font-weight:700;">600px</td>
+                                </tr>
+                                <tr style="border-bottom:1px solid var(--hairline);">
+                                    <td style="padding:4px 0;color:var(--caption);">MD</td>
+                                    <td style="padding:4px;text-align:right;font-weight:700;">768px</td>
+                                </tr>
+                                <tr style="border-bottom:1px solid var(--hairline);">
+                                    <td style="padding:4px 0;color:var(--caption);">LG</td>
+                                    <td style="padding:4px;text-align:right;font-weight:700;">1024px</td>
+                                </tr>
+                                <tr style="border-bottom:1px solid var(--hairline);">
+                                    <td style="padding:4px 0;color:var(--caption);">XL</td>
+                                    <td style="padding:4px;text-align:right;font-weight:700;">1280px</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:4px 0;color:var(--caption);">2XL ✓</td>
+                                    <td style="padding:4px;text-align:right;font-weight:700;">1440px</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--hairline);">
+                            <div class="mono-bold" style="font-size:0.6rem;margin-bottom:10px;">UX Principles</div>
+                            <div
+                                style="font-family:var(--font-mono);font-size:0.6rem;color:var(--caption);line-height:2;">
+                                01 Hierarchy<br>
+                                02 Progressive Disclosure<br>
+                                03 Feedback<br>
+                                04 Consistency<br>
+                                05 Affordance<br>
+                                06 Orientation<br>
+                                07 Cognitive Load<br>
+                                08 Error Prevention<br>
+                                09 Speed Perception<br>
+                                10 Scannability<br>
+                                11 Mobile Context<br>
+                                12 Forgiveness
+                            </div>
+                        </div>
+
+                        <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--hairline);">
+                            <div class="mono-bold" style="font-size:0.6rem;margin-bottom:10px;">Core Web Vitals</div>
+                            <div style="display:flex;flex-direction:column;gap:5px;">
+                                <div
+                                    style="display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:0.6rem;">
+                                    <span style="color:var(--caption);">LCP</span><span
+                                        style="color:var(--green);font-weight:700;">&lt; 2.5s</span>
+                                </div>
+                                <div
+                                    style="display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:0.6rem;">
+                                    <span style="color:var(--caption);">CLS</span><span
+                                        style="color:var(--green);font-weight:700;">&lt; 0.1</span>
+                                </div>
+                                <div
+                                    style="display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:0.6rem;">
+                                    <span style="color:var(--caption);">INP</span><span
+                                        style="color:var(--green);font-weight:700;">&lt; 200ms</span>
+                                </div>
+                                <div
+                                    style="display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:0.6rem;">
+                                    <span style="color:var(--caption);">TTFB</span><span
+                                        style="color:var(--green);font-weight:700;">&lt; 800ms</span>
+                                </div>
+                                <div
+                                    style="display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:0.6rem;">
+                                    <span style="color:var(--caption);">FCP</span><span
+                                        style="color:var(--green);font-weight:700;">&lt; 1.8s</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════ -->
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-inner">
+            <div class="footer-logo">NEWSROOM</div>
+            <div class="footer-meta">Responsive · SEO · UX/UI Rules — Design System v2.0</div>
+            <nav class="footer-links" aria-label="Footer navigation">
+                <a href="#responsive">Responsive</a>
+                <a href="#seo">SEO</a>
+                <a href="#uxui">UX/UI</a>
+                <a href="#typography">Typography</a>
+                <a href="#images">Images</a>
+                <a href="#performance">Performance</a>
+                <a href="#accessibility">Accessibility</a>
+                <a href="#checklist">Checklist</a>
+            </nav>
+        </div>
+    </footer>
+
+    <!-- ═══════════════════════════════════════════
+     JS — Minimal, progressive enhancement
+═══════════════════════════════════════════ -->
+    <script>
+        (function () {
+            'use strict';
+
+            /* ── Scroll progress bar ── */
+            const bar = document.getElementById('progressBar');
+            if (bar) {
+                const updateProgress = () => {
+                    const scrollTop = window.scrollY;
+                    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+                    const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+                    bar.style.width = pct + '%';
+                };
+                window.addEventListener('scroll', updateProgress, { passive: true });
+            }
+
+            /* ── Mobile hamburger ── */
+            const toggle = document.querySelector('.nav-toggle');
+            const drawer = document.getElementById('mobileNav');
+            if (toggle && drawer) {
+                toggle.addEventListener('click', () => {
+                    const expanded = toggle.getAttribute('aria-expanded') === 'true';
+                    toggle.setAttribute('aria-expanded', String(!expanded));
+                    drawer.classList.toggle('open');
+                });
+                /* Close on ESC */
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && drawer.classList.contains('open')) {
+                        drawer.classList.remove('open');
+                        toggle.setAttribute('aria-expanded', 'false');
+                        toggle.focus();
+                    }
+                });
+                /* Close when a nav link is clicked */
+                drawer.querySelectorAll('a').forEach(a => {
+                    a.addEventListener('click', () => {
+                        drawer.classList.remove('open');
+                        toggle.setAttribute('aria-expanded', 'false');
+                    });
+                });
+            }
+
+            /* ── TOC mobile toggle ── */
+            const tocToggle = document.querySelector('.toc-mobile-toggle');
+            const tocBody = document.getElementById('tocBody');
+            if (tocToggle && tocBody) {
+                tocToggle.addEventListener('click', () => {
+                    const expanded = tocToggle.getAttribute('aria-expanded') === 'true';
+                    tocToggle.setAttribute('aria-expanded', String(!expanded));
+                    tocBody.classList.toggle('open');
+                });
+            }
+
+            /* ── Active section nav highlight ── */
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.section-nav a');
+            if (sections.length && navLinks.length) {
+                const obs = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            navLinks.forEach(a => {
+                                a.classList.toggle('active', a.getAttribute('href') === '#' + entry.target.id);
+                            });
+                        }
+                    });
+                }, { threshold: 0.2, rootMargin: '-80px 0px -60% 0px' });
+                sections.forEach(s => obs.observe(s));
+            }
+
+            /* ── Smooth anchor offset (accounts for sticky header) ── */
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (!target) return;
+                    e.preventDefault();
+                    const offset = 80; /* height of sticky header */
+                    const top = target.getBoundingClientRect().top + window.scrollY - offset;
+                    window.scrollTo({ top, behavior: 'smooth' });
+                });
+            });
+
+        })();
+    </script>
+</body>
+
+</html>
