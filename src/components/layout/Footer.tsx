@@ -30,7 +30,8 @@ export const Footer = () => {
           </nav>
         </div>
 
-        <div style={{ borderTop: '1px solid #222', paddingTop: '32px', display: 'flex', flexDirection: 'column', mdDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: '24px' }} className="footer-bottom">
+        <div style={{ borderTop: '1px solid #222', paddingTop: '32px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', gap: '24px' }} className="footer-bottom">
+
           <span className="wired-mono" style={{ fontSize: '10px', color: 'var(--disabled-gray)' }}>
             © {new Date().getFullYear()} AUREWS. ALL SYSTEMS NOMINAL.
           </span>
