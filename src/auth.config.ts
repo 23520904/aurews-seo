@@ -14,8 +14,15 @@ export const authConfig = {
         if (isLoggedIn) return true;
         return false; // Redirect unauthenticated users to login
       }
+
+      const isAdminRoute = nextUrl.pathname.startsWith("/admin");
+      if (isAdminRoute) {
+        if (isLoggedIn && (auth?.user as any)?.role === "ADMIN") return true;
+        return false; // Or return a 403-like redirect
+      }
       
       if (isAuthPage && isLoggedIn) {
+
         return Response.redirect(new URL("/dashboard", nextUrl));
       }
       

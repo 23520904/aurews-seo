@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
 
   // Suppress all deprecation warnings from dependencies
-  serverExternalPackages: ['@prisma/client', 'bcrypt'],
+  serverExternalPackages: ['@prisma/client'],
 
 
   // next/image remote domains — required or you get 400 errors
