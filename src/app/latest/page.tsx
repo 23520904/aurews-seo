@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { Ribbon } from "@/components/ui/Ribbon";
 import Link from "next/link";
-export const runtime = 'nodejs';
+
 export default async function LatestPage() {
   const posts = await prisma.post.findMany({
     where: { status: 'PUBLISHED' },

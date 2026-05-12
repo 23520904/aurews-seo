@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { verifyRefreshToken, generateAccessToken, generateRefreshToken } from "@/lib/tokens";
-export const runtime = 'nodejs';
+
 export async function POST(request: Request) {
   try {
     const { refreshToken } = await request.json();

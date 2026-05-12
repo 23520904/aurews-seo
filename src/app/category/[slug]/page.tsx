@@ -5,7 +5,7 @@ import { Ribbon } from "@/components/ui/Ribbon";
 interface PageProps {
   params: { slug: string };
 }
-export const runtime = 'nodejs';
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   return {

@@ -1,5 +1,5 @@
 import { Ribbon } from "@/components/ui/Ribbon";
-export const runtime = 'nodejs';
+
 export default function AboutPage() {
   return (
     <div className="wired-wrapper" style={{ padding: '80px 0' }}>

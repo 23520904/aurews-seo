@@ -5,7 +5,7 @@ import Link from "next/link";
 import { login } from "@/lib/actions/auth";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-export const runtime = 'nodejs';
+
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);

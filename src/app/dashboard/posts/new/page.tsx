@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { Ribbon } from "@/components/ui/Ribbon";
 import { PostForm } from "./PostForm";
-export const runtime = 'nodejs';
+
 export default async function NewPostPage() {
   const session = await auth();
   if (!session) {

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { Ribbon } from "@/components/ui/Ribbon";
 import { OrganizationJsonLd } from "@/components/seo/JsonLd";
-export const runtime = 'nodejs';
+
 export default async function Home() {
   const [heroPost, latestPosts, popularPosts] = await Promise.all([
     prisma.post.findFirst({

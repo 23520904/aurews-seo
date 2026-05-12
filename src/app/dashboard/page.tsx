@@ -4,7 +4,7 @@ import { Ribbon } from "@/components/ui/Ribbon";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-export const runtime = 'nodejs';
+
 export default async function DashboardPage() {
   const session = await auth();
 

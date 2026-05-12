@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { register } from "@/lib/actions/auth";
 import { useState } from "react";
-export const runtime = 'nodejs';
+
 export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);

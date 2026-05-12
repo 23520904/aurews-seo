@@ -3,7 +3,7 @@ import { auth } from "@/auth";
 import { notFound, redirect } from "next/navigation";
 import { PostForm } from "../../posts/new/PostForm";
 import { Ribbon } from "@/components/ui/Ribbon";
-export const runtime = 'nodejs';
+
 export default async function EditPostPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   if (!session) redirect("/auth/login");

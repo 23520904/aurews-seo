@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { Suspense } from "react";
 
 export const dynamic = 'force-dynamic';
-export const runtime = 'nodejs';
+
 async function SearchResults({ query }: { query: string }) {
   if (!query) return null;
 
