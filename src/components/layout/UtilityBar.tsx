@@ -1,8 +1,9 @@
 import Link from "next/link";
-
+import { auth } from "@/auth";
 import { logout } from "@/lib/actions/auth";
-export const UtilityBar = ({ session }: { session: any }) => {
 
+export const UtilityBar = async () => {
+  const session = await auth();
 
   return (
     <div className="wired-black-bg desktop-only" style={{ background: 'var(--wired-black)', color: 'var(--paper-white)', padding: '8px 0' }}>

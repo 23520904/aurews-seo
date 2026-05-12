@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Lora, Work_Sans, Space_Mono } from "next/font/google";
 import "./globals.css";
-import { auth } from "@/auth";
+
 const playfair = Playfair_Display({
   variable: "--font-display",
   subsets: ["latin"],
@@ -48,17 +48,16 @@ import { UtilityBar } from "@/components/layout/UtilityBar";
 import { Masthead } from "@/components/layout/Masthead";
 import { Footer } from "@/components/layout/Footer";
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth();
   return (
     <html lang="en" className={`${playfair.variable} ${lora.variable} ${workSans.variable} ${spaceMono.variable}`}>
       <body className="wired-body">
-        <UtilityBar session={session} />
-        <Masthead session={session} />
+        <UtilityBar />
+        <Masthead />
         <main style={{ minHeight: '80vh', padding: '80px 0' }}>
           {children}
         </main>

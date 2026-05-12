@@ -1,9 +1,10 @@
 import { MobileMenu } from "./MobileMenu";
+import { auth } from "@/auth";
 import Link from "next/link";
 import { Search } from "lucide-react";
 
-export const Masthead = ({ session }: { session: any }) => {
-
+export const Masthead = async () => {
+  const session = await auth();
 
   return (
     <header className="rule-thick" style={{ background: 'var(--paper-white)', position: 'sticky', top: 0, zIndex: 1000 }}>
@@ -28,6 +29,16 @@ export const Masthead = ({ session }: { session: any }) => {
             <MobileMenu session={session} />
           </div>
         </div>
+
+        <style dangerouslySetInnerHTML={{
+          __html: `
+          @media (max-width: 768px) {
+            .desktop-only {
+              display: none !important;
+            }
+          }
+        `}} />
+
       </div>
     </header>
   );
