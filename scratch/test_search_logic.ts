@@ -17,7 +17,7 @@ async function testSearchLogic() {
       take: 20
     });
     console.log("Results found:", results.length);
-    results.forEach(p => console.log("- ", p.title));
+    results.forEach((p: any) => console.log("- ", p.title));
   } catch (err) {
     console.error("Search logic failed:", err);
   } finally {

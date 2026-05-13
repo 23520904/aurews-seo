@@ -1,9 +1,12 @@
+// Standard Node.js runtime (Cloudflare nodejs_compat)
+export const dynamic = "force-dynamic";
+
 import { Ribbon } from "@/components/ui/Ribbon";
+
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { Suspense } from "react";
 
-export const dynamic = 'force-dynamic';
 
 async function SearchResults({ query }: { query: string }) {
   if (!query) return null;

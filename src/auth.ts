@@ -6,6 +6,8 @@ import { authConfig } from "./auth.config";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
+  secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || "a-very-long-and-secure-fallback-secret-for-development-purposes-only",
+  trustHost: true,
   providers: [
     Credentials({
       async authorize(credentials) {
@@ -33,9 +35,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
-  secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
-  trustHost: true,
-  // Ensure the base URL is correct in production
   basePath: "/api/auth",
 });
 

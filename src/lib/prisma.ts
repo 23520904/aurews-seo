@@ -1,37 +1,30 @@
-import { Pool, types } from 'pg'
-import { PrismaPg } from '@prisma/adapter-pg'
-import { PrismaClient } from '@prisma/client'
+import { Pool, types } from 'pg';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from '@prisma/client';
 
-// Fix for BigInt serialization in JSON (common with Prisma + pg)
-types.setTypeParser(20, (val) => parseInt(val, 10));
+// Fix for BigInt serialization
+types.setTypeParser(20, (val: string) => parseInt(val, 10));
 
 const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined
-  pool: Pool | undefined
-}
+  prisma: PrismaClient | undefined;
+};
 
-// Ensure the pool is only created once globally
-if (!globalForPrisma.pool) {
-  globalForPrisma.pool = new Pool({ 
+const createPrismaClient = () => {
+  const pool = new Pool({ 
     connectionString: process.env.DATABASE_URL,
-    max: 5, // Keep this low for serverless environments
+    max: 10,
     idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 5000,
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
-  })
-}
+    connectionTimeoutMillis: 2000,
+  });
+  
+  const adapter = new PrismaPg(pool as any);
 
-const adapter = new PrismaPg(globalForPrisma.pool)
-
-export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
+  return new PrismaClient({
     adapter,
-    log: process.env.NODE_ENV === 'development'
-      ? ['query', 'error', 'warn']
-      : ['error'],
-  })
+    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+  });
+};
 
-if (process.env.NODE_ENV !== 'production') {
-  globalForPrisma.prisma = prisma
-}
+export const prisma = globalForPrisma.prisma ?? createPrismaClient();
+
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;

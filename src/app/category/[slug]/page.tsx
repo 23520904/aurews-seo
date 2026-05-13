@@ -1,4 +1,7 @@
+// Standard Node.js runtime (Cloudflare nodejs_compat)
+
 import { Metadata } from "next";
+
 import Link from "next/link";
 import { Ribbon } from "@/components/ui/Ribbon";
 

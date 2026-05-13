@@ -57,7 +57,7 @@ async function main() {
   ];
 
   for (const p of posts) {
-    const cat = categories.find(c => c.name === p.category);
+    const cat = categories.find((c: any) => c.name === p.category);
     if (cat) {
       await prisma.post.create({
         data: {

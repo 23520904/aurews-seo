@@ -1,4 +1,8 @@
+// Standard Node.js runtime (Cloudflare nodejs_compat)
+export const dynamic = "force-dynamic";
+
 import { NextResponse } from "next/server";
+
 import { verifyRefreshToken, generateAccessToken, generateRefreshToken } from "@/lib/tokens";
 
 export async function POST(request: Request) {

@@ -1,4 +1,7 @@
+// Standard Node.js runtime (Cloudflare nodejs_compat)
+
 import { prisma } from "@/lib/prisma";
+
 import { Ribbon } from "@/components/ui/Ribbon";
 import Link from "next/link";
 
