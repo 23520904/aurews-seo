@@ -1,5 +1,5 @@
-import React from "react";
-import { BASE_URL } from "@/lib/constants";
+
+import { BASE_URL, DEFAULT_IMAGE } from "@/lib/constants";
 
 export const OrganizationJsonLd = () => {
   const schema = {
@@ -27,14 +27,27 @@ export const NewsArticleJsonLd = ({ post }: { post: any }) => {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
     "headline": post.title,
-    "image": [post.coverImage],
+    "description": post.excerpt || post.title,
+    "image": [post.coverImage || DEFAULT_IMAGE],
     "datePublished": post.createdAt,
     "dateModified": post.updatedAt,
     "author": [{
       "@type": "Person",
       "name": post.author?.name || "Aurews",
       "url": `${BASE_URL}/about`
-    }]
+    }],
+    "publisher": {
+      "@type": "NewsMediaOrganization",
+      "name": "Aurews",
+      "logo": {
+        "@type": "ImageObject",
+        "url": `${BASE_URL}/logo.png`
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": `${BASE_URL}/article/${post.slug}`
+    }
   };
 
   return (

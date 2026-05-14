@@ -5,6 +5,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { Ribbon } from "@/components/ui/Ribbon";
 import { OrganizationJsonLd } from "@/components/seo/JsonLd";
+import { DEFAULT_IMAGE } from "@/lib/constants";
 
 export default async function Home() {
   const [heroPost, latestPosts, popularPosts] = await Promise.all([
@@ -37,15 +38,13 @@ export default async function Home() {
         <section style={{ margin: 'var(--space-12) 0', borderBottom: '2px solid var(--black)', paddingBottom: 'var(--space-12)' }}>
           <div className="responsive-grid hero-grid" style={{ gap: 'var(--space-12)', alignItems: 'center' }}>
             <div style={{ order: 2 }}>
-              {heroPost.coverImage && (
-                <div style={{ position: 'relative', aspectRatio: '16/9', border: '2px solid var(--black)', background: '#f0f0f0' }}>
-                  <img
-                    src={heroPost.coverImage}
-                    alt={heroPost.title}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
-                </div>
-              )}
+              <div style={{ position: 'relative', aspectRatio: '16/9', border: '2px solid var(--black)', background: '#f0f0f0' }}>
+                <img
+                  src={heroPost.coverImage || DEFAULT_IMAGE}
+                  alt={heroPost.title}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              </div>
             </div>
             <div style={{ order: 1 }}>
               <Ribbon>Featured Story</Ribbon>
@@ -79,13 +78,11 @@ export default async function Home() {
             {latestPosts.map((post) => (
               <article key={post.id} style={{ display: 'grid', gridTemplateColumns: 'minmax(120px, 1fr) 2fr', gap: 'var(--space-6)', borderBottom: '1px solid var(--hairline)', paddingBottom: 'var(--space-8)' }}>
                 <div style={{ position: 'relative', aspectRatio: '4/3', background: '#f8f8f8', border: '1px solid var(--hairline)' }}>
-                  {post.coverImage && (
-                    <img
-                      src={post.coverImage}
-                      alt={post.title}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                    />
-                  )}
+                  <img
+                    src={post.coverImage || DEFAULT_IMAGE}
+                    alt={post.title}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
                 </div>
                 <div>
                   <span className="wired-mono" style={{ color: 'var(--blue)', fontWeight: 700 }}>{post.category.name.toUpperCase()}</span>
@@ -136,4 +133,3 @@ export default async function Home() {
     </div>
   );
 }
-

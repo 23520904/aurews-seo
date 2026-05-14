@@ -1,0 +1,2203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SEO — Sitemap & Robots.txt Guide 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Space+Mono:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Work+Sans:wght@400;600;700&display=swap"
+        rel="stylesheet" />
+    <style>
+        :root {
+            --black: #000000;
+            --ink: #1a1a1a;
+            --paper: #ffffff;
+            --blue: #057dbc;
+            --green: #1a7a34;
+            --amber: #7a4d00;
+            --red: #8b0000;
+            --caption: #757575;
+            --hairline: #e2e8f0;
+            --code-bg: #f4f4f0;
+            --font-display: 'Playfair Display', serif;
+            --font-body: 'Lora', serif;
+            --font-ui: 'Work Sans', sans-serif;
+            --font-mono: 'Space Mono', 'Courier New', monospace;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--paper);
+            color: var(--ink);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a {
+            color: var(--blue);
+            text-decoration: none;
+        }
+
+        code {
+            font-family: var(--font-mono);
+            font-size: 0.74rem;
+            background: var(--code-bg);
+            padding: 1px 5px;
+            letter-spacing: 0;
+            text-transform: none;
+        }
+
+        /* UTIL BAR */
+        .util-bar {
+            background: var(--black);
+            padding: 8px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .util-bar span,
+        .util-bar a {
+            color: var(--paper);
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1.1px;
+        }
+
+        .util-bar a:hover {
+            color: var(--blue);
+        }
+
+        .util-links {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        /* MASTHEAD */
+        .masthead {
+            border-bottom: 2px solid var(--black);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            color: var(--black);
+            line-height: 1;
+        }
+
+        .masthead-sub {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--caption);
+            margin-top: 4px;
+        }
+
+        .masthead-meta {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.9px;
+            color: var(--caption);
+            text-align: right;
+            line-height: 1.7;
+        }
+
+        .wrapper {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        @media (min-width: 1024px) {
+            .wrapper {
+                padding: 0 48px;
+            }
+        }
+
+        /* LAYOUT */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 32px;
+            padding: 32px 0;
+        }
+
+        @media (min-width: 900px) {
+            .two-col {
+                grid-template-columns: 1fr 320px;
+            }
+        }
+
+        /* RIBBON */
+        .ribbon {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .ribbon-label {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--black);
+            white-space: nowrap;
+        }
+
+        .ribbon-line {
+            flex: 1;
+            height: 2px;
+            background: var(--black);
+        }
+
+        .ribbon.green .ribbon-label {
+            color: var(--green);
+        }
+
+        .ribbon.green .ribbon-line {
+            background: var(--green);
+        }
+
+        .ribbon.amber .ribbon-label {
+            color: var(--amber);
+        }
+
+        .ribbon.amber .ribbon-line {
+            background: var(--amber);
+        }
+
+        .ribbon.red .ribbon-label {
+            color: var(--red);
+        }
+
+        .ribbon.red .ribbon-line {
+            background: var(--red);
+        }
+
+        .ribbon.blue .ribbon-label {
+            color: var(--blue);
+        }
+
+        .ribbon.blue .ribbon-line {
+            background: var(--blue);
+        }
+
+        /* PAGE SECTIONS */
+        .page-section {
+            padding: 32px 0;
+            border-top: 1px solid var(--hairline);
+        }
+
+        .page-section:first-of-type {
+            border-top: none;
+        }
+
+        .section-kicker {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.92px;
+            color: var(--caption);
+            margin-bottom: 6px;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1.05;
+            letter-spacing: -0.5px;
+            margin-bottom: 10px;
+        }
+
+        .section-deck {
+            font-family: var(--font-body);
+            font-size: 1rem;
+            color: var(--caption);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        /* RULE */
+        .rule2 {
+            border: none;
+            border-top: 2px solid var(--black);
+            margin: 16px 0;
+        }
+
+        .hairline {
+            border: none;
+            border-top: 1px solid var(--hairline);
+            margin: 0;
+        }
+
+        /* BADGES */
+        .badge-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .badge {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 2px 8px;
+            border: 1px solid var(--black);
+            background: var(--paper);
+            color: var(--black);
+        }
+
+        .badge.seo {
+            border-color: #2d7a34;
+            color: #2d7a34;
+        }
+
+        .badge.ok {
+            background: var(--green);
+            color: #fff;
+            border-color: var(--green);
+        }
+
+        .badge.warn {
+            background: var(--amber);
+            color: #fff;
+            border-color: var(--amber);
+        }
+
+        .badge.err {
+            background: var(--red);
+            color: #fff;
+            border-color: var(--red);
+        }
+
+        .badge.blue {
+            background: var(--blue);
+            color: #fff;
+            border-color: var(--blue);
+        }
+
+        .badge.new {
+            background: var(--black);
+            color: #fff;
+            border-color: var(--black);
+        }
+
+        /* INFO STRIP */
+        .info-strip {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1px;
+            background: var(--hairline);
+            border: 1px solid var(--hairline);
+            margin: 16px 0;
+        }
+
+        .info-item {
+            background: var(--paper);
+            padding: 14px 18px;
+            flex: 1 1 180px;
+        }
+
+        .info-label {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--caption);
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--ink);
+            line-height: 1.3;
+        }
+
+        /* CARDS */
+        .card {
+            border: 1px solid var(--hairline);
+            border-top: 3px solid var(--black);
+            padding: 20px;
+            background: var(--paper);
+            margin-bottom: 20px;
+        }
+
+        .card.green-top {
+            border-top-color: var(--green);
+        }
+
+        .card.amber-top {
+            border-top-color: var(--amber);
+        }
+
+        .card.red-top {
+            border-top-color: var(--red);
+        }
+
+        .card.blue-top {
+            border-top-color: var(--blue);
+        }
+
+        .card-title {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 6px;
+            line-height: 1.2;
+        }
+
+        .card-desc {
+            font-family: var(--font-body);
+            font-size: 0.875rem;
+            color: var(--caption);
+            line-height: 1.5;
+            margin-bottom: 14px;
+        }
+
+        /* CODE BLOCKS */
+        .code-block {
+            background: var(--ink);
+            color: #e8e8e0;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            line-height: 1.75;
+            padding: 18px 20px;
+            overflow-x: auto;
+            margin: 12px 0;
+            border-left: 3px solid var(--blue);
+            letter-spacing: 0;
+            text-transform: none;
+            white-space: pre;
+        }
+
+        .code-block.green {
+            border-left-color: var(--green);
+        }
+
+        .code-block.amber {
+            border-left-color: var(--amber);
+        }
+
+        .code-block.red {
+            border-left-color: var(--red);
+        }
+
+        .code-block .cm {
+            color: #6a9955;
+        }
+
+        .code-block .kw {
+            color: #569cd6;
+        }
+
+        .code-block .st {
+            color: #ce9178;
+        }
+
+        .code-block .nu {
+            color: #b5cea8;
+        }
+
+        .code-block .fn {
+            color: #dcdcaa;
+        }
+
+        .code-block .ty {
+            color: #4ec9b0;
+        }
+
+        .code-block .hd {
+            color: #888;
+            font-style: italic;
+        }
+
+        .code-block .ok {
+            color: #4ec9b0;
+            font-weight: 700;
+        }
+
+        .code-block .er {
+            color: #f48771;
+            font-weight: 700;
+        }
+
+        .code-block .tg {
+            color: #c586c0;
+        }
+
+        .code-label {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--caption);
+            margin: 14px 0 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .code-label::before {
+            content: "";
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--blue);
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .code-label.green::before {
+            background: var(--green);
+        }
+
+        .code-label.amber::before {
+            background: var(--amber);
+        }
+
+        .code-label.red::before {
+            background: var(--red);
+        }
+
+        /* FEATURE LIST */
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            border-top: 1px solid var(--hairline);
+            padding-top: 10px;
+        }
+
+        .feature-list li {
+            font-family: var(--font-ui);
+            font-size: 0.8rem;
+            color: var(--ink);
+            padding: 5px 0;
+            border-bottom: 1px solid var(--hairline);
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            line-height: 1.5;
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-list li::before {
+            content: "→";
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--caption);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* NOTICE BARS */
+        .notice {
+            padding: 12px 16px;
+            border-left: 3px solid var(--black);
+            background: #f9f9f9;
+            margin: 16px 0;
+        }
+
+        .notice.green {
+            border-left-color: var(--green);
+            background: #f0faf2;
+        }
+
+        .notice.amber {
+            border-left-color: var(--amber);
+            background: #fdf8f0;
+        }
+
+        .notice.red {
+            border-left-color: var(--red);
+            background: #fdf0f0;
+        }
+
+        .notice.blue {
+            border-left-color: var(--blue);
+            background: #f0f6fd;
+        }
+
+        .notice-label {
+            font-family: var(--font-mono);
+            font-size: 0.63rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .notice.green .notice-label {
+            color: var(--green);
+        }
+
+        .notice.amber .notice-label {
+            color: var(--amber);
+        }
+
+        .notice.red .notice-label {
+            color: var(--red);
+        }
+
+        .notice.blue .notice-label {
+            color: var(--blue);
+        }
+
+        .notice-body {
+            font-family: var(--font-ui);
+            font-size: 0.82rem;
+            color: var(--ink);
+            line-height: 1.55;
+        }
+
+        /* TABLE */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: var(--font-ui);
+            font-size: 0.8rem;
+            margin: 16px 0;
+        }
+
+        .data-table th {
+            font-family: var(--font-mono);
+            font-size: 0.62rem;
+            text-transform: uppercase;
+            letter-spacing: 0.9px;
+            font-weight: 700;
+            text-align: left;
+            padding: 9px 12px;
+            background: var(--black);
+            color: var(--paper);
+        }
+
+        .data-table td {
+            padding: 9px 12px;
+            border-bottom: 1px solid var(--hairline);
+            vertical-align: top;
+            line-height: 1.45;
+            color: var(--ink);
+        }
+
+        .data-table tr:hover td {
+            background: #f9f9f9;
+        }
+
+        .data-table .mono-cell {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--black);
+        }
+
+        .data-table .ok-cell {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--green);
+            font-weight: 700;
+        }
+
+        .data-table .warn-cell {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--amber);
+            font-weight: 700;
+        }
+
+        .data-table .err-cell {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--red);
+            font-weight: 700;
+        }
+
+        /* CHECKLIST */
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checklist li {
+            font-family: var(--font-ui);
+            font-size: 0.82rem;
+            padding: 6px 0;
+            border-bottom: 1px solid var(--hairline);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            line-height: 1.45;
+        }
+
+        .checklist li:last-child {
+            border-bottom: none;
+        }
+
+        .ck {
+            font-family: var(--font-mono);
+            font-size: 0.63rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            padding: 1px 5px;
+            margin-top: 1px;
+        }
+
+        .ck.pass {
+            background: var(--green);
+            color: #fff;
+        }
+
+        .ck.fix {
+            background: var(--red);
+            color: #fff;
+        }
+
+        .ck.warn {
+            background: var(--amber);
+            color: #fff;
+        }
+
+        /* TWO PANEL */
+        .two-panel {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            margin: 16px 0;
+        }
+
+        @media (min-width: 700px) {
+            .two-panel {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* NUMBERED */
+        .numbered-item {
+            display: grid;
+            grid-template-columns: 48px 1fr;
+            gap: 14px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--hairline);
+            align-items: start;
+        }
+
+        .numbered-item:last-child {
+            border-bottom: none;
+        }
+
+        .num-digit {
+            font-family: var(--font-display);
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--hairline);
+            line-height: 1;
+        }
+
+        .num-title {
+            font-family: var(--font-display);
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 4px;
+        }
+
+        .num-desc {
+            font-family: var(--font-ui);
+            font-size: 0.78rem;
+            color: var(--caption);
+            line-height: 1.5;
+        }
+
+        /* FLOW */
+        .flow {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0;
+            padding: 16px 0;
+        }
+
+        .flow-node {
+            background: var(--paper);
+            border: 2px solid var(--black);
+            padding: 8px 12px;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            white-space: nowrap;
+            color: var(--black);
+        }
+
+        .flow-node.green {
+            background: var(--green);
+            color: #fff;
+            border-color: var(--green);
+        }
+
+        .flow-node.blue {
+            background: var(--blue);
+            color: #fff;
+            border-color: var(--blue);
+        }
+
+        .flow-node.black {
+            background: var(--black);
+            color: #fff;
+        }
+
+        .flow-arrow {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--caption);
+            padding: 0 7px;
+        }
+
+        /* TOC */
+        .toc {
+            background: var(--paper);
+            border: 2px solid var(--black);
+            padding: 20px;
+            position: sticky;
+            top: 24px;
+        }
+
+        .toc-title {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--black);
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--black);
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-list li {
+            border-bottom: 1px solid var(--hairline);
+            padding: 6px 0;
+        }
+
+        .toc-list li:last-child {
+            border-bottom: none;
+        }
+
+        .toc-list a {
+            font-family: var(--font-ui);
+            font-size: 0.78rem;
+            color: var(--ink);
+            display: block;
+        }
+
+        .toc-list a:hover {
+            color: var(--blue);
+        }
+
+        .toc-num {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            color: var(--caption);
+            margin-right: 6px;
+        }
+
+        /* FOOTER */
+        .site-footer {
+            background: var(--ink);
+            color: var(--paper);
+            padding: 40px 24px 24px;
+            margin-top: 64px;
+        }
+
+        .footer-logo {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .footer-meta {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--caption);
+            margin-top: 4px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-links a {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.9px;
+            color: rgba(255, 255, 255, 0.45);
+        }
+
+        .footer-links a:hover {
+            color: var(--blue);
+        }
+
+        @media (max-width: 899px) {
+            .toc {
+                display: none;
+            }
+        }
+
+        details {
+            border-top: 1px solid var(--hairline);
+        }
+
+        summary {
+            cursor: pointer;
+            padding: 13px 0;
+            font-family: var(--font-ui);
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--ink);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            list-style: none;
+            border-bottom: 1px solid var(--hairline);
+        }
+
+        summary::-webkit-details-marker {
+            display: none;
+        }
+
+        summary::after {
+            content: "+";
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            color: var(--caption);
+        }
+
+        details[open] summary::after {
+            content: "−";
+        }
+
+        details[open] summary {
+            border-bottom: 2px solid var(--black);
+        }
+
+        .details-body {
+            padding: 16px 0;
+        }
+
+        .tag-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 12px 0;
+        }
+
+        .tag {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 3px 8px;
+            background: var(--black);
+            color: var(--paper);
+        }
+
+        .tag.green {
+            background: var(--green);
+        }
+
+        .tag.blue {
+            background: var(--blue);
+        }
+
+        .tag.amber {
+            background: var(--amber);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- UTIL BAR -->
+    <div class="util-bar">
+        <span>SEO Guide v1.0 — Sitemap &amp; Robots.txt · Next.js App Router · Google 2026</span>
+        <div class="util-links">
+            <a href="#overview">Overview</a>
+            <a href="#sitemap">Sitemap</a>
+            <a href="#robots">Robots</a>
+            <a href="#google">Google 2026</a>
+            <a href="#errors">Errors</a>
+            <a href="#checklist">Checklist</a>
+        </div>
+    </div>
+
+    <!-- MASTHEAD -->
+    <header>
+        <div class="wrapper">
+            <div class="masthead">
+                <div>
+                    <div class="logo">NEWSROOM</div>
+                    <div class="masthead-sub">SEO Reference · sitemap.xml + robots.txt · Next.js App Router · Google
+                        Best Practices 2026</div>
+                </div>
+                <div class="masthead-meta">
+                    Guide v1.0<br>
+                    Next.js 14+ App Router<br>
+                    Netlify · Node.js 20 LTS
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="wrapper">
+        <div class="two-col">
+            <main>
+
+                <!-- §01 OVERVIEW -->
+                <section id="overview" class="page-section" style="border-top:none;">
+                    <div class="section-kicker">§ 01 — Overview</div>
+                    <h1 class="section-title">Sitemap &amp; Robots.txt for Google 2026</h1>
+                    <p class="section-deck">In 2026, Google's crawler reads both files on every deploy cycle. A
+                        correctly structured sitemap speeds up index coverage for new articles; a correctly scoped
+                        robots.txt prevents dilution of crawl budget and keeps admin/auth routes out of search results.
+                        This guide covers both, end-to-end, for a Next.js App Router project on Netlify.</p>
+
+                    <hr class="rule2" />
+
+                    <div class="info-strip">
+                        <div class="info-item">
+                            <div class="info-label">Sitemap method</div>
+                            <div class="info-value">Next.js app/sitemap.ts (dynamic)</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Robots method</div>
+                            <div class="info-value">Next.js app/robots.ts (dynamic)</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Output URLs</div>
+                            <div class="info-value">/sitemap.xml · /robots.txt</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Served as</div>
+                            <div class="info-value">Server-Rendered at Route Level</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Auto-submit</div>
+                            <div class="info-value">Search Console + Netlify Plugin</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Google Crawl</div>
+                            <div class="info-value">Googlebot 2.1 / Core Web Vitals</div>
+                        </div>
+                    </div>
+
+                    <div class="notice green">
+                        <div class="notice-label">Why app/sitemap.ts over static sitemap.xml?</div>
+                        <div class="notice-body">A static <code>sitemap.xml</code> in <code>/public</code> quickly
+                            becomes stale. Next.js App Router's <code>app/sitemap.ts</code> generates the XML at request
+                            time (or at build time with ISR), pulling live slugs from the database. Every published
+                            article is always in the sitemap within seconds of publication.</div>
+                    </div>
+
+                    <div class="notice amber">
+                        <div class="notice-label">2026 Google change: IndexNow + sitemap ping deprecated</div>
+                        <div class="notice-body">Google has soft-deprecated the <code>?sitemap=</code> ping URL. Use
+                            <strong>IndexNow</strong> (Bing/Yandex/Google unified protocol) via webhook on publish, or
+                            rely on Search Console's auto-discovery. The sitemap URL in <code>robots.txt</code> remains
+                            the most reliable discovery signal.</div>
+                    </div>
+                </section>
+
+                <!-- §02 SITEMAP -->
+                <section id="sitemap" class="page-section">
+                    <div class="ribbon green">
+                        <span class="ribbon-label">§ 02 — sitemap.xml — Dynamic App Router</span>
+                        <div class="ribbon-line"></div>
+                    </div>
+
+                    <!-- Architecture -->
+                    <h3
+                        style="font-family:var(--font-mono);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--caption);margin-bottom:12px;">
+                        Request Flow</h3>
+                    <div class="flow">
+                        <div class="flow-node">Googlebot</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-node">GET /sitemap.xml</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-node black">app/sitemap.ts</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-node blue">Prisma query</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-node green">XML response</div>
+                    </div>
+
+                    <!-- Main sitemap.ts -->
+                    <div class="card green-top">
+                        <div class="badge-row"><span class="badge seo">app/sitemap.ts</span><span
+                                class="badge ok">Primary</span><span class="badge new">Use This</span></div>
+                        <div class="card-title">app/sitemap.ts — Full Implementation</div>
+                        <div class="card-desc">Place this file at <code>app/sitemap.ts</code>. Next.js automatically
+                            serves it at <code>/sitemap.xml</code>. No redirect needed. Returns a typed
+                            <code>MetadataRoute.Sitemap</code> array that Next.js converts to valid XML.</div>
+
+                        <div class="code-label green">app/sitemap.ts</div>
+                        <div class="code-block"><span class="kw">import</span> { <span class="ty">MetadataRoute</span> }
+                            <span class="kw">from</span> <span class="st">'next'</span>
+                            <span class="kw">import</span> { prisma } <span class="kw">from</span> <span
+                                class="st">'@/lib/prisma'</span>
+
+                            <span class="hd">// Force dynamic so new articles appear immediately</span>
+                            <span class="kw">export const</span> dynamic = <span class="st">'force-dynamic'</span>
+                            <span class="hd">// OR: revalidate every 60s (ISR — recommended for large sites)</span>
+                            <span class="hd">// export const revalidate = 60</span>
+
+                            <span class="kw">const</span> BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? <span
+                                class="st">'https://yourdomain.com'</span>
+
+                            <span class="hd">// Category slugs — must match your DB/route slugs exactly</span>
+                            <span class="kw">const</span> CATEGORY_SLUGS = [
+                            <span class="st">'business'</span>,
+                            <span class="st">'money-markets'</span>,
+                            <span class="st">'tech-innovation'</span>,
+                            <span class="st">'ai'</span>,
+                            <span class="st">'lifestyle'</span>,
+                            <span class="st">'politics'</span>,
+                            ]
+
+                            <span class="kw">export default async function</span> <span class="fn">sitemap</span>():
+                            <span class="ty">Promise</span>&lt;<span class="ty">MetadataRoute.Sitemap</span>&gt; {
+                            <span class="hd">// ── 1. Fetch all published articles
+                                ───────────────────────────────</span>
+                            <span class="kw">const</span> articles = <span class="kw">await</span>
+                            prisma.post.findMany({
+                            <span class="kw">where</span>: {
+                            <span class="kw">status</span>: <span class="st">'PUBLISHED'</span>,
+                            <span class="kw">deletedAt</span>: <span class="kw">null</span>,
+                            },
+                            <span class="kw">select</span>: {
+                            <span class="kw">slug</span>: <span class="kw">true</span>,
+                            <span class="kw">updatedAt</span>: <span class="kw">true</span>,
+                            <span class="kw">category</span>: { <span class="kw">select</span>: { <span
+                                class="kw">slug</span>: <span class="kw">true</span> } },
+                            },
+                            <span class="kw">orderBy</span>: { <span class="kw">updatedAt</span>: <span
+                                class="st">'desc'</span> },
+                            })
+
+                            <span class="hd">// ── 2. Static routes (highest priority)
+                                ───────────────────────────</span>
+                            <span class="kw">const</span> staticRoutes: <span class="ty">MetadataRoute.Sitemap</span> =
+                            [
+                            {
+                            <span class="kw">url</span>: <span class="st">`${BASE_URL}/`</span>,
+                            <span class="kw">lastModified</span>: <span class="kw">new</span> <span
+                                class="ty">Date</span>(),
+                            <span class="kw">changeFrequency</span>: <span class="st">'hourly'</span>, <span
+                                class="cm">// homepage updates constantly</span>
+                            <span class="kw">priority</span>: <span class="nu">1.0</span>,
+                            },
+                            {
+                            <span class="kw">url</span>: <span class="st">`${BASE_URL}/latest`</span>,
+                            <span class="kw">lastModified</span>: <span class="kw">new</span> <span
+                                class="ty">Date</span>(),
+                            <span class="kw">changeFrequency</span>: <span class="st">'hourly'</span>,
+                            <span class="kw">priority</span>: <span class="nu">0.9</span>,
+                            },
+                            {
+                            <span class="kw">url</span>: <span class="st">`${BASE_URL}/about`</span>,
+                            <span class="kw">lastModified</span>: <span class="kw">new</span> <span
+                                class="ty">Date</span>(<span class="st">'2025-01-01'</span>),
+                            <span class="kw">changeFrequency</span>: <span class="st">'yearly'</span>,
+                            <span class="kw">priority</span>: <span class="nu">0.4</span>,
+                            },
+                            {
+                            <span class="kw">url</span>: <span class="st">`${BASE_URL}/contact`</span>,
+                            <span class="kw">lastModified</span>: <span class="kw">new</span> <span
+                                class="ty">Date</span>(<span class="st">'2025-01-01'</span>),
+                            <span class="kw">changeFrequency</span>: <span class="st">'yearly'</span>,
+                            <span class="kw">priority</span>: <span class="nu">0.3</span>,
+                            },
+                            ]
+
+                            <span class="hd">// ── 3. Category pages
+                                ─────────────────────────────────────────────</span>
+                            <span class="kw">const</span> categoryRoutes: <span class="ty">MetadataRoute.Sitemap</span>
+                            = CATEGORY_SLUGS.<span class="fn">map</span>((slug) => ({
+                            <span class="kw">url</span>: <span class="st">`${BASE_URL}/category/${slug}`</span>,
+                            <span class="kw">lastModified</span>: <span class="kw">new</span> <span
+                                class="ty">Date</span>(),
+                            <span class="kw">changeFrequency</span>: <span class="st">'hourly'</span> <span
+                                class="kw">as const</span>,
+                            <span class="kw">priority</span>: <span class="nu">0.8</span>,
+                            }))
+
+                            <span class="hd">// ── 4. Article pages
+                                ──────────────────────────────────────────────</span>
+                            <span class="kw">const</span> articleRoutes: <span class="ty">MetadataRoute.Sitemap</span> =
+                            articles.<span class="fn">map</span>((article) => ({
+                            <span class="kw">url</span>: <span class="st">`${BASE_URL}/article/${article.slug}`</span>,
+                            <span class="kw">lastModified</span>: article.updatedAt,
+                            <span class="kw">changeFrequency</span>: <span class="st">'weekly'</span> <span
+                                class="kw">as const</span>,
+                            <span class="kw">priority</span>: <span class="nu">0.7</span>,
+                            }))
+
+                            <span class="kw">return</span> [...staticRoutes, ...categoryRoutes, ...articleRoutes]
+                            }
+                        </div>
+
+                        <ul class="feature-list">
+                            <li><strong>Output URL:</strong> <code>/sitemap.xml</code> — served automatically by
+                                Next.js, no redirect needed.</li>
+                            <li><strong>force-dynamic</strong> ensures every crawl gets the freshest slug list. Use
+                                <code>revalidate = 60</code> for sites with 1000+ articles to reduce DB load.</li>
+                            <li><strong>priority</strong> is a hint, not a guarantee. Google may ignore it. Set it
+                                anyway — Bing and others respect it.</li>
+                            <li><strong>lastModified</strong> is the most important field Google reads. Use real
+                                <code>updatedAt</code> timestamps from the DB, not hardcoded dates.</li>
+                            <li><strong>changeFrequency</strong> for articles: use <code>'weekly'</code> not
+                                <code>'daily'</code> — articles rarely change after publication and overclaiming causes
+                                crawl wasted visits.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Split Sitemap for Large Sites -->
+                    <div class="card blue-top" style="margin-top:0;">
+                        <div class="badge-row"><span class="badge blue">Advanced</span><span class="badge">10,000+
+                                URLs</span></div>
+                        <div class="card-title">Sitemap Index — For Large Sites (10,000+ articles)</div>
+                        <div class="card-desc">Google's sitemap limit is 50,000 URLs or 50 MB per file. For large news
+                            sites, use a sitemap index that splits articles by category or date. Next.js supports this
+                            via <code>app/sitemap/[id]/route.ts</code>.</div>
+
+                        <div class="code-label">app/sitemap/[id]/route.ts — individual shard</div>
+                        <div class="code-block"><span class="kw">import</span> { <span class="ty">NextResponse</span> }
+                            <span class="kw">from</span> <span class="st">'next/server'</span>
+                            <span class="kw">import</span> { prisma } <span class="kw">from</span> <span
+                                class="st">'@/lib/prisma'</span>
+
+                            <span class="kw">const</span> BASE_URL = process.env.NEXT_PUBLIC_SITE_URL!
+                            <span class="kw">const</span> PAGE_SIZE = <span class="nu">1000</span>
+
+                            <span class="kw">export async function</span> <span class="fn">GET</span>(_: <span
+                                class="ty">Request</span>, { params }: { params: { id: <span class="kw">string</span> }
+                            }) {
+                            <span class="kw">const</span> page = <span class="ty">Number</span>(params.id)
+                            <span class="kw">const</span> articles = <span class="kw">await</span>
+                            prisma.post.findMany({
+                            <span class="kw">where</span>: { <span class="kw">status</span>: <span
+                                class="st">'PUBLISHED'</span>, <span class="kw">deletedAt</span>: <span
+                                class="kw">null</span> },
+                            <span class="kw">select</span>: { <span class="kw">slug</span>: <span
+                                class="kw">true</span>, <span class="kw">updatedAt</span>: <span class="kw">true</span>
+                            },
+                            <span class="kw">skip</span>: (page - <span class="nu">1</span>) * PAGE_SIZE,
+                            <span class="kw">take</span>: PAGE_SIZE,
+                            <span class="kw">orderBy</span>: { <span class="kw">updatedAt</span>: <span
+                                class="st">'desc'</span> },
+                            })
+
+                            <span class="kw">const</span> xml = <span class="st">`&lt;?xml version="1.0"
+                                encoding="UTF-8"?&gt;
+                                &lt;urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"&gt;
+                                ${articles.<span class="fn">map</span>((a) =&gt; <span class="st">` &lt;url&gt;
+                                    &lt;loc&gt;${BASE_URL}/article/${a.slug}&lt;/loc&gt;
+                                    &lt;lastmod&gt;${a.updatedAt.toISOString()}&lt;/lastmod&gt;
+                                    &lt;changefreq&gt;weekly&lt;/changefreq&gt;
+                                    &lt;priority&gt;0.7&lt;/priority&gt;
+                                    &lt;/url&gt;`</span>).<span class="fn">join</span>(<span class="st">'\n'</span>)}
+                                &lt;/urlset&gt;`</span>
+
+                            <span class="kw">return new</span> <span class="ty">NextResponse</span>(xml, {
+                            <span class="kw">headers</span>: {
+                            <span class="st">'Content-Type'</span>: <span class="st">'application/xml;
+                                charset=utf-8'</span>,
+                            <span class="st">'Cache-Control'</span>: <span class="st">'public, s-maxage=3600,
+                                stale-while-revalidate=86400'</span>,
+                            },
+                            })
+                            }
+                        </div>
+                    </div>
+
+                    <!-- News sitemap -->
+                    <div class="card green-top" style="margin-top:0;">
+                        <div class="badge-row"><span class="badge seo">Google News</span><span
+                                class="badge ok">Recommended</span></div>
+                        <div class="card-title">app/news-sitemap.xml/route.ts — Google News Sitemap</div>
+                        <div class="card-desc">News publishers should submit a separate <strong>Google News
+                                Sitemap</strong> alongside the regular sitemap. It uses the <code>news:</code> namespace
+                            and covers only articles published in the <strong>last 48 hours</strong>. This is the
+                            primary signal for Google News / Discover inclusion.</div>
+
+                        <div class="notice amber">
+                            <div class="notice-label">Google News Sitemap Rules (2026)</div>
+                            <div class="notice-body">Only include articles published in the past 48 hours. Max 1,000
+                                URLs. Do not include the same URL in both the news sitemap and the regular sitemap on
+                                the same submission. Submit the news sitemap URL separately in Google Search Console
+                                under "Sitemaps".</div>
+                        </div>
+
+                        <div class="code-label green">app/news-sitemap.xml/route.ts</div>
+                        <div class="code-block"><span class="kw">import</span> { <span class="ty">NextResponse</span> }
+                            <span class="kw">from</span> <span class="st">'next/server'</span>
+                            <span class="kw">import</span> { prisma } <span class="kw">from</span> <span
+                                class="st">'@/lib/prisma'</span>
+
+                            <span class="kw">export const</span> dynamic = <span class="st">'force-dynamic'</span>
+
+                            <span class="kw">const</span> BASE_URL = process.env.NEXT_PUBLIC_SITE_URL!
+                            <span class="kw">const</span> PUBLICATION_NAME = <span class="st">'Newsroom'</span> <span
+                                class="cm">// must match Search Console verification</span>
+                            <span class="kw">const</span> PUBLICATION_LANG = <span class="st">'en'</span>
+
+                            <span class="kw">export async function</span> <span class="fn">GET</span>() {
+                            <span class="kw">const</span> cutoff = <span class="kw">new</span> <span
+                                class="ty">Date</span>(<span class="ty">Date</span>.now() - <span class="nu">48</span> *
+                            <span class="nu">60</span> * <span class="nu">60</span> * <span class="nu">1000</span>)
+                            <span class="cm">// 48 hours ago</span>
+
+                            <span class="kw">const</span> articles = <span class="kw">await</span>
+                            prisma.post.findMany({
+                            <span class="kw">where</span>: {
+                            <span class="kw">status</span>: <span class="st">'PUBLISHED'</span>,
+                            <span class="kw">deletedAt</span>: <span class="kw">null</span>,
+                            <span class="kw">createdAt</span>: { <span class="kw">gte</span>: cutoff },
+                            },
+                            <span class="kw">select</span>: {
+                            <span class="kw">slug</span>: <span class="kw">true</span>,
+                            <span class="kw">title</span>: <span class="kw">true</span>,
+                            <span class="kw">createdAt</span>: <span class="kw">true</span>,
+                            },
+                            <span class="kw">orderBy</span>: { <span class="kw">createdAt</span>: <span
+                                class="st">'desc'</span> },
+                            <span class="kw">take</span>: <span class="nu">1000</span>,
+                            })
+
+                            <span class="kw">const</span> xml = <span class="st">`&lt;?xml version="1.0"
+                                encoding="UTF-8"?&gt;
+                                &lt;urlset
+                                xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+                                xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"&gt;
+                                ${articles.<span class="fn">map</span>((a) =&gt; <span class="st">` &lt;url&gt;
+                                    &lt;loc&gt;${BASE_URL}/article/${a.slug}&lt;/loc&gt;
+                                    &lt;news:news&gt;
+                                    &lt;news:publication&gt;
+                                    &lt;news:name&gt;${PUBLICATION_NAME}&lt;/news:name&gt;
+                                    &lt;news:language&gt;${PUBLICATION_LANG}&lt;/news:language&gt;
+                                    &lt;/news:publication&gt;
+                                    &lt;news:publication_date&gt;${a.createdAt.toISOString()}&lt;/news:publication_date&gt;
+                                    &lt;news:title&gt;${a.title.<span class="fn">replace</span>(/&amp;/g, <span
+                                        class="st">'&amp;amp;'</span>).<span class="fn">replace</span>(/&lt;/g, <span
+                                        class="st">'&amp;lt;'</span>)}&lt;/news:title&gt;
+                                    &lt;/news:news&gt;
+                                    &lt;/url&gt;`</span>).<span class="fn">join</span>(<span class="st">'\n'</span>)}
+                                &lt;/urlset&gt;`</span>
+
+                            <span class="kw">return new</span> <span class="ty">NextResponse</span>(xml, {
+                            <span class="kw">headers</span>: {
+                            <span class="st">'Content-Type'</span>: <span class="st">'application/xml;
+                                charset=utf-8'</span>,
+                            <span class="st">'Cache-Control'</span>: <span class="st">'public, s-maxage=300,
+                                stale-while-revalidate=600'</span>,
+                            },
+                            })
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Sitemap priorities table -->
+                    <h3
+                        style="font-family:var(--font-mono);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:24px 0 10px;color:var(--caption);">
+                        Priority &amp; Change Frequency Reference</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Route</th>
+                                <th>Priority</th>
+                                <th>changeFrequency</th>
+                                <th>Rationale</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="mono-cell">/</td>
+                                <td class="ok-cell">1.0</td>
+                                <td>hourly</td>
+                                <td>Homepage is the single highest-value URL. Refreshes constantly.</td>
+                            </tr>
+                            <tr>
+                                <td class="mono-cell">/latest</td>
+                                <td class="ok-cell">0.9</td>
+                                <td>hourly</td>
+                                <td>Aggregator view — changes with every new publish.</td>
+                            </tr>
+                            <tr>
+                                <td class="mono-cell">/category/[slug]</td>
+                                <td class="ok-cell">0.8</td>
+                                <td>hourly</td>
+                                <td>Category index pages are key landing pages for topic searches.</td>
+                            </tr>
+                            <tr>
+                                <td class="mono-cell">/article/[slug]</td>
+                                <td
+                                    style="font-family:var(--font-mono);font-size:.7rem;font-weight:700;color:var(--amber);">
+                                    0.7</td>
+                                <td>weekly</td>
+                                <td>Individual articles rarely change. Overclaiming "daily" wastes crawl budget.</td>
+                            </tr>
+                            <tr>
+                                <td class="mono-cell">/about</td>
+                                <td class="warn-cell">0.4</td>
+                                <td>yearly</td>
+                                <td>Static page, very low crawl value.</td>
+                            </tr>
+                            <tr>
+                                <td class="mono-cell">/contact</td>
+                                <td class="warn-cell">0.3</td>
+                                <td>yearly</td>
+                                <td>Static, low value. Include for completeness, not for ranking.</td>
+                            </tr>
+                            <tr>
+                                <td class="mono-cell">/search?q=...</td>
+                                <td class="err-cell">EXCLUDE</td>
+                                <td>—</td>
+                                <td>Search result pages have <code>noindex</code>. Never include in sitemap.</td>
+                            </tr>
+                            <tr>
+                                <td class="mono-cell">/dashboard/*</td>
+                                <td class="err-cell">EXCLUDE</td>
+                                <td>—</td>
+                                <td>Auth-protected. Must be blocked in robots.txt AND excluded from sitemap.</td>
+                            </tr>
+                            <tr>
+                                <td class="mono-cell">/admin/*</td>
+                                <td class="err-cell">EXCLUDE</td>
+                                <td>—</td>
+                                <td>Same — admin routes must never appear in any sitemap.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- §03 ROBOTS -->
+                <section id="robots" class="page-section">
+                    <div class="ribbon amber">
+                        <span class="ribbon-label">§ 03 — robots.txt — Dynamic App Router</span>
+                        <div class="ribbon-line"></div>
+                    </div>
+
+                    <div class="notice blue">
+                        <div class="notice-label">app/robots.ts vs /public/robots.txt</div>
+                        <div class="notice-body">Use <code>app/robots.ts</code> (typed, dynamic) instead of a static
+                            file in <code>/public</code>. The typed approach is validated by TypeScript, automatically
+                            picks up your <code>NEXT_PUBLIC_SITE_URL</code> env var, and prevents the #1 mistake:
+                            hardcoding the wrong domain in production.</div>
+                    </div>
+
+                    <div class="card amber-top">
+                        <div class="badge-row"><span class="badge seo">app/robots.ts</span><span
+                                class="badge ok">Primary</span></div>
+                        <div class="card-title">app/robots.ts — Full Implementation</div>
+                        <div class="card-desc">Serves at <code>/robots.txt</code> automatically. The
+                            <code>MetadataRoute.Robots</code> type enforces correct shape. Sitemap URL is injected from
+                            env var so it's always correct across environments.</div>
+
+                        <div class="code-label amber">app/robots.ts</div>
+                        <div class="code-block"><span class="kw">import</span> { <span class="ty">MetadataRoute</span> }
+                            <span class="kw">from</span> <span class="st">'next'</span>
+
+                            <span class="kw">const</span> BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? <span
+                                class="st">'https://yourdomain.com'</span>
+
+                            <span class="kw">export default function</span> <span class="fn">robots</span>(): <span
+                                class="ty">MetadataRoute.Robots</span> {
+                            <span class="kw">return</span> {
+                            rules: [
+                            <span class="hd">// ── Primary rule for all crawlers ──────────────────────────────</span>
+                            {
+                            userAgent: <span class="st">'*'</span>,
+                            allow: [
+                            <span class="st">'/'</span>,
+                            <span class="st">'/article/'</span>,
+                            <span class="st">'/category/'</span>,
+                            <span class="st">'/latest'</span>,
+                            <span class="st">'/about'</span>,
+                            <span class="st">'/contact'</span>,
+                            ],
+                            disallow: [
+                            <span class="st">'/admin'</span>, <span class="cm">// CMS — never index</span>
+                            <span class="st">'/admin/'</span>,
+                            <span class="st">'/dashboard'</span>, <span class="cm">// User private area</span>
+                            <span class="st">'/dashboard/'</span>,
+                            <span class="st">'/auth/'</span>, <span class="cm">// Login/register/reset pages</span>
+                            <span class="st">'/api/'</span>, <span class="cm">// All API endpoints — no HTML
+                                value</span>
+                            <span class="st">'/search'</span>, <span class="cm">// Dynamic search results — noindex
+                                anyway</span>
+                            <span class="st">'/_next/'</span>, <span class="cm">// Next.js internals — never
+                                crawl</span>
+                            <span class="st">'/cdn-cgi/'</span>, <span class="cm">// Cloudflare/CDN internals if
+                                present</span>
+                            ],
+                            },
+
+                            <span class="hd">// ── Block known bad bots explicitly ────────────────────────────</span>
+                            <span class="hd">// Bots that ignore robots.txt won't respect this, but it's</span>
+                            <span class="hd">// a useful signal and some crawlers do honor it.</span>
+                            {
+                            userAgent: [
+                            <span class="st">'AhrefsBot'</span>, <span class="cm">// Major SEO crawler — allow if you
+                                want backlink data</span>
+                            <span class="st">'SemrushBot'</span>,
+                            <span class="st">'DotBot'</span>,
+                            <span class="st">'MJ12bot'</span>,
+                            ],
+                            disallow: [<span class="st">'/'</span>], <span class="cm">// Block entirely to save crawl
+                                bandwidth</span>
+                            },
+
+                            <span class="hd">// ── AI training crawlers — block (2026 standard practice) ──────</span>
+                            {
+                            userAgent: [
+                            <span class="st">'GPTBot'</span>, <span class="cm">// OpenAI</span>
+                            <span class="st">'ChatGPT-User'</span>,
+                            <span class="st">'Google-Extended'</span>, <span class="cm">// Google AI training (separate
+                                from Googlebot)</span>
+                            <span class="st">'ClaudeBot'</span>, <span class="cm">// Anthropic crawler</span>
+                            <span class="st">'CCBot'</span>, <span class="cm">// Common Crawl (used in AI
+                                training)</span>
+                            <span class="st">'anthropic-ai'</span>,
+                            <span class="st">'Omgilibot'</span>,
+                            <span class="st">'FacebookBot'</span>,
+                            <span class="st">'Bytespider'</span>, <span class="cm">// TikTok/ByteDance</span>
+                            <span class="st">'PetalBot'</span>,
+                            <span class="st">'cohere-ai'</span>,
+                            ],
+                            disallow: [<span class="st">'/'</span>],
+                            },
+
+                            <span class="hd">// ── Googlebot: explicit allow for good measure ─────────────────</span>
+                            <span class="hd">// Google reads robots.txt very literally — being explicit helps.</span>
+                            {
+                            userAgent: <span class="st">'Googlebot'</span>,
+                            allow: [<span class="st">'/'</span>],
+                            disallow: [
+                            <span class="st">'/admin'</span>,
+                            <span class="st">'/dashboard'</span>,
+                            <span class="st">'/auth/'</span>,
+                            <span class="st">'/api/'</span>,
+                            <span class="st">'/_next/'</span>,
+                            ],
+                            crawlDelay: <span class="nu">1</span>, <span class="cm">// 1 second between requests —
+                                polite</span>
+                            },
+                            ],
+
+                            <span class="hd">// Sitemap URLs — always include both if using Google News sitemap</span>
+                            sitemap: [
+                            <span class="st">`${BASE_URL}/sitemap.xml`</span>,
+                            <span class="st">`${BASE_URL}/news-sitemap.xml`</span>, <span class="cm">// Remove if not a
+                                news publisher</span>
+                            ],
+
+                            <span class="hd">// Host directive (some crawlers use this)</span>
+                            host: BASE_URL,
+                            }
+                            }
+                        </div>
+
+                        <ul class="feature-list">
+                            <li>The <code>host</code> field is recognized by Yandex and some others — always set it to
+                                your canonical domain.</li>
+                            <li>Blocking <code>/api/</code> prevents API responses from appearing in search results
+                                (which they sometimes do without this).</li>
+                            <li>Blocking <code>/_next/</code> prevents Next.js chunk files, source maps, and internal
+                                routes from being indexed.</li>
+                            <li>AI crawler blocks are now standard editorial practice in 2026. Adjust based on your
+                                publication's policy.</li>
+                            <li>The <code>crawlDelay</code> on Googlebot is optional but polite. Google recommends not
+                                setting it lower than 1.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Raw output preview -->
+                    <div class="card" style="margin-top:0;">
+                        <div class="badge-row"><span class="badge">Output Preview</span><span class="badge seo">What
+                                Google Actually Reads</span></div>
+                        <div class="card-title">Generated /robots.txt Output</div>
+                        <div class="card-desc">This is what Next.js renders from the <code>robots.ts</code> above when a
+                            bot fetches <code>/robots.txt</code>.</div>
+                        <div class="code-label">GET /robots.txt → text/plain</div>
+                        <div class="code-block" style="border-left-color:var(--amber);">User-agent: *
+                            Allow: /
+                            Allow: /article/
+                            Allow: /category/
+                            Allow: /latest
+                            Allow: /about
+                            Allow: /contact
+                            Disallow: /admin
+                            Disallow: /admin/
+                            Disallow: /dashboard
+                            Disallow: /dashboard/
+                            Disallow: /auth/
+                            Disallow: /api/
+                            Disallow: /search
+                            Disallow: /_next/
+                            Disallow: /cdn-cgi/
+
+                            User-agent: AhrefsBot
+                            User-agent: SemrushBot
+                            User-agent: DotBot
+                            User-agent: MJ12bot
+                            Disallow: /
+
+                            User-agent: GPTBot
+                            User-agent: ChatGPT-User
+                            User-agent: Google-Extended
+                            User-agent: ClaudeBot
+                            User-agent: CCBot
+                            User-agent: anthropic-ai
+                            User-agent: Omgilibot
+                            User-agent: FacebookBot
+                            User-agent: Bytespider
+                            User-agent: PetalBot
+                            User-agent: cohere-ai
+                            Disallow: /
+
+                            User-agent: Googlebot
+                            Allow: /
+                            Disallow: /admin
+                            Disallow: /dashboard
+                            Disallow: /auth/
+                            Disallow: /api/
+                            Disallow: /_next/
+                            Crawl-delay: 1
+
+                            Sitemap: https://yourdomain.com/sitemap.xml
+                            Sitemap: https://yourdomain.com/news-sitemap.xml
+
+                            Host: https://yourdomain.com</div>
+                    </div>
+                </section>
+
+                <!-- §04 GOOGLE 2026 -->
+                <section id="google" class="page-section">
+                    <div class="ribbon blue">
+                        <span class="ribbon-label">§ 04 — Google 2026 — What Actually Matters</span>
+                        <div class="ribbon-line"></div>
+                    </div>
+
+                    <div class="notice green">
+                        <div class="notice-label">Core signal changes in 2026</div>
+                        <div class="notice-body">Google's 2025–2026 core updates de-weighted thin content and amplified
+                            E-E-A-T (Experience, Expertise, Authoritativeness, Trustworthiness) signals. For a news
+                            site, this means author attribution schema, organizational schema, and freshness signals via
+                            lastModified are more important than ever.</div>
+                    </div>
+
+                    <details open>
+                        <summary>generateMetadata() — Per-Article SEO (Critical)</summary>
+                        <div class="details-body">
+                            <div class="card blue-top" style="border:1px solid var(--hairline);">
+                                <div class="card-desc">Every article page must export <code>generateMetadata()</code>.
+                                    This is more important than the sitemap — it controls what Google, Twitter Cards,
+                                    and Open Graph show in search results and social previews.</div>
+                                <div class="code-label">app/article/[slug]/page.tsx — generateMetadata</div>
+                                <div class="code-block"><span class="kw">import</span> { <span
+                                        class="ty">Metadata</span> } <span class="kw">from</span> <span
+                                        class="st">'next'</span>
+                                    <span class="kw">import</span> { prisma } <span class="kw">from</span> <span
+                                        class="st">'@/lib/prisma'</span>
+                                    <span class="kw">import</span> { <span class="fn">notFound</span> } <span
+                                        class="kw">from</span> <span class="st">'next/navigation'</span>
+
+                                    <span class="kw">const</span> BASE_URL = process.env.NEXT_PUBLIC_SITE_URL!
+
+                                    <span class="kw">export async function</span> <span
+                                        class="fn">generateMetadata</span>({
+                                    params,
+                                    }: {
+                                    params: { slug: <span class="kw">string</span> }
+                                    }): <span class="ty">Promise</span>&lt;<span class="ty">Metadata</span>&gt; {
+                                    <span class="kw">const</span> article = <span class="kw">await</span>
+                                    prisma.post.findUnique({
+                                    <span class="kw">where</span>: { <span class="kw">slug</span>: params.slug, <span
+                                        class="kw">status</span>: <span class="st">'PUBLISHED'</span>, <span
+                                        class="kw">deletedAt</span>: <span class="kw">null</span> },
+                                    <span class="kw">include</span>: { <span class="kw">author</span>: <span
+                                        class="kw">true</span>, <span class="kw">category</span>: <span
+                                        class="kw">true</span> },
+                                    })
+                                    <span class="kw">if</span> (!article) <span class="fn">notFound</span>()
+
+                                    <span class="kw">const</span> url = <span
+                                        class="st">`${BASE_URL}/article/${article.slug}`</span>
+                                    <span class="kw">const</span> ogImage = article.coverImage ?? <span
+                                        class="st">`${BASE_URL}/og-default.jpg`</span>
+
+                                    <span class="kw">return</span> {
+                                    <span class="kw">title</span>: article.title,
+                                    <span class="kw">description</span>: article.excerpt ?? article.title,
+                                    <span class="kw">authors</span>: [{ <span class="kw">name</span>:
+                                    article.author.name, <span class="kw">url</span>: <span
+                                        class="st">`${BASE_URL}/author/${article.author.id}`</span> }],
+
+                                    <span class="hd">// Canonical URL — prevents duplicate content issues</span>
+                                    <span class="kw">alternates</span>: { <span class="kw">canonical</span>: url },
+
+                                    <span class="hd">// Open Graph — controls social previews</span>
+                                    <span class="kw">openGraph</span>: {
+                                    <span class="kw">type</span>: <span class="st">'article'</span>,
+                                    <span class="kw">url</span>: url,
+                                    <span class="kw">title</span>: article.title,
+                                    <span class="kw">description</span>: article.excerpt ?? article.title,
+                                    <span class="kw">images</span>: [{ <span class="kw">url</span>: ogImage, <span
+                                        class="kw">width</span>: <span class="nu">1200</span>, <span
+                                        class="kw">height</span>: <span class="nu">630</span>, <span
+                                        class="kw">alt</span>: article.title }],
+                                    <span class="kw">publishedTime</span>: article.createdAt.toISOString(),
+                                    <span class="kw">modifiedTime</span>: article.updatedAt.toISOString(),
+                                    <span class="kw">authors</span>: [article.author.name],
+                                    <span class="kw">section</span>: article.category.name,
+                                    <span class="kw">tags</span>: [article.category.slug],
+                                    <span class="kw">siteName</span>: <span class="st">'Newsroom'</span>,
+                                    <span class="kw">locale</span>: <span class="st">'en_US'</span>,
+                                    },
+
+                                    <span class="hd">// Twitter Cards</span>
+                                    <span class="kw">twitter</span>: {
+                                    <span class="kw">card</span>: <span class="st">'summary_large_image'</span>,
+                                    <span class="kw">title</span>: article.title,
+                                    <span class="kw">description</span>: article.excerpt ?? article.title,
+                                    <span class="kw">images</span>: [ogImage],
+                                    },
+
+                                    <span class="hd">// Robots — index all published articles</span>
+                                    <span class="kw">robots</span>: {
+                                    <span class="kw">index</span>: <span class="kw">true</span>,
+                                    <span class="kw">follow</span>: <span class="kw">true</span>,
+                                    <span class="kw">googleBot</span>: {
+                                    <span class="kw">index</span>: <span class="kw">true</span>,
+                                    <span class="kw">follow</span>: <span class="kw">true</span>,
+                                    <span class="st">'max-image-preview'</span>: <span class="st">'large'</span>, <span
+                                        class="cm">// required for Google Discover image previews</span>
+                                    <span class="st">'max-snippet'</span>: -<span class="nu">1</span>, <span
+                                        class="cm">// allow any snippet length</span>
+                                    <span class="st">'max-video-preview'</span>: -<span class="nu">1</span>,
+                                    },
+                                    },
+                                    }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+
+                    <details>
+                        <summary>JSON-LD — NewsArticle Schema (E-E-A-T Signal)</summary>
+                        <div class="details-body">
+                            <div class="card blue-top" style="border:1px solid var(--hairline);">
+                                <div class="card-desc">Structured data is a direct E-E-A-T signal.
+                                    <code>NewsArticle</code> schema tells Google this is journalism, not a blog post.
+                                    Always include author name and organization. Never inject JSON-LD via client-side
+                                    effect — it must be server-rendered.</div>
+                                <div class="code-label">components/ArticleJsonLd.tsx — server component</div>
+                                <div class="code-block"><span class="kw">interface</span> <span class="ty">Props</span>
+                                    {
+                                    title: <span class="kw">string</span>
+                                    description: <span class="kw">string</span>
+                                    image: <span class="kw">string</span>
+                                    slug: <span class="kw">string</span>
+                                    authorName: <span class="kw">string</span>
+                                    publishedAt: <span class="ty">Date</span>
+                                    updatedAt: <span class="ty">Date</span>
+                                    categoryName:<span class="kw">string</span>
+                                    }
+
+                                    <span class="kw">const</span> BASE_URL = process.env.NEXT_PUBLIC_SITE_URL!
+
+                                    <span class="kw">export function</span> <span class="fn">ArticleJsonLd</span>({
+                                    title, description, image, slug,
+                                    authorName, publishedAt, updatedAt, categoryName
+                                    }: <span class="ty">Props</span>) {
+                                    <span class="kw">const</span> jsonLd = {
+                                    <span class="st">'@context'</span>: <span class="st">'https://schema.org'</span>,
+                                    <span class="st">'@type'</span>: <span class="st">'NewsArticle'</span>,
+                                    headline: title,
+                                    description: description,
+                                    image: [image],
+                                    url: <span class="st">`${BASE_URL}/article/${slug}`</span>,
+                                    datePublished: publishedAt.toISOString(),
+                                    dateModified: updatedAt.toISOString(),
+                                    inLanguage: <span class="st">'en-US'</span>,
+                                    author: {
+                                    <span class="st">'@type'</span>: <span class="st">'Person'</span>,
+                                    name: authorName,
+                                    },
+                                    publisher: {
+                                    <span class="st">'@type'</span>: <span class="st">'NewsMediaOrganization'</span>,
+                                    name: <span class="st">'Newsroom'</span>,
+                                    logo: <span class="st">`${BASE_URL}/logo.png`</span>,
+                                    url: BASE_URL,
+                                    },
+                                    articleSection: categoryName,
+                                    isPartOf: {
+                                    <span class="st">'@type'</span>: <span class="st">'WebSite'</span>,
+                                    url: BASE_URL,
+                                    name: <span class="st">'Newsroom'</span>,
+                                    },
+                                    <span class="hd">// 2026: speakable tells Google Assistant which text to read
+                                        aloud</span>
+                                    speakable: {
+                                    <span class="st">'@type'</span>: <span class="st">'SpeakableSpecification'</span>,
+                                    cssSelector: [<span class="st">'.article-headline'</span>, <span
+                                        class="st">'.article-deck'</span>],
+                                    },
+                                    }
+
+                                    <span class="kw">return</span> (
+                                    &lt;<span class="tg">script</span>
+                                    <span class="kw">type</span>=<span class="st">"application/ld+json"</span>
+                                    dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+                                    /&gt;
+                                    )
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+
+                    <details>
+                        <summary>ISR Revalidation Webhook — Keep Sitemap Fresh on Publish</summary>
+                        <div class="details-body">
+                            <div class="card blue-top" style="border:1px solid var(--hairline);">
+                                <div class="card-desc">When an article is published, call this webhook to purge the
+                                    sitemap cache. Otherwise the sitemap is stale until the next natural revalidation
+                                    window. Trigger this from your CMS save Server Action or admin post-creation flow.
+                                </div>
+                                <div class="code-label">app/api/revalidate/route.ts</div>
+                                <div class="code-block"><span class="kw">import</span> { <span
+                                        class="fn">revalidatePath</span>, <span class="fn">revalidateTag</span> } <span
+                                        class="kw">from</span> <span class="st">'next/cache'</span>
+                                    <span class="kw">import</span> { <span class="ty">NextRequest</span>, <span
+                                        class="ty">NextResponse</span> } <span class="kw">from</span> <span
+                                        class="st">'next/server'</span>
+
+                                    <span class="kw">export async function</span> <span class="fn">POST</span>(req:
+                                    <span class="ty">NextRequest</span>) {
+                                    <span class="kw">const</span> secret = req.headers.get(<span
+                                        class="st">'x-revalidate-secret'</span>)
+                                    <span class="kw">if</span> (secret !== process.env.REVALIDATE_SECRET) {
+                                    <span class="kw">return</span> NextResponse.json({ <span class="kw">error</span>:
+                                    <span class="st">'Unauthorized'</span> }, { <span class="kw">status</span>: <span
+                                        class="nu">401</span> })
+                                    }
+
+                                    <span class="kw">const</span> { slug, categorySlug } = <span class="kw">await</span>
+                                    req.json()
+
+                                    <span class="hd">// Revalidate the new article page</span>
+                                    <span class="kw">if</span> (slug) <span class="fn">revalidatePath</span>(<span
+                                        class="st">`/article/${slug}`</span>)
+                                    <span class="hd">// Revalidate the category it belongs to</span>
+                                    <span class="kw">if</span> (categorySlug) <span
+                                        class="fn">revalidatePath</span>(<span
+                                        class="st">`/category/${categorySlug}`</span>)
+                                    <span class="hd">// Revalidate global pages</span>
+                                    <span class="fn">revalidatePath</span>(<span class="st">'/'</span>)
+                                    <span class="fn">revalidatePath</span>(<span class="st">'/latest'</span>)
+                                    <span class="hd">// Revalidate the sitemap so Googlebot gets fresh URLs on next
+                                        crawl</span>
+                                    <span class="fn">revalidatePath</span>(<span class="st">'/sitemap.xml'</span>)
+
+                                    <span class="kw">return</span> NextResponse.json({ <span
+                                        class="kw">revalidated</span>: <span class="kw">true</span>, <span
+                                        class="kw">ts</span>: <span class="kw">new</span> <span
+                                        class="ty">Date</span>().toISOString() })
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+
+                    <details>
+                        <summary>Search Console Setup — Submit Sitemaps</summary>
+                        <div class="details-body">
+                            <div style="padding:4px 0;">
+                                <div class="numbered-item">
+                                    <div class="num-digit">01</div>
+                                    <div>
+                                        <div class="num-title">Verify ownership via DNS TXT record</div>
+                                        <div class="num-desc">In Google Search Console → Add property → Domain → Copy
+                                            the TXT record value. Add it to your domain's DNS at the registrar. Fastest
+                                            verification method — no file uploads needed.</div>
+                                    </div>
+                                </div>
+                                <div class="numbered-item">
+                                    <div class="num-digit">02</div>
+                                    <div>
+                                        <div class="num-title">Submit sitemap.xml</div>
+                                        <div class="num-desc">Sitemaps → Add a new sitemap → Enter
+                                            <code>sitemap.xml</code>. Google will fetch and process it within hours.
+                                            Status should show "Success".</div>
+                                    </div>
+                                </div>
+                                <div class="numbered-item">
+                                    <div class="num-digit">03</div>
+                                    <div>
+                                        <div class="num-title">Submit news-sitemap.xml separately</div>
+                                        <div class="num-desc">Same as above — enter <code>news-sitemap.xml</code> as a
+                                            second sitemap. Google News uses a separate processing pipeline for the news
+                                            namespace.</div>
+                                    </div>
+                                </div>
+                                <div class="numbered-item">
+                                    <div class="num-digit">04</div>
+                                    <div>
+                                        <div class="num-title">Monitor Index Coverage report</div>
+                                        <div class="num-desc">URL Inspection → Coverage. Watch for "Crawled – currently
+                                            not indexed" (content quality issue) vs. "Discovered – currently not
+                                            indexed" (crawl budget issue). The sitemap helps with the latter.</div>
+                                    </div>
+                                </div>
+                                <div class="numbered-item">
+                                    <div class="num-digit">05</div>
+                                    <div>
+                                        <div class="num-title">Check robots.txt in Search Console</div>
+                                        <div class="num-desc">Settings → robots.txt Tester. Paste any URL and verify it
+                                            returns "Allowed" or "Blocked" as expected. Always test <code>/admin/</code>
+                                            (must be Blocked) and <code>/article/test-slug</code> (must be Allowed).
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+                </section>
+
+                <!-- §05 COMMON ERRORS -->
+                <section id="errors" class="page-section">
+                    <div class="ribbon red">
+                        <span class="ribbon-label">§ 05 — Common SEO Errors &amp; Fixes</span>
+                        <div class="ribbon-line"></div>
+                    </div>
+
+                    <table class="data-table" style="margin-top:16px;">
+                        <thead>
+                            <tr>
+                                <th>Symptom / Error</th>
+                                <th>Root Cause</th>
+                                <th>Fix</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="mono-cell">Sitemap not found</td>
+                                <td>Using static <code>/public/sitemap.xml</code> but Next.js App Router overrides it,
+                                    or <code>app/sitemap.ts</code> has a TypeScript error and silently fails.</td>
+                                <td>Run <code>npm run build</code> locally — check for TS errors in
+                                    <code>sitemap.ts</code>. Visit <code>/sitemap.xml</code> in the browser and confirm
+                                    valid XML is returned.</td>
+                            </tr>
+                            <tr>
+                                <td class="mono-cell">sitemap.xml returns 500</td>
+                                <td>Prisma call in <code>sitemap.ts</code> throws at build time (DB not reachable) or at
+                                    runtime (connection error).</td>
+                                <td>Wrap Prisma call in try/catch and return an empty array on error so the sitemap file
+                                    itself never 500s. Log the error separately.</td>
+                            </tr>
+                            <tr>
+                                <td class="mono-cell">Admin routes indexed by Google</td>
+                                <td><code>/admin</code> missing from <code>robots.ts</code> disallow list, or
+                                    <code>noindex</code> meta tag not set on admin layout.</td>
+                                <td>Add to both: <code>robots.ts</code> disallow AND <code>app/admin/layout.tsx</code>
+                                    metadata <code>robots: { index: false, follow: false }</code>. Defense in depth.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="mono-cell">Search result pages indexed</td>
+                                <td><code>/search</code> not blocked in robots.txt, and <code>noindex</code> metadata
+                                    missing from search page.</td>
+                                <td>Add <code>/search</code> to disallow in <code>robots.ts</code>. In
+                                    <code>app/search/page.tsx</code>:
+                                    <code>export const metadata = { robots: { index: false } }</code>.</td>
+                            </tr>
+                            <tr>
+                                <td class="mono-cell">Duplicate content — www vs non-www</td>
+                                <td>Site resolves on both <code>www.domain.com</code> and <code>domain.com</code>
+                                    without canonical.</td>
+                                <td>Set canonical in <code>generateMetadata</code> for every page. Configure Netlify
+                                    redirect: all <code>www.*</code> → apex domain (or vice versa) with 301 in
+                                    <code>netlify.toml</code>.</td>
+                            </tr>
+                            <tr>
+                                <td class="mono-cell">lastModified always "now"</td>
+                                <td>Using <code>new Date()</code> for <code>lastModified</code> on article routes
+                                    instead of real <code>updatedAt</code> from DB.</td>
+                                <td>Always use the actual <code>updatedAt</code> timestamp from the database. Google
+                                    uses this to decide whether to re-crawl. Stale-but-unchanged articles should not
+                                    trigger re-crawls.</td>
+                            </tr>
+                            <tr>
+                                <td class="mono-cell">NEXT_PUBLIC_SITE_URL wrong in sitemap</td>
+                                <td>Env var not set in Netlify, defaulting to <code>localhost:3000</code> in produced
+                                    sitemap.</td>
+                                <td>Add <code>NEXT_PUBLIC_SITE_URL=https://yourdomain.com</code> in Netlify Dashboard →
+                                    Site configuration → Environment variables. Scope to Production.</td>
+                            </tr>
+                            <tr>
+                                <td class="mono-cell">OG image 400 error</td>
+                                <td>Cloudinary hostname not in <code>next.config.js</code> <code>remotePatterns</code>,
+                                    causing Next.js image optimization to refuse the URL.</td>
+                                <td>Add <code>res.cloudinary.com</code> to <code>remotePatterns</code>. For OG images,
+                                    use absolute Cloudinary CDN URLs directly (bypass <code>next/image</code>
+                                    optimization for OG).</td>
+                            </tr>
+                            <tr>
+                                <td class="mono-cell">Google Discover won't show images</td>
+                                <td>Missing <code>'max-image-preview': 'large'</code> in <code>googleBot</code> robots
+                                    metadata. Google Discover requires explicit permission for large image previews.
+                                </td>
+                                <td>Add to <code>generateMetadata()</code>:
+                                    <code>robots: { googleBot: { 'max-image-preview': 'large' } }</code>. Required for
+                                    Discover inclusion.</td>
+                            </tr>
+                            <tr>
+                                <td class="mono-cell">Sitemap URL wrong environment</td>
+                                <td>Sitemap generated during Netlify build preview (deploy preview URL) but submitted to
+                                    Search Console with production URL.</td>
+                                <td>Always use <code>NEXT_PUBLIC_SITE_URL</code> (set to production domain) for sitemap
+                                    URL construction. Do not use Netlify's auto-injected <code>URL</code> env var in the
+                                    sitemap.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- §06 CHECKLIST -->
+                <section id="checklist" class="page-section">
+                    <div class="ribbon">
+                        <span class="ribbon-label">§ 06 — SEO Pre-Launch Checklist</span>
+                        <div class="ribbon-line"></div>
+                    </div>
+
+                    <div class="card" style="margin-top:16px;border-top:3px solid var(--black);">
+                        <div class="badge-row"><span class="badge">Pre-Deploy</span><span class="badge seo">All Must
+                                Pass</span></div>
+                        <div class="card-title">Complete SEO Checklist — sitemap + robots + metadata</div>
+                        <ul class="checklist">
+                            <li><span class="ck pass">DO</span> <code>app/sitemap.ts</code> exists, exports a default
+                                async function returning <code>MetadataRoute.Sitemap</code>.</li>
+                            <li><span class="ck pass">DO</span> <code>app/robots.ts</code> exists, exports a default
+                                function returning <code>MetadataRoute.Robots</code>.</li>
+                            <li><span class="ck pass">DO</span> <code>NEXT_PUBLIC_SITE_URL</code> is set in Netlify env
+                                vars to the exact production domain (no trailing slash).</li>
+                            <li><span class="ck pass">DO</span> Visit <code>/sitemap.xml</code> in browser — confirm
+                                valid XML with real article URLs, not <code>localhost</code>.</li>
+                            <li><span class="ck pass">DO</span> Visit <code>/robots.txt</code> in browser — confirm
+                                <code>/admin</code>, <code>/dashboard</code>, <code>/auth/</code>, <code>/api/</code>
+                                are all in Disallow.</li>
+                            <li><span class="ck pass">DO</span> Visit <code>/robots.txt</code> — confirm
+                                <code>Sitemap:</code> line points to the correct production URL.</li>
+                            <li><span class="ck pass">DO</span> Test in Google Search Console → robots.txt Tester:
+                                <code>/admin/posts</code> must return "Blocked".</li>
+                            <li><span class="ck pass">DO</span> Test in Google Search Console → robots.txt Tester:
+                                <code>/article/test-slug</code> must return "Allowed".</li>
+                            <li><span class="ck pass">DO</span> Every <code>article/[slug]/page.tsx</code> exports
+                                <code>generateMetadata()</code> with real title, description, OG image, canonical URL.
+                            </li>
+                            <li><span class="ck pass">DO</span> OG images are 1200×630 px. Test with <a
+                                    href="https://developers.facebook.com/tools/debug/" target="_blank">Facebook
+                                    Debugger</a> and <a href="https://cards-dev.twitter.com/validator"
+                                    target="_blank">Twitter Card Validator</a>.</li>
+                            <li><span class="ck pass">DO</span> <code>NewsArticle</code> JSON-LD is server-rendered on
+                                every article page. Validate at <a href="https://validator.schema.org"
+                                    target="_blank">validator.schema.org</a>.</li>
+                            <li><span class="ck pass">DO</span> <code>max-image-preview: large</code> is set in
+                                <code>googleBot</code> robots metadata for article pages.</li>
+                            <li><span class="ck pass">DO</span> Sitemap submitted to Google Search Console — status
+                                shows "Success", not "Couldn't fetch".</li>
+                            <li><span class="ck pass">DO</span> News sitemap submitted separately if you are a news
+                                publisher (under 48-hour article cutoff logic).</li>
+                            <li><span class="ck pass">DO</span> <code>/search</code> has
+                                <code>robots: { index: false }</code> in its metadata AND is in the robots.txt disallow
+                                list.</li>
+                            <li><span class="ck pass">DO</span> Admin and dashboard layouts have
+                                <code>robots: { index: false, follow: false }</code> as defense-in-depth.</li>
+                            <li><span class="ck pass">DO</span> <code>sitemap.ts</code> Prisma call is wrapped in
+                                try/catch — sitemap must never 500.</li>
+                            <li><span class="ck warn">CHECK</span> <code>changeFrequency: 'daily'</code> on articles?
+                                Change to <code>'weekly'</code> — overclaiming wastes crawl budget.</li>
+                            <li><span class="ck warn">CHECK</span> Are draft or soft-deleted posts leaking into the
+                                sitemap? Ensure <code>status: 'PUBLISHED'</code> and <code>deletedAt: null</code>
+                                filters are present.</li>
+                            <li><span class="ck fix">NEVER</span> Include <code>/search?q=...</code> URLs in the sitemap
+                                — these are <code>noindex</code> and will cause crawl budget waste.</li>
+                            <li><span class="ck fix">NEVER</span> Include <code>/dashboard</code> or <code>/admin</code>
+                                URLs in any sitemap — ever.</li>
+                            <li><span class="ck fix">NEVER</span> Hardcode <code>localhost:3000</code> as the base URL
+                                in <code>sitemap.ts</code> without a fallback — always use
+                                <code>NEXT_PUBLIC_SITE_URL</code>.</li>
+                            <li><span class="ck fix">NEVER</span> Use a static <code>/public/sitemap.xml</code> file
+                                alongside <code>app/sitemap.ts</code> — the static file wins and your dynamic one is
+                                never served.</li>
+                        </ul>
+                    </div>
+                </section>
+
+            </main>
+
+            <!-- TOC SIDEBAR -->
+            <aside>
+                <div class="toc">
+                    <div class="toc-title">Contents</div>
+                    <ul class="toc-list">
+                        <li><a href="#overview"><span class="toc-num">§01</span> Overview</a></li>
+                        <li><a href="#sitemap"><span class="toc-num">§02</span> sitemap.xml — Dynamic</a></li>
+                        <li><a href="#robots"><span class="toc-num">§03</span> robots.txt — Dynamic</a></li>
+                        <li><a href="#google"><span class="toc-num">§04</span> Google 2026</a></li>
+                        <li><a href="#errors"><span class="toc-num">§05</span> Common Errors</a></li>
+                        <li><a href="#checklist"><span class="toc-num">§06</span> Checklist</a></li>
+                    </ul>
+
+                    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--hairline);">
+                        <div
+                            style="font-family:var(--font-mono);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">
+                            Files to Create</div>
+                        <div style="display:flex;flex-direction:column;gap:5px;">
+                            <div
+                                style="font-family:var(--font-mono);font-size:.65rem;color:var(--green);font-weight:700;">
+                                app/sitemap.ts</div>
+                            <div
+                                style="font-family:var(--font-mono);font-size:.65rem;color:var(--green);font-weight:700;">
+                                app/robots.ts</div>
+                            <div
+                                style="font-family:var(--font-mono);font-size:.65rem;color:var(--amber);font-weight:700;">
+                                app/news-sitemap.xml/route.ts</div>
+                            <div style="font-family:var(--font-mono);font-size:.65rem;color:var(--caption);">
+                                app/api/revalidate/route.ts</div>
+                            <div style="font-family:var(--font-mono);font-size:.65rem;color:var(--caption);">
+                                components/ArticleJsonLd.tsx</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--hairline);">
+                        <div
+                            style="font-family:var(--font-mono);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">
+                            2026 Priority</div>
+                        <div style="display:flex;flex-direction:column;gap:6px;">
+                            <div style="font-family:var(--font-ui);font-size:.75rem;color:var(--ink);">1.
+                                <strong>lastModified</strong> accuracy</div>
+                            <div style="font-family:var(--font-ui);font-size:.75rem;color:var(--ink);">2.
+                                <strong>E-E-A-T</strong> JSON-LD authorship</div>
+                            <div style="font-family:var(--font-ui);font-size:.75rem;color:var(--ink);">3.
+                                <strong>canonical</strong> on every page</div>
+                            <div style="font-family:var(--font-ui);font-size:.75rem;color:var(--ink);">4.
+                                <strong>max-image-preview</strong>:large</div>
+                            <div style="font-family:var(--font-ui);font-size:.75rem;color:var(--ink);">5.
+                                <strong>noindex</strong> on auth/admin</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--hairline);">
+                        <div
+                            style="font-family:var(--font-mono);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">
+                            Badge Legend</div>
+                        <div style="display:flex;flex-direction:column;gap:5px;">
+                            <div><span class="badge ok">OK</span> <span
+                                    style="font-family:var(--font-ui);font-size:.7rem;color:var(--caption);"> Required —
+                                    do this</span></div>
+                            <div><span class="badge warn">WARN</span> <span
+                                    style="font-family:var(--font-ui);font-size:.7rem;color:var(--caption);">Watch /
+                                    verify</span></div>
+                            <div><span class="badge err">ERR</span> <span
+                                    style="font-family:var(--font-ui);font-size:.7rem;color:var(--caption);">Never do
+                                    this</span></div>
+                            <div><span class="badge seo">SEO</span> <span
+                                    style="font-family:var(--font-ui);font-size:.7rem;color:var(--caption);">SEO-specific</span>
+                            </div>
+                            <div><span class="badge blue">ADV</span> <span
+                                    style="font-family:var(--font-ui);font-size:.7rem;color:var(--caption);">Advanced /
+                                    optional</span></div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="wrapper">
+            <div class="footer-logo">NEWSROOM</div>
+            <div class="footer-meta">SEO Guide v1.0 · sitemap.xml + robots.txt · Next.js App Router · Google 2026</div>
+            <div class="footer-links">
+                <a href="#overview">Overview</a>
+                <a href="#sitemap">Sitemap</a>
+                <a href="#robots">Robots</a>
+                <a href="#google">Google 2026</a>
+                <a href="#errors">Errors</a>
+                <a href="#checklist">Checklist</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>
