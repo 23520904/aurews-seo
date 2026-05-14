@@ -106,3 +106,54 @@ export async function deletePost(id: string) {
   }
 }
 
+export async function bulkCreatePosts(postsData: any[]) {
+  const session = await auth();
+  if (!session || !session.user?.id) {
+    throw new Error("Unauthorized");
+  }
+
+  // Check if user is ADMIN
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { role: true }
+  });
+
+  if (user?.role !== 'ADMIN') {
+    return { error: "Forbidden: Admin access required" };
+  }
+
+  if (!Array.isArray(postsData) || postsData.length === 0) {
+    return { error: "Invalid data format: Expected non-empty array" };
+  }
+
+  try {
+    const results = await prisma.$transaction(
+      postsData.map((post) => {
+        const slug = post.slug || post.title.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
+        return prisma.post.create({
+          data: {
+            title: post.title,
+            slug,
+            body: post.body,
+            excerpt: post.excerpt,
+            coverImage: post.coverImage,
+            categoryId: post.categoryId,
+            status: post.status || 'PUBLISHED',
+            authorId: session.user!.id as string,
+          },
+        });
+      }),
+      {
+        timeout: 30000, // Increase to 30 seconds for large batches
+      }
+    );
+
+    revalidatePath("/");
+    revalidatePath("/dashboard");
+    
+    return { success: true, count: results.length };
+  } catch (error: any) {
+    console.error("Bulk creation failed:", error);
+    return { error: `Bulk creation failed: ${error.message || "Possible slug duplication or invalid category ID"}` };
+  }
+}

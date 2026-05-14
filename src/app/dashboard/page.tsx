@@ -44,6 +44,11 @@ export default async function DashboardPage() {
           </div>
         </div>
         <div style={{ display: 'flex', gap: '12px' }}>
+          {session.user.role === 'ADMIN' && (
+            <Link href="/dashboard/bulk">
+              <Button style={{ padding: '12px 24px' }}>[!] BULK IMPORT</Button>
+            </Link>
+          )}
           <Link href="/dashboard/posts/new">
             <Button variant="inverted" style={{ padding: '12px 24px' }}>+ CREATE NEW ENTRY</Button>
           </Link>
