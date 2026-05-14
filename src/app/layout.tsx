@@ -60,6 +60,18 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${playfair.variable} ${lora.variable} ${workSans.variable} ${spaceMono.variable}`}>
       <head>
+        {/* Google Tag Manager */}
+        <Script id="google-tag-manager" strategy="afterInteractive">
+          {`
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','GTM-N3T37ZSQ');
+          `}
+        </Script>
+        {/* End Google Tag Manager */}
+
         {/* Google tag (gtag.js) */}
         <Script
           async
@@ -71,12 +83,22 @@ export default function RootLayout({
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-
             gtag('config', 'G-LD00Y10ZRH');
           `}
         </Script>
       </head>
       <body className="wired-body">
+        {/* Google Tag Manager (noscript) */}
+        <noscript>
+          <iframe 
+            src="https://www.googletagmanager.com/ns.html?id=GTM-N3T37ZSQ"
+            height="0" 
+            width="0" 
+            style={{ display: 'none', visibility: 'hidden' }}
+          />
+        </noscript>
+        {/* End Google Tag Manager (noscript) */}
+
         <UtilityBar />
         <Masthead />
         <main style={{ minHeight: '80vh', padding: 'var(--space-12) 0' }}>
