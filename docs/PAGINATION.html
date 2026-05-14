@@ -1,0 +1,2753 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NEWSROOM — Pagination Mechanism Guide</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,600;1,400&family=Work+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <style>
+        :root {
+            --black: #000000;
+            --ink: #1a1a1a;
+            --paper: #ffffff;
+            --blue: #057dbc;
+            --green: #1a7a34;
+            --amber: #7a4d00;
+            --red: #8b0000;
+            --caption: #757575;
+            --disabled: #999999;
+            --hairline: #e2e8f0;
+            --code-bg: #f4f4f0;
+            --subtle: #f8f8f6;
+
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-body: 'Lora', Georgia, serif;
+            --font-ui: 'Work Sans', Helvetica, sans-serif;
+            --font-mono: 'Space Mono', 'Courier New', monospace;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--paper);
+            color: var(--ink);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        img {
+            display: block;
+            max-width: 100%;
+        }
+
+        /* ── UTIL BAR ── */
+        .util-bar {
+            background: var(--black);
+            padding: 8px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .util-bar span,
+        .util-bar a {
+            font-family: var(--font-mono);
+            font-size: 0.67rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .util-bar a:hover {
+            color: var(--blue);
+        }
+
+        .util-links {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        /* ── MASTHEAD ── */
+        .masthead {
+            border-bottom: 3px solid var(--black);
+            padding: 20px 32px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 2.6rem;
+            font-weight: 900;
+            letter-spacing: -2px;
+            color: var(--black);
+            line-height: 1;
+        }
+
+        .masthead-sub {
+            font-family: var(--font-mono);
+            font-size: 0.62rem;
+            text-transform: uppercase;
+            letter-spacing: 1.3px;
+            color: var(--caption);
+            margin-top: 5px;
+        }
+
+        .masthead-right {
+            text-align: right;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.9px;
+            color: var(--caption);
+            line-height: 1.7;
+        }
+
+        /* ── WRAPPER ── */
+        .wrapper {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        /* ── RIBBON ── */
+        .ribbon {
+            background: var(--black);
+            padding: 9px 0;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 2px;
+        }
+
+        .ribbon-label {
+            font-family: var(--font-mono);
+            font-size: 0.73rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.3px;
+            color: var(--paper);
+            white-space: nowrap;
+        }
+
+        .ribbon-rule {
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.18);
+        }
+
+        .ribbon.blue {
+            background: var(--blue);
+        }
+
+        .ribbon.green {
+            background: var(--green);
+        }
+
+        .ribbon.amber {
+            background: var(--amber);
+        }
+
+        .ribbon.red {
+            background: var(--red);
+        }
+
+        /* ── PAGE SECTIONS ── */
+        .page-section {
+            padding: 36px 0;
+            border-top: 1px solid var(--hairline);
+        }
+
+        .page-section:first-of-type {
+            border-top: none;
+            padding-top: 28px;
+        }
+
+        .section-kicker {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--caption);
+            margin-bottom: 6px;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 2.4rem;
+            font-weight: 700;
+            line-height: 1.05;
+            letter-spacing: -0.5px;
+            color: var(--ink);
+            margin-bottom: 10px;
+        }
+
+        .section-deck {
+            font-family: var(--font-body);
+            font-size: 1rem;
+            color: var(--caption);
+            max-width: 680px;
+            line-height: 1.6;
+        }
+
+        /* ── RULE ── */
+        .rule {
+            border: none;
+            border-top: 1px solid var(--black);
+            margin: 0;
+        }
+
+        .rule2 {
+            border: none;
+            border-top: 2px solid var(--black);
+            margin: 0;
+        }
+
+        .hairline {
+            border: none;
+            border-top: 1px solid var(--hairline);
+            margin: 0;
+        }
+
+        /* ── MONO ── */
+        .mono {
+            font-family: var(--font-mono);
+            font-size: 0.73rem;
+            text-transform: uppercase;
+            letter-spacing: 0.9px;
+        }
+
+        .mono-bold {
+            font-family: var(--font-mono);
+            font-size: 0.73rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.1px;
+        }
+
+        code {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            background: var(--code-bg);
+            padding: 1px 6px;
+            letter-spacing: 0;
+            text-transform: none;
+        }
+
+        /* ── BADGE ── */
+        .badge {
+            font-family: var(--font-mono);
+            font-size: 0.62rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 2px 8px;
+            border: 1px solid var(--black);
+            color: var(--black);
+            display: inline-block;
+        }
+
+        .badge.blue {
+            border-color: var(--blue);
+            color: var(--blue);
+        }
+
+        .badge.green {
+            border-color: var(--green);
+            color: var(--green);
+        }
+
+        .badge.amber {
+            border-color: var(--amber);
+            color: var(--amber);
+        }
+
+        .badge.red {
+            border-color: var(--red);
+            color: var(--red);
+        }
+
+        .badge.solid {
+            background: var(--black);
+            color: var(--paper);
+            border-color: var(--black);
+        }
+
+        .badge.solid-blue {
+            background: var(--blue);
+            color: #fff;
+            border-color: var(--blue);
+        }
+
+        .badge.solid-green {
+            background: var(--green);
+            color: #fff;
+            border-color: var(--green);
+        }
+
+        .badge.solid-amber {
+            background: var(--amber);
+            color: #fff;
+            border-color: var(--amber);
+        }
+
+        .badge.solid-red {
+            background: var(--red);
+            color: #fff;
+            border-color: var(--red);
+        }
+
+        .badge-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        /* ── CODE BLOCK ── */
+        .code-block {
+            background: var(--ink);
+            color: #e8e8e0;
+            font-family: var(--font-mono);
+            font-size: 0.71rem;
+            line-height: 1.75;
+            padding: 18px 22px;
+            overflow-x: auto;
+            margin: 12px 0;
+            border-left: 3px solid var(--blue);
+            letter-spacing: 0;
+            text-transform: none;
+            white-space: pre;
+        }
+
+        .code-block.green {
+            border-left-color: var(--green);
+        }
+
+        .code-block.amber {
+            border-left-color: var(--amber);
+        }
+
+        .code-block.red {
+            border-left-color: var(--red);
+        }
+
+        .code-block .cm {
+            color: #6a9955;
+        }
+
+        .code-block .kw {
+            color: #569cd6;
+        }
+
+        .code-block .st {
+            color: #ce9178;
+        }
+
+        .code-block .nu {
+            color: #b5cea8;
+        }
+
+        .code-block .fn {
+            color: #dcdcaa;
+        }
+
+        .code-block .ty {
+            color: #4ec9b0;
+        }
+
+        .code-block .hd {
+            color: #888;
+            font-style: italic;
+        }
+
+        .code-label {
+            font-family: var(--font-mono);
+            font-size: 0.62rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--caption);
+            margin: 16px 0 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .code-label::before {
+            content: "";
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--blue);
+            flex-shrink: 0;
+        }
+
+        .code-label.green::before {
+            background: var(--green);
+        }
+
+        .code-label.amber::before {
+            background: var(--amber);
+        }
+
+        .code-label.red::before {
+            background: var(--red);
+        }
+
+        /* ── INFO CARD ── */
+        .info-card {
+            border: 1px solid var(--hairline);
+            border-top: 3px solid var(--black);
+            padding: 22px;
+            background: var(--paper);
+            margin-bottom: 20px;
+        }
+
+        .info-card.blue {
+            border-top-color: var(--blue);
+        }
+
+        .info-card.green {
+            border-top-color: var(--green);
+        }
+
+        .info-card.amber {
+            border-top-color: var(--amber);
+        }
+
+        .info-card.red {
+            border-top-color: var(--red);
+        }
+
+        .card-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 6px;
+        }
+
+        .card-desc {
+            font-family: var(--font-ui);
+            font-size: 0.85rem;
+            color: var(--caption);
+            line-height: 1.55;
+            margin-bottom: 14px;
+        }
+
+        /* ── FEATURE LIST ── */
+        .flist {
+            list-style: none;
+            padding: 0;
+            border-top: 1px solid var(--hairline);
+            padding-top: 10px;
+        }
+
+        .flist li {
+            font-family: var(--font-ui);
+            font-size: 0.82rem;
+            color: var(--ink);
+            padding: 5px 0;
+            border-bottom: 1px solid var(--hairline);
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            line-height: 1.5;
+        }
+
+        .flist li:last-child {
+            border-bottom: none;
+        }
+
+        .flist li::before {
+            content: "→";
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            color: var(--caption);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* ── TWO COLUMN LAYOUT ── */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 28px;
+        }
+
+        @media (min-width: 768px) {
+            .two-col {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .three-col {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .three-col {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+        }
+
+        /* ── MIDDLEWARE BAR ── */
+        .mbar {
+            border-left: 3px solid var(--black);
+            background: var(--subtle);
+            padding: 12px 16px;
+            margin-bottom: 16px;
+        }
+
+        .mbar.blue {
+            border-left-color: var(--blue);
+            background: #f0f6fb;
+        }
+
+        .mbar.green {
+            border-left-color: var(--green);
+            background: #f0faf2;
+        }
+
+        .mbar.amber {
+            border-left-color: var(--amber);
+            background: #fdf8f0;
+        }
+
+        .mbar.red {
+            border-left-color: var(--red);
+            background: #fdf0f0;
+        }
+
+        .mbar-body {
+            font-family: var(--font-ui);
+            font-size: 0.82rem;
+            color: var(--caption);
+            margin-top: 5px;
+            line-height: 1.55;
+        }
+
+        /* ── INFRA STRIP ── */
+        .infra-strip {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1px;
+            background: var(--hairline);
+            border: 1px solid var(--hairline);
+            margin: 16px 0;
+        }
+
+        .infra-item {
+            background: var(--paper);
+            padding: 14px 18px;
+            flex: 1 1 180px;
+        }
+
+        .infra-label {
+            font-family: var(--font-mono);
+            font-size: 0.62rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--caption);
+            margin-bottom: 4px;
+        }
+
+        .infra-value {
+            font-family: var(--font-display);
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--ink);
+        }
+
+        /* ── COMPARISON TABLE ── */
+        .cmp-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: var(--font-ui);
+            font-size: 0.83rem;
+            margin: 16px 0;
+        }
+
+        .cmp-table th {
+            font-family: var(--font-mono);
+            font-size: 0.64rem;
+            text-transform: uppercase;
+            letter-spacing: 0.9px;
+            font-weight: 700;
+            text-align: left;
+            padding: 9px 12px;
+            background: var(--black);
+            color: var(--paper);
+        }
+
+        .cmp-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--hairline);
+            vertical-align: top;
+            line-height: 1.45;
+            color: var(--ink);
+        }
+
+        .cmp-table tr:hover td {
+            background: #f9f9f9;
+        }
+
+        .cmp-table .label-cell {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--black);
+            white-space: nowrap;
+        }
+
+        .cmp-table .yes {
+            color: var(--green);
+            font-weight: 700;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+        }
+
+        .cmp-table .no {
+            color: var(--red);
+            font-weight: 700;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+        }
+
+        .cmp-table .mid {
+            color: var(--amber);
+            font-weight: 700;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+        }
+
+        /* ── FLOW DIAGRAM ── */
+        .flow {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0;
+            padding: 18px 0;
+        }
+
+        .flow-node {
+            background: var(--paper);
+            border: 2px solid var(--black);
+            padding: 9px 14px;
+            font-family: var(--font-mono);
+            font-size: 0.67rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.9px;
+            white-space: nowrap;
+            color: var(--black);
+        }
+
+        .flow-node.filled {
+            background: var(--black);
+            color: var(--paper);
+        }
+
+        .flow-node.blue {
+            background: var(--blue);
+            color: var(--paper);
+            border-color: var(--blue);
+        }
+
+        .flow-node.green {
+            background: var(--green);
+            color: var(--paper);
+            border-color: var(--green);
+        }
+
+        .flow-node.red {
+            background: var(--red);
+            color: var(--paper);
+            border-color: var(--red);
+        }
+
+        .flow-arrow {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            color: var(--caption);
+            padding: 0 8px;
+        }
+
+        /* ── STEP FLOW ── */
+        .step-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--hairline);
+        }
+
+        .step-row:last-child {
+            border-bottom: none;
+        }
+
+        .step-num {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            font-weight: 700;
+            background: var(--black);
+            color: var(--paper);
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .step-title {
+            font-family: var(--font-ui);
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 4px;
+        }
+
+        .step-body {
+            font-family: var(--font-ui);
+            font-size: 0.81rem;
+            color: var(--caption);
+            line-height: 1.55;
+        }
+
+        /* ── CHECKLIST ── */
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checklist li {
+            font-family: var(--font-ui);
+            font-size: 0.82rem;
+            color: var(--ink);
+            padding: 6px 0;
+            border-bottom: 1px solid var(--hairline);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            line-height: 1.45;
+        }
+
+        .checklist li:last-child {
+            border-bottom: none;
+        }
+
+        .ck {
+            font-family: var(--font-mono);
+            font-size: 0.67rem;
+            font-weight: 700;
+            padding: 1px 6px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .ck.pass {
+            background: var(--green);
+            color: #fff;
+        }
+
+        .ck.warn {
+            background: var(--amber);
+            color: #fff;
+        }
+
+        .ck.never {
+            background: var(--red);
+            color: #fff;
+        }
+
+        /* ── ERROR TABLE ── */
+        .err-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+            margin: 14px 0;
+        }
+
+        .err-table th {
+            font-family: var(--font-mono);
+            font-size: 0.63rem;
+            text-transform: uppercase;
+            letter-spacing: 0.9px;
+            font-weight: 700;
+            text-align: left;
+            padding: 8px 12px;
+            background: var(--red);
+            color: #fff;
+        }
+
+        .err-table td {
+            padding: 9px 12px;
+            border-bottom: 1px solid var(--hairline);
+            vertical-align: top;
+            font-family: var(--font-ui);
+            line-height: 1.45;
+        }
+
+        .err-table tr:hover td {
+            background: #fff8f8;
+        }
+
+        .err-table .err-code {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--red);
+            white-space: nowrap;
+        }
+
+        .err-table .err-fix {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--green);
+        }
+
+        /* ═══════════════════════════════════════════
+     LIVE UI DEMOS
+  ═══════════════════════════════════════════ */
+
+        /* Demo wrapper */
+        .demo-shell {
+            border: 1px solid var(--hairline);
+            background: var(--subtle);
+            padding: 28px 24px;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .demo-label {
+            position: absolute;
+            top: -1px;
+            left: 0;
+            background: var(--black);
+            color: var(--paper);
+            font-family: var(--font-mono);
+            font-size: 0.62rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 3px 12px;
+        }
+
+        /* ── DEMO: Mock Post Card ── */
+        .mock-card {
+            background: var(--paper);
+            border: 1px solid var(--hairline);
+            padding: 16px;
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            animation: fadeSlideIn 0.35s ease both;
+        }
+
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .mock-card-img {
+            width: 88px;
+            height: 64px;
+            flex-shrink: 0;
+            background: var(--hairline);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mock-card-img span {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            color: var(--caption);
+        }
+
+        .mock-card-cat {
+            font-family: var(--font-mono);
+            font-size: 0.62rem;
+            text-transform: uppercase;
+            letter-spacing: 0.9px;
+            color: var(--blue);
+            margin-bottom: 4px;
+        }
+
+        .mock-card-title {
+            font-family: var(--font-display);
+            font-size: 0.95rem;
+            font-weight: 700;
+            line-height: 1.2;
+            color: var(--ink);
+            margin-bottom: 5px;
+        }
+
+        .mock-card-byline {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--caption);
+        }
+
+        .mock-cards-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            background: var(--hairline);
+        }
+
+        /* ── LOAD MORE BUTTON ── */
+        .btn-load-more {
+            display: block;
+            width: 100%;
+            margin: 16px 0 0;
+            background: var(--paper);
+            border: 2px solid var(--black);
+            color: var(--black);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 14px 0;
+            cursor: pointer;
+            transition: background 150ms, color 150ms, border-color 150ms;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-load-more:hover {
+            background: var(--black);
+            color: var(--paper);
+        }
+
+        .btn-load-more:disabled {
+            border-color: var(--disabled);
+            color: var(--disabled);
+            cursor: not-allowed;
+        }
+
+        .btn-load-more.loading {
+            color: transparent;
+        }
+
+        .btn-load-more.loading::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 18px;
+            height: 18px;
+            margin: -9px 0 0 -9px;
+            border: 2px solid var(--hairline);
+            border-top-color: var(--black);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .load-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-mono);
+            font-size: 0.63rem;
+            text-transform: uppercase;
+            letter-spacing: 0.9px;
+            color: var(--caption);
+            margin-top: 10px;
+        }
+
+        /* ── NUMERIC PAGINATION ── */
+        .pg-bar {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            flex-wrap: wrap;
+            margin: 16px 0;
+        }
+
+        .pg-btn {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--hairline);
+            background: var(--paper);
+            color: var(--ink);
+            cursor: pointer;
+            transition: all 130ms;
+            flex-shrink: 0;
+        }
+
+        .pg-btn:hover:not(.pg-active):not(.pg-dots):not(:disabled) {
+            border-color: var(--black);
+            background: var(--black);
+            color: var(--paper);
+        }
+
+        .pg-btn.pg-active {
+            background: var(--black);
+            color: var(--paper);
+            border-color: var(--black);
+            cursor: default;
+        }
+
+        .pg-btn.pg-dots {
+            cursor: default;
+            border-color: transparent;
+            color: var(--caption);
+        }
+
+        .pg-btn:disabled {
+            color: var(--disabled);
+            border-color: var(--hairline);
+            cursor: not-allowed;
+        }
+
+        .pg-btn.pg-arrow {
+            width: auto;
+            padding: 0 14px;
+            font-size: 0.67rem;
+            letter-spacing: 1px;
+        }
+
+        .pg-info {
+            font-family: var(--font-mono);
+            font-size: 0.63rem;
+            color: var(--caption);
+            text-transform: uppercase;
+            letter-spacing: 0.9px;
+            margin-top: 8px;
+        }
+
+        /* ── INFINITE SCROLL INDICATOR ── */
+        .infinite-trigger {
+            text-align: center;
+            padding: 24px 0;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--caption);
+            border-top: 1px solid var(--hairline);
+            margin-top: 12px;
+        }
+
+        .infinite-spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--hairline);
+            border-top-color: var(--black);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            margin: 0 auto 8px;
+        }
+
+        /* ── FILTER CHIPS ── */
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .chip {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 5px 12px;
+            border: 1px solid var(--hairline);
+            background: var(--paper);
+            color: var(--caption);
+            cursor: pointer;
+            transition: all 130ms;
+        }
+
+        .chip:hover {
+            border-color: var(--black);
+            color: var(--black);
+        }
+
+        .chip.active {
+            background: var(--black);
+            color: var(--paper);
+            border-color: var(--black);
+        }
+
+        /* ── SORT BAR ── */
+        .sort-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--hairline);
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .sort-label {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--caption);
+        }
+
+        .sort-options {
+            display: flex;
+            gap: 0;
+        }
+
+        .sort-opt {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 5px 12px;
+            border: 1px solid var(--hairline);
+            background: var(--paper);
+            color: var(--caption);
+            cursor: pointer;
+            transition: all 130ms;
+            border-right-width: 0;
+        }
+
+        .sort-opt:last-child {
+            border-right-width: 1px;
+        }
+
+        .sort-opt:hover {
+            background: var(--subtle);
+            color: var(--ink);
+        }
+
+        .sort-opt.active {
+            background: var(--black);
+            color: var(--paper);
+            border-color: var(--black);
+        }
+
+        /* ── SCROLL POSITION PILL ── */
+        .scroll-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--ink);
+            color: var(--paper);
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.9px;
+            padding: 6px 14px;
+            position: fixed;
+            bottom: 24px;
+            right: 32px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 200ms;
+            z-index: 100;
+        }
+
+        .scroll-pill.visible {
+            opacity: 1;
+            pointer-events: auto;
+            cursor: pointer;
+        }
+
+        /* ── TOC ── */
+        .toc {
+            background: var(--paper);
+            border: 2px solid var(--black);
+            padding: 18px 20px;
+            position: sticky;
+            top: 24px;
+        }
+
+        .toc-title {
+            font-family: var(--font-mono);
+            font-size: 0.73rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--black);
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--black);
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-list li {
+            border-bottom: 1px solid var(--hairline);
+            padding: 5px 0;
+        }
+
+        .toc-list li:last-child {
+            border-bottom: none;
+        }
+
+        .toc-list a {
+            font-family: var(--font-ui);
+            font-size: 0.82rem;
+            color: var(--ink);
+            display: block;
+            transition: color 120ms;
+        }
+
+        .toc-list a:hover {
+            color: var(--blue);
+        }
+
+        .toc-num {
+            font-family: var(--font-mono);
+            font-size: 0.62rem;
+            color: var(--caption);
+            margin-right: 6px;
+        }
+
+        .two-col-aside {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 32px;
+        }
+
+        @media (min-width: 900px) {
+            .two-col-aside {
+                grid-template-columns: 1fr 280px;
+            }
+        }
+
+        /* ── FOOTER ── */
+        .site-footer {
+            background: var(--ink);
+            color: var(--paper);
+            padding: 36px 32px 24px;
+            margin-top: 64px;
+        }
+
+        .footer-logo {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+        }
+
+        .footer-meta {
+            font-family: var(--font-mono);
+            font-size: 0.62rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 4px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-links a {
+            font-family: var(--font-mono);
+            font-size: 0.62rem;
+            text-transform: uppercase;
+            letter-spacing: 0.9px;
+            color: rgba(255, 255, 255, 0.4);
+            transition: color 120ms;
+        }
+
+        .footer-links a:hover {
+            color: var(--blue);
+        }
+
+        /* ── HIGHLIGHT BAR ── */
+        .hl-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1px;
+            background: var(--hairline);
+            border: 1px solid var(--hairline);
+            margin: 14px 0;
+        }
+
+        .hl-item {
+            background: var(--paper);
+            padding: 12px 16px;
+            flex: 1 1 160px;
+        }
+
+        .hl-item-label {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--caption);
+            margin-bottom: 3px;
+        }
+
+        .hl-item-val {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--ink);
+        }
+
+        @media (max-width: 767px) {
+            .two-col-aside {
+                display: block;
+            }
+
+            .toc {
+                position: static;
+                margin-bottom: 24px;
+            }
+
+            .demo-shell {
+                padding: 24px 16px;
+            }
+
+            .pg-btn {
+                width: 34px;
+                height: 34px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- UTILITY BAR -->
+    <div class="util-bar">
+        <span>Pagination Guide v1.0 — NEWSROOM Platform · Next.js + Netlify</span>
+        <div class="util-links">
+            <a href="#overview">Overview</a>
+            <a href="#load-more">Load More</a>
+            <a href="#numeric">Numeric</a>
+            <a href="#infinite">Infinite Scroll</a>
+            <a href="#filters">Filters</a>
+            <a href="#api">API</a>
+            <a href="#errors">Pitfalls</a>
+        </div>
+    </div>
+
+    <!-- MASTHEAD -->
+    <header>
+        <div class="wrapper">
+            <div class="masthead">
+                <div>
+                    <div class="logo">NEWSROOM</div>
+                    <div class="masthead-sub">Next.js · Netlify · Pagination Mechanism Guide · v1.0</div>
+                </div>
+                <div class="masthead-right">
+                    Pagination Architecture<br>
+                    3 Patterns · Full UI Reference<br>
+                    Cursor · Offset · Infinite
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="wrapper">
+        <div class="two-col-aside" style="padding: 28px 0 0;">
+
+            <main>
+
+                <!-- ═══════════════════════════════════════
+           §1 OVERVIEW
+      ═══════════════════════════════════════ -->
+                <section id="overview" class="page-section" style="border-top:none;">
+                    <div class="section-kicker">§ 01 — Overview</div>
+                    <h1 class="section-title">Pagination Mechanisms</h1>
+                    <p class="section-deck">NEWSROOM uses three distinct pagination patterns across its surfaces — each
+                        chosen for a specific UX goal. This guide covers the full UI, implementation, and API contract
+                        for each.</p>
+
+                    <hr class="rule2" style="margin: 18px 0;" />
+
+                    <div class="hl-bar">
+                        <div class="hl-item">
+                            <div class="hl-item-label">Pattern A</div>
+                            <div class="hl-item-val">Cursor / Load More</div>
+                        </div>
+                        <div class="hl-item">
+                            <div class="hl-item-label">Pattern B</div>
+                            <div class="hl-item-val">Numeric Pages</div>
+                        </div>
+                        <div class="hl-item">
+                            <div class="hl-item-label">Pattern C</div>
+                            <div class="hl-item-val">Infinite Scroll</div>
+                        </div>
+                        <div class="hl-item">
+                            <div class="hl-item-label">State Layer</div>
+                            <div class="hl-item-val">URL-First</div>
+                        </div>
+                        <div class="hl-item">
+                            <div class="hl-item-label">API Style</div>
+                            <div class="hl-item-val">Cursor + Offset</div>
+                        </div>
+                    </div>
+
+                    <div class="mbar blue" style="margin-top:16px;">
+                        <span class="mono-bold" style="color:var(--blue);">Design Principle — URL-First State</span>
+                        <div class="mbar-body">All pagination state lives in the URL (<code>?page=3</code>,
+                            <code>?cursor=abc</code>). This ensures deep-linking, browser Back/Forward, and SSR work
+                            correctly. Never use component-local state as the source of truth for page position in
+                            routes the user can share.</div>
+                    </div>
+
+                    <h2
+                        style="font-family:var(--font-mono);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:22px 0 10px;">
+                        Pattern Routing Map</h2>
+                    <table class="cmp-table">
+                        <thead>
+                            <tr>
+                                <th>Route</th>
+                                <th>Pattern</th>
+                                <th>Page Size</th>
+                                <th>SEO</th>
+                                <th>Back/Forward</th>
+                                <th>URL State</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="label-cell">/</td>
+                                <td>None (fixed 12)</td>
+                                <td>12</td>
+                                <td class="yes">SSG</td>
+                                <td class="mid">N/A</td>
+                                <td class="no">No</td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">/latest</td>
+                                <td>Cursor / Load More</td>
+                                <td>20 + 10</td>
+                                <td class="mid">SSR</td>
+                                <td class="yes">Yes</td>
+                                <td class="yes">?cursor=</td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">/category/[slug]</td>
+                                <td>Cursor / Load More</td>
+                                <td>12 + 8</td>
+                                <td class="yes">ISR</td>
+                                <td class="yes">Yes</td>
+                                <td class="yes">?cursor=</td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">/search</td>
+                                <td>Numeric Pages</td>
+                                <td>10</td>
+                                <td class="no">noindex</td>
+                                <td class="yes">Yes</td>
+                                <td class="yes">?page=</td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">/admin/posts</td>
+                                <td>Numeric Pages</td>
+                                <td>25</td>
+                                <td class="no">noindex</td>
+                                <td class="yes">Yes</td>
+                                <td class="yes">?page=</td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">/dashboard/my-posts</td>
+                                <td>Numeric Pages</td>
+                                <td>20</td>
+                                <td class="no">noindex</td>
+                                <td class="yes">Yes</td>
+                                <td class="yes">?page=</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h2
+                        style="font-family:var(--font-mono);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:22px 0 10px;">
+                        Pattern Comparison</h2>
+                    <table class="cmp-table">
+                        <thead>
+                            <tr>
+                                <th>Criterion</th>
+                                <th>Cursor / Load More</th>
+                                <th>Numeric Pages</th>
+                                <th>Infinite Scroll</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="label-cell">Stable results</td>
+                                <td class="yes">✓ Stable</td>
+                                <td class="mid">~ Drift on inserts</td>
+                                <td class="yes">✓ Stable</td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">Deep-link to page</td>
+                                <td class="no">✗ No</td>
+                                <td class="yes">✓ Yes</td>
+                                <td class="no">✗ No</td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">SEO-indexable pages</td>
+                                <td class="no">✗ No</td>
+                                <td class="yes">✓ Yes</td>
+                                <td class="no">✗ No</td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">DB performance</td>
+                                <td class="yes">✓ O(1) seek</td>
+                                <td class="mid">~ O(n) offset</td>
+                                <td class="yes">✓ O(1) seek</td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">Editorial UX fit</td>
+                                <td class="yes">✓ Best (feeds)</td>
+                                <td class="yes">✓ Best (search, admin)</td>
+                                <td class="mid">~ Acceptable (mobile)</td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">User controls load</td>
+                                <td class="yes">✓ Explicit tap</td>
+                                <td class="yes">✓ Explicit tap</td>
+                                <td class="no">✗ Automatic</td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">Total count shown</td>
+                                <td class="mid">~ Optional</td>
+                                <td class="yes">✓ Yes</td>
+                                <td class="no">✗ No</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+
+                <!-- ═══════════════════════════════════════
+           §2 CURSOR / LOAD MORE
+      ═══════════════════════════════════════ -->
+                <section id="load-more" class="page-section">
+                    <div class="ribbon">
+                        <span class="ribbon-label">§ 02 — Cursor Pagination &amp; Load More Button</span>
+                        <div class="ribbon-rule"></div>
+                    </div>
+
+                    <div style="padding-top:18px;">
+                        <div class="section-kicker">Used on: /latest · /category/[slug]</div>
+                        <p
+                            style="font-family:var(--font-body);font-size:.95rem;color:var(--caption);line-height:1.6;max-width:640px;margin-top:6px;">
+                            Cursor pagination uses a stable pointer (the <code>id</code> or <code>createdAt</code> of
+                            the last item seen) to fetch the next page. No items skip or duplicate when new posts are
+                            published mid-session.
+                        </p>
+                    </div>
+
+                    <div class="mbar green" style="margin-top:16px;">
+                        <span class="mono-bold" style="color:var(--green);">How a cursor works</span>
+                        <div class="mbar-body">The API returns a <code>nextCursor</code> — the opaque ID of the last
+                            item in the current page. The client appends <code>?cursor=nextCursor</code> to fetch the
+                            next batch. When <code>nextCursor === null</code>, there are no more results and the button
+                            is hidden.</div>
+                    </div>
+
+                    <!-- FLOW -->
+                    <div class="mono" style="color:var(--caption);margin:18px 0 6px;">Request Flow</div>
+                    <div class="flow">
+                        <div class="flow-node">Initial Load<br><span style="font-size:.58rem;opacity:.7">no
+                                cursor</span></div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-node blue">GET /api/posts<br><span style="font-size:.58rem">?limit=20</span>
+                        </div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-node green">posts[] + nextCursor</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-node">"Load More" tap</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-node blue">GET /api/posts<br><span
+                                style="font-size:.58rem">?cursor=XYZ&amp;limit=10</span></div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-node green">append + new cursor</div>
+                    </div>
+
+                    <!-- LIVE UI DEMO: Load More -->
+                    <div class="demo-shell" style="margin-top:24px;">
+                        <span class="demo-label">Live UI Demo — Load More</span>
+
+                        <div class="sort-bar">
+                            <span class="sort-label">Latest Stories</span>
+                            <div class="sort-options">
+                                <button class="sort-opt active" onclick="setSort(this,'newest')">Newest</button>
+                                <button class="sort-opt" onclick="setSort(this,'oldest')">Oldest</button>
+                                <button class="sort-opt" onclick="setSort(this,'popular')">Popular</button>
+                            </div>
+                        </div>
+
+                        <div class="chips" id="chip-group">
+                            <button class="chip active" onclick="setChip(this,'all')">All</button>
+                            <button class="chip" onclick="setChip(this,'business')">Business</button>
+                            <button class="chip" onclick="setChip(this,'tech')">Tech &amp; AI</button>
+                            <button class="chip" onclick="setChip(this,'markets')">Markets</button>
+                            <button class="chip" onclick="setChip(this,'politics')">Politics</button>
+                        </div>
+
+                        <div class="mock-cards-list" id="cards-list"></div>
+
+                        <button class="btn-load-more" id="load-more-btn" onclick="loadMore()">
+                            Load More Stories
+                        </button>
+
+                        <div class="load-meta">
+                            <span id="load-count">Showing 4 of 24 stories</span>
+                            <span id="load-cursor">cursor: post_004</span>
+                        </div>
+                    </div>
+
+                    <!-- STATE DIAGRAM -->
+                    <h3
+                        style="font-family:var(--font-mono);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:24px 0 10px;">
+                        Button State Machine</h3>
+                    <table class="cmp-table">
+                        <thead>
+                            <tr>
+                                <th>State</th>
+                                <th>Button Label</th>
+                                <th>Disabled?</th>
+                                <th>Visual</th>
+                                <th>Trigger</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="label-cell">idle</td>
+                                <td>LOAD MORE STORIES</td>
+                                <td class="no">No</td>
+                                <td>White bg, black border</td>
+                                <td>User tap</td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">loading</td>
+                                <td>(spinner)</td>
+                                <td class="yes">Yes</td>
+                                <td>Spinner centered, text hidden</td>
+                                <td>Auto after tap</td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">loaded</td>
+                                <td>LOAD MORE STORIES</td>
+                                <td class="no">No</td>
+                                <td>Returns to idle</td>
+                                <td>New cursor received</td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">exhausted</td>
+                                <td>ALL STORIES LOADED</td>
+                                <td class="yes">Yes</td>
+                                <td>Disabled, grey text</td>
+                                <td><code>nextCursor === null</code></td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">error</td>
+                                <td>RETRY</td>
+                                <td class="no">No</td>
+                                <td>Red border, retry label</td>
+                                <td>Network/API error</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- CODE: Page Component -->
+                    <div class="info-card green" style="margin-top:20px;">
+                        <div class="badge-row"><span class="badge solid">Component</span><span
+                                class="badge green">app/latest/page.tsx</span></div>
+                        <div class="card-title">Server Page + Client Load More</div>
+                        <div class="card-desc">The page component fetches the first page server-side (SSR). The client
+                            <code>&lt;LoadMore&gt;</code> component handles subsequent fetches without a full page
+                            reload.</div>
+
+                        <div class="code-label green">app/latest/page.tsx — server component</div>
+                        <pre class="code-block green"><span class="kw">import</span> { <span class="ty">LoadMore</span> } <span class="kw">from</span> <span class="st">'@/components/LoadMore'</span>
+<span class="kw">import</span> { <span class="ty">PostCard</span>  } <span class="kw">from</span> <span class="st">'@/components/PostCard'</span>
+<span class="kw">import</span> { prisma    } <span class="kw">from</span> <span class="st">'@/lib/prisma'</span>
+
+<span class="kw">const</span> PAGE_SIZE = <span class="nu">20</span>
+
+<span class="kw">export default async function</span> <span class="fn">LatestPage</span>() {
+  <span class="hd">// Server-side: fetch first page</span>
+  <span class="kw">const</span> posts = <span class="kw">await</span> prisma.post.findMany({
+    <span class="kw">where</span>:   { <span class="kw">status</span>: <span class="st">'PUBLISHED'</span>, <span class="kw">deletedAt</span>: <span class="kw">null</span> },
+    <span class="kw">take</span>:    PAGE_SIZE + <span class="nu">1</span>,   <span class="cm">// fetch +1 to detect hasMore</span>
+    <span class="kw">orderBy</span>: { <span class="kw">createdAt</span>: <span class="st">'desc'</span> },
+    <span class="kw">include</span>: { <span class="kw">author</span>: <span class="kw">true</span>, <span class="kw">category</span>: <span class="kw">true</span> },
+  })
+
+  <span class="kw">const</span> hasMore    = posts.length > PAGE_SIZE
+  <span class="kw">const</span> items      = hasMore ? posts.slice(<span class="nu">0</span>, PAGE_SIZE) : posts
+  <span class="kw">const</span> nextCursor = hasMore ? items[items.length - <span class="nu">1</span>].id : <span class="kw">null</span>
+
+  <span class="kw">return</span> (
+    &lt;<span class="ty">main</span>&gt;
+      &lt;<span class="ty">h1</span>&gt;Latest Stories&lt;/<span class="ty">h1</span>&gt;
+      &lt;<span class="ty">ul</span>&gt;
+        {items.map(post => (
+          &lt;<span class="ty">PostCard</span> key={post.id} post={post} /&gt;
+        ))}
+      &lt;/<span class="ty">ul</span>&gt;
+      <span class="cm">/* Client component handles all subsequent loads */</span>
+      &lt;<span class="ty">LoadMore</span>
+        initialCursor={nextCursor}
+        endpoint=<span class="st">"/api/posts/latest"</span>
+        pageSize={<span class="nu">10</span>}
+      /&gt;
+    &lt;/<span class="ty">main</span>&gt;
+  )
+}</pre>
+
+                        <div class="code-label green">components/LoadMore.tsx — client component</div>
+                        <pre class="code-block green"><span class="st">'use client'</span>
+<span class="kw">import</span> { useState, useTransition } <span class="kw">from</span> <span class="st">'react'</span>
+<span class="kw">import</span> { <span class="ty">PostCard</span> } <span class="kw">from</span> <span class="st">'./PostCard'</span>
+
+<span class="kw">type</span> <span class="ty">Props</span> = {
+  initialCursor: <span class="ty">string</span> | <span class="kw">null</span>
+  endpoint:      <span class="ty">string</span>
+  pageSize:      <span class="ty">number</span>
+}
+
+<span class="kw">export function</span> <span class="fn">LoadMore</span>({ initialCursor, endpoint, pageSize }: <span class="ty">Props</span>) {
+  <span class="kw">const</span> [posts,  setPosts ] = useState&lt;<span class="ty">Post</span>[]&gt;([])
+  <span class="kw">const</span> [cursor, setCursor] = useState(initialCursor)
+  <span class="kw">const</span> [isPending, startTransition] = useTransition()
+
+  <span class="kw">if</span> (!cursor) <span class="kw">return</span> (
+    &lt;<span class="ty">p</span> className=<span class="st">"all-loaded-msg"</span>&gt;All stories loaded&lt;/<span class="ty">p</span>&gt;
+  )
+
+  <span class="kw">async function</span> <span class="fn">fetchMore</span>() {
+    startTransition(<span class="kw">async</span> () => {
+      <span class="kw">const</span> res  = <span class="kw">await</span> fetch(
+        <span class="st">`${endpoint}?cursor=${cursor}&amp;limit=${pageSize}`</span>
+      )
+      <span class="kw">if</span> (!res.ok) <span class="kw">throw new</span> <span class="ty">Error</span>(<span class="st">'fetch failed'</span>)
+
+      <span class="kw">const</span> { data } = <span class="kw">await</span> res.json()
+      setPosts(prev => [...prev, ...data.posts])
+      setCursor(data.nextCursor)    <span class="cm">// null when exhausted</span>
+    })
+  }
+
+  <span class="kw">return</span> (
+    &lt;&gt;
+      {posts.map(post => &lt;<span class="ty">PostCard</span> key={post.id} post={post} /&gt;)}
+
+      {cursor &amp;&amp; (
+        &lt;<span class="ty">button</span>
+          onClick={fetchMore}
+          disabled={isPending}
+          className={<span class="st">`btn-load-more ${isPending ? 'loading' : ''}`</span>}
+        &gt;
+          {isPending ? <span class="st">''</span> : <span class="st">'Load More Stories'</span>}
+        &lt;/<span class="ty">button</span>&gt;
+      )}
+    &lt;/&gt;
+  )
+}</pre>
+                    </div>
+
+                    <!-- API endpoint for cursor -->
+                    <div class="info-card blue" style="margin-top:20px;">
+                        <div class="badge-row"><span class="badge solid-blue">API</span><span
+                                class="badge blue">app/api/posts/latest/route.ts</span></div>
+                        <div class="card-title">Cursor API Endpoint</div>
+                        <div class="card-desc">The <code>GET /api/posts/latest</code> endpoint accepts a
+                            <code>cursor</code> and <code>limit</code> query param and returns a consistent paginated
+                            response envelope.</div>
+
+                        <div class="code-label">app/api/posts/latest/route.ts</div>
+                        <pre class="code-block"><span class="kw">import</span> { ok, err, withErrorHandler } <span class="kw">from</span> <span class="st">'@/lib/api-response'</span>
+<span class="kw">import</span> { prisma } <span class="kw">from</span> <span class="st">'@/lib/prisma'</span>
+
+<span class="kw">export const</span> GET = <span class="fn">withErrorHandler</span>(<span class="kw">async</span> (req: <span class="ty">Request</span>) => {
+  <span class="kw">const</span> { searchParams } = <span class="kw">new</span> <span class="ty">URL</span>(req.url)
+  <span class="kw">const</span> cursor = searchParams.get(<span class="st">'cursor'</span>)        <span class="cm">// optional</span>
+  <span class="kw">const</span> limit  = Math.min(Number(searchParams.get(<span class="st">'limit'</span>)) || <span class="nu">10</span>, <span class="nu">50</span>)
+
+  <span class="kw">const</span> posts = <span class="kw">await</span> prisma.post.findMany({
+    <span class="kw">take</span>:    limit + <span class="nu">1</span>,              <span class="cm">// overfetch by 1 to detect hasMore</span>
+    <span class="kw">skip</span>:    cursor ? <span class="nu">1</span> : <span class="nu">0</span>,       <span class="cm">// skip cursor item itself</span>
+    <span class="kw">cursor</span>:  cursor ? { <span class="kw">id</span>: cursor } : <span class="kw">undefined</span>,
+    <span class="kw">where</span>:   { <span class="kw">status</span>: <span class="st">'PUBLISHED'</span>, <span class="kw">deletedAt</span>: <span class="kw">null</span> },
+    <span class="kw">orderBy</span>: { <span class="kw">createdAt</span>: <span class="st">'desc'</span> },
+    <span class="kw">include</span>: { <span class="kw">author</span>: <span class="kw">true</span>, <span class="kw">category</span>: <span class="kw">true</span> },
+  })
+
+  <span class="kw">const</span> hasMore    = posts.length > limit
+  <span class="kw">const</span> items      = hasMore ? posts.slice(<span class="nu">0</span>, limit) : posts
+  <span class="kw">const</span> nextCursor = hasMore ? items[items.length - <span class="nu">1</span>].id : <span class="kw">null</span>
+
+  <span class="kw">return</span> <span class="fn">ok</span>({
+    <span class="kw">posts</span>:      items,
+    <span class="kw">nextCursor</span>,             <span class="cm">// null = no more pages</span>
+    <span class="kw">count</span>:      items.length,
+  })
+})</pre>
+
+                        <div class="code-label">Response envelope shape</div>
+                        <pre class="code-block">{
+  <span class="st">"success"</span>: <span class="kw">true</span>,
+  <span class="st">"data"</span>: {
+    <span class="st">"posts"</span>:      [...],        <span class="cm">// array of post objects</span>
+    <span class="st">"nextCursor"</span>: <span class="st">"post_cuid_xyz"</span>,  <span class="cm">// or null if end of feed</span>
+    <span class="st">"count"</span>:      <span class="nu">10</span>
+  }
+}</pre>
+                    </div>
+                </section>
+
+
+                <!-- ═══════════════════════════════════════
+           §3 NUMERIC PAGINATION
+      ═══════════════════════════════════════ -->
+                <section id="numeric" class="page-section">
+                    <div class="ribbon blue">
+                        <span class="ribbon-label">§ 03 — Numeric Page Pagination</span>
+                        <div class="ribbon-rule"></div>
+                    </div>
+
+                    <div style="padding-top:18px;">
+                        <div class="section-kicker">Used on: /search · /admin/posts · /dashboard/my-posts</div>
+                        <p
+                            style="font-family:var(--font-body);font-size:.95rem;color:var(--caption);line-height:1.6;max-width:640px;margin-top:6px;">
+                            Numeric (offset) pagination shows page numbers and allows jumping to any page. Best for
+                            admin tables and search results where users want a known position. State lives in the URL as
+                            <code>?page=N</code>.
+                        </p>
+                    </div>
+
+                    <div class="mbar amber" style="margin-top:16px;">
+                        <span class="mono-bold" style="color:var(--amber);">Offset tradeoff</span>
+                        <div class="mbar-body">Offset pagination (<code>LIMIT 25 OFFSET 50</code>) is simple but O(n) —
+                            the DB scans all skipped rows. For large datasets (&gt;10k posts) in admin views, this is
+                            acceptable. Never use offset on public feeds where N can grow unboundedly.</div>
+                    </div>
+
+                    <!-- LIVE UI DEMO: Numeric Pager -->
+                    <div class="demo-shell" style="margin-top:22px;">
+                        <span class="demo-label">Live UI Demo — Numeric Pagination</span>
+
+                        <div class="sort-bar">
+                            <span class="sort-label" id="pg-result-count">Showing 1–25 of 147 results</span>
+                            <div class="sort-options">
+                                <button class="sort-opt active" onclick="setSort(this,'date')">Date</button>
+                                <button class="sort-opt" onclick="setSort(this,'title')">Title</button>
+                                <button class="sort-opt" onclick="setSort(this,'views')">Views</button>
+                            </div>
+                        </div>
+
+                        <!-- Pager A: current page 1 -->
+                        <div style="margin-bottom:20px;">
+                            <div class="mono" style="color:var(--caption);margin-bottom:8px;">Page 1 of 6</div>
+                            <div class="pg-bar" id="pg-demo-1"></div>
+                        </div>
+
+                        <!-- Pager B: current page 4 (middle) -->
+                        <div style="margin-bottom:20px;">
+                            <div class="mono" style="color:var(--caption);margin-bottom:8px;">Page 4 of 6 (middle state
+                                — truncated ends)</div>
+                            <div class="pg-bar" id="pg-demo-4"></div>
+                        </div>
+
+                        <!-- Pager C: current page 6 (last) -->
+                        <div>
+                            <div class="mono" style="color:var(--caption);margin-bottom:8px;">Page 6 of 6 (last page)
+                            </div>
+                            <div class="pg-bar" id="pg-demo-6"></div>
+                        </div>
+
+                        <div class="pg-info" style="margin-top:16px;">URL:
+                            <code>/search?q=bitcoin&amp;page=<span id="pg-url-num">1</span></code> · Offset:
+                            <code><span id="pg-offset">0</span></code> · Limit: <code>25</code></div>
+                    </div>
+
+                    <!-- Component code -->
+                    <div class="info-card blue" style="margin-top:20px;">
+                        <div class="badge-row"><span class="badge solid-blue">Component</span><span
+                                class="badge blue">components/Paginator.tsx</span></div>
+                        <div class="card-title">Numeric Paginator Component</div>
+                        <div class="card-desc">A reusable Server-Component-compatible paginator that generates URL-based
+                            page links. No client JS needed for basic navigation — links are standard
+                            <code>&lt;a&gt;</code> tags with <code>?page=N</code>.</div>
+
+                        <div class="code-label">components/Paginator.tsx</div>
+                        <pre class="code-block"><span class="kw">import</span> Link <span class="kw">from</span> <span class="st">'next/link'</span>
+
+<span class="kw">type</span> <span class="ty">Props</span> = {
+  currentPage:  <span class="ty">number</span>
+  totalPages:   <span class="ty">number</span>
+  basePath:     <span class="ty">string</span>          <span class="cm">// e.g. "/search?q=bitcoin"</span>
+  pageParam?:   <span class="ty">string</span>          <span class="cm">// default "page"</span>
+}
+
+<span class="kw">function</span> <span class="fn">buildPages</span>(current: <span class="ty">number</span>, total: <span class="ty">number</span>): (<span class="ty">number</span> | <span class="st">'…'</span>)[] {
+  <span class="kw">if</span> (total &lt;= <span class="nu">7</span>) <span class="kw">return</span> Array.from({ <span class="kw">length</span>: total }, (_, i) => i + <span class="nu">1</span>)
+
+  <span class="kw">const</span> pages: (<span class="ty">number</span> | <span class="st">'…'</span>)[] = [<span class="nu">1</span>]
+
+  <span class="kw">if</span> (current > <span class="nu">3</span>) pages.push(<span class="st">'…'</span>)
+
+  <span class="kw">const</span> start = Math.max(<span class="nu">2</span>, current - <span class="nu">1</span>)
+  <span class="kw">const</span> end   = Math.min(total - <span class="nu">1</span>, current + <span class="nu">1</span>)
+  <span class="kw">for</span> (<span class="kw">let</span> i = start; i &lt;= end; i++) pages.push(i)
+
+  <span class="kw">if</span> (current &lt; total - <span class="nu">2</span>) pages.push(<span class="st">'…'</span>)
+  pages.push(total)
+  <span class="kw">return</span> pages
+}
+
+<span class="kw">export function</span> <span class="fn">Paginator</span>({ currentPage, totalPages, basePath, pageParam = <span class="st">'page'</span> }: <span class="ty">Props</span>) {
+  <span class="kw">const</span> <span class="fn">href</span> = (p: <span class="ty">number</span>) => <span class="st">`${basePath}&amp;${pageParam}=${p}`</span>
+  <span class="kw">const</span> pages = <span class="fn">buildPages</span>(currentPage, totalPages)
+
+  <span class="kw">return</span> (
+    &lt;<span class="ty">nav</span> aria-label=<span class="st">"Pagination"</span> className=<span class="st">"pg-bar"</span>&gt;
+      &lt;<span class="ty">Link</span>
+        href={<span class="fn">href</span>(currentPage - <span class="nu">1</span>)}
+        className=<span class="st">`pg-btn pg-arrow ${currentPage &lt;= 1 ? 'disabled' : ''}`</span>
+        aria-disabled={currentPage &lt;= <span class="nu">1</span>}
+      &gt;← Prev&lt;/<span class="ty">Link</span>&gt;
+
+      {pages.map((p, i) =>
+        p === <span class="st">'…'</span>
+          ? &lt;<span class="ty">span</span> key={i} className=<span class="st">"pg-btn pg-dots"</span>&gt;…&lt;/<span class="ty">span</span>&gt;
+          : &lt;<span class="ty">Link</span>
+              key={p}
+              href={<span class="fn">href</span>(p)}
+              className={<span class="st">`pg-btn ${p === currentPage ? 'pg-active' : ''}`</span>}
+              aria-current={p === currentPage ? <span class="st">'page'</span> : <span class="kw">undefined</span>}
+            &gt;{p}&lt;/<span class="ty">Link</span>&gt;
+      )}
+
+      &lt;<span class="ty">Link</span>
+        href={<span class="fn">href</span>(currentPage + <span class="nu">1</span>)}
+        className=<span class="st">`pg-btn pg-arrow ${currentPage >= totalPages ? 'disabled' : ''}`</span>
+        aria-disabled={currentPage >= totalPages}
+      &gt;Next →&lt;/<span class="ty">Link</span>&gt;
+    &lt;/<span class="ty">nav</span>&gt;
+  )
+}</pre>
+
+                        <div class="code-label">app/search/page.tsx — reading page from searchParams</div>
+                        <pre class="code-block"><span class="kw">const</span> PAGE_SIZE = <span class="nu">10</span>
+
+<span class="kw">export default async function</span> <span class="fn">SearchPage</span>({
+  searchParams
+}: {
+  searchParams: { q?: <span class="ty">string</span>; page?: <span class="ty">string</span> }
+}) {
+  <span class="kw">const</span> query = searchParams.q ?? <span class="st">''</span>
+  <span class="kw">const</span> page  = Math.max(<span class="nu">1</span>, Number(searchParams.page) || <span class="nu">1</span>)
+  <span class="kw">const</span> skip  = (page - <span class="nu">1</span>) * PAGE_SIZE
+
+  <span class="kw">const</span> [posts, total] = <span class="kw">await</span> Promise.all([
+    prisma.post.findMany({
+      <span class="kw">where</span>: {
+        <span class="kw">status</span>: <span class="st">'PUBLISHED'</span>,
+        <span class="kw">deletedAt</span>: <span class="kw">null</span>,
+        <span class="kw">OR</span>: [
+          { <span class="kw">title</span>:   { <span class="kw">contains</span>: query, <span class="kw">mode</span>: <span class="st">'insensitive'</span> } },
+          { <span class="kw">excerpt</span>: { <span class="kw">contains</span>: query, <span class="kw">mode</span>: <span class="st">'insensitive'</span> } },
+        ],
+      },
+      <span class="kw">skip</span>,
+      <span class="kw">take</span>: PAGE_SIZE,
+      <span class="kw">orderBy</span>: { <span class="kw">createdAt</span>: <span class="st">'desc'</span> },
+    }),
+    prisma.post.count({ <span class="kw">where</span>: { <span class="cm">/* same where */</span> } }),
+  ])
+
+  <span class="kw">const</span> totalPages = Math.ceil(total / PAGE_SIZE)
+
+  <span class="kw">return</span> (
+    &lt;&gt;
+      &lt;<span class="ty">PostList</span> posts={posts} /&gt;
+      &lt;<span class="ty">Paginator</span>
+        currentPage={page}
+        totalPages={totalPages}
+        basePath={<span class="st">`/search?q=${encodeURIComponent(query)}`</span>}
+      /&gt;
+    &lt;/&gt;
+  )
+}</pre>
+                    </div>
+                </section>
+
+
+                <!-- ═══════════════════════════════════════
+           §4 INFINITE SCROLL
+      ═══════════════════════════════════════ -->
+                <section id="infinite" class="page-section">
+                    <div class="ribbon amber">
+                        <span class="ribbon-label">§ 04 — Infinite Scroll (Optional / Mobile)</span>
+                        <div class="ribbon-rule"></div>
+                    </div>
+
+                    <div style="padding-top:18px;">
+                        <div class="section-kicker">Optional pattern for mobile /latest feeds</div>
+                        <p
+                            style="font-family:var(--font-body);font-size:.95rem;color:var(--caption);line-height:1.6;max-width:640px;margin-top:6px;">
+                            Infinite scroll auto-triggers the next page when the user scrolls within ~300px of the
+                            bottom. Uses <code>IntersectionObserver</code> for zero-jank detection. Built on top of the
+                            same cursor API — no new backend needed.
+                        </p>
+                    </div>
+
+                    <div class="mbar red" style="margin-top:16px;">
+                        <span class="mono-bold" style="color:var(--red);">Caution — editorial UX</span>
+                        <div class="mbar-body">Infinite scroll is <strong>not the default</strong> for NEWSROOM. News
+                            readers scan headlines; they should control when they load more. Use Load More (§02) for all
+                            public feeds. Infinite scroll is only appropriate inside dedicated mobile app-like surfaces
+                            where content consumption, not headline scanning, is the goal.</div>
+                    </div>
+
+                    <!-- UI DEMO: Infinite Scroll -->
+                    <div class="demo-shell" style="margin-top:22px;">
+                        <span class="demo-label">Live UI Demo — Infinite Scroll Indicator</span>
+
+                        <div class="mock-cards-list" id="inf-cards-list"
+                            style="max-height:340px;overflow-y:auto;position:relative;">
+                        </div>
+                        <div class="infinite-trigger" id="inf-trigger">
+                            <div class="infinite-spinner" id="inf-spinner" style="display:none;"></div>
+                            <span id="inf-status">Scroll down to load more ↓</span>
+                        </div>
+                        <div class="load-meta" style="margin-top:8px;">
+                            <span id="inf-count">Showing 4 stories</span>
+                            <span>Observer: active</span>
+                        </div>
+                    </div>
+
+                    <div class="info-card amber" style="margin-top:20px;">
+                        <div class="badge-row"><span class="badge solid-amber">Component</span><span
+                                class="badge amber">components/InfiniteList.tsx</span></div>
+                        <div class="card-title">IntersectionObserver Hook</div>
+                        <div class="card-desc">A sentinel <code>&lt;div ref=sentinelRef&gt;</code> at the bottom of the
+                            list is watched by an <code>IntersectionObserver</code>. When it enters the viewport, the
+                            next page is fetched automatically. Reuses the same cursor API as Load More.</div>
+
+                        <div class="code-label amber">hooks/useInfiniteScroll.ts</div>
+                        <pre class="code-block amber"><span class="st">'use client'</span>
+<span class="kw">import</span> { useEffect, useRef, useState, useCallback } <span class="kw">from</span> <span class="st">'react'</span>
+
+<span class="kw">export function</span> <span class="fn">useInfiniteScroll</span>&lt;<span class="ty">T</span>&gt;(
+  endpoint: <span class="ty">string</span>,
+  initialCursor: <span class="ty">string</span> | <span class="kw">null</span>,
+  pageSize = <span class="nu">10</span>
+) {
+  <span class="kw">const</span> [items,   setItems  ] = useState&lt;<span class="ty">T</span>[]&gt;([])
+  <span class="kw">const</span> [cursor,  setCursor ] = useState(initialCursor)
+  <span class="kw">const</span> [loading, setLoading] = useState(<span class="kw">false</span>)
+  <span class="kw">const</span> sentinelRef = useRef&lt;<span class="ty">HTMLDivElement</span>&gt;(<span class="kw">null</span>)
+
+  <span class="kw">const</span> fetchMore = <span class="fn">useCallback</span>(<span class="kw">async</span> () => {
+    <span class="kw">if</span> (loading || !cursor) <span class="kw">return</span>
+    setLoading(<span class="kw">true</span>)
+    <span class="kw">try</span> {
+      <span class="kw">const</span> res  = <span class="kw">await</span> fetch(<span class="st">`${endpoint}?cursor=${cursor}&amp;limit=${pageSize}`</span>)
+      <span class="kw">const</span> json = <span class="kw">await</span> res.json()
+      setItems(prev => [...prev, ...json.data.posts])
+      setCursor(json.data.nextCursor)
+    } <span class="kw">finally</span> { setLoading(<span class="kw">false</span>) }
+  }, [cursor, loading, endpoint, pageSize])
+
+  <span class="hd">// Attach IntersectionObserver to sentinel element</span>
+  useEffect(() => {
+    <span class="kw">if</span> (!sentinelRef.current) <span class="kw">return</span>
+    <span class="kw">const</span> observer = <span class="kw">new</span> <span class="ty">IntersectionObserver</span>(
+      ([entry]) => { <span class="kw">if</span> (entry.isIntersecting) fetchMore() },
+      { rootMargin: <span class="st">'300px'</span> }   <span class="cm">// trigger 300px before visible</span>
+    )
+    observer.observe(sentinelRef.current)
+    <span class="kw">return</span> () => observer.disconnect()
+  }, [fetchMore])
+
+  <span class="kw">return</span> { items, loading, hasMore: !!cursor, sentinelRef }
+}</pre>
+                    </div>
+                </section>
+
+
+                <!-- ═══════════════════════════════════════
+           §5 FILTERS + SORT UI
+      ═══════════════════════════════════════ -->
+                <section id="filters" class="page-section">
+                    <div class="ribbon green">
+                        <span class="ribbon-label">§ 05 — Filter Chips &amp; Sort Controls</span>
+                        <div class="ribbon-rule"></div>
+                    </div>
+
+                    <div style="padding-top:18px;">
+                        <p
+                            style="font-family:var(--font-body);font-size:.95rem;color:var(--caption);line-height:1.6;max-width:640px;margin-top:6px;">
+                            Filters and sorting always reset pagination to page 1 / clear the cursor, and update the
+                            URL. The full filter+sort state lives in the URL so it is shareable and works with browser
+                            history.
+                        </p>
+                    </div>
+
+                    <div class="mbar green" style="margin-top:14px;">
+                        <span class="mono-bold" style="color:var(--green);">Rule — Always reset pagination on filter
+                            change</span>
+                        <div class="mbar-body">When a user changes category, sort order, or any filter, remove
+                            <code>page</code> and <code>cursor</code> from the URL and restart from the beginning. Never
+                            paginate a filtered result mid-stream. The new <code>router.push()</code> call should omit
+                            the previous pagination param.</div>
+                    </div>
+
+                    <div class="info-card green" style="margin-top:18px;">
+                        <div class="badge-row"><span class="badge solid-green">Pattern</span><span
+                                class="badge green">URL State Sync</span></div>
+                        <div class="card-title">Filter + Sort → URL Sync Pattern</div>
+                        <div class="card-desc">Both client-side filter chips and sort dropdowns update the URL with
+                            <code>router.push()</code>, never component-local state. This drives a server re-render with
+                            the new params.</div>
+
+                        <div class="code-label green">components/FilterBar.tsx — client component</div>
+                        <pre class="code-block green"><span class="st">'use client'</span>
+<span class="kw">import</span> { useRouter, useSearchParams, usePathname } <span class="kw">from</span> <span class="st">'next/navigation'</span>
+
+<span class="kw">const</span> CATEGORIES = [<span class="st">'all'</span>, <span class="st">'business'</span>, <span class="st">'tech-innovation'</span>, <span class="st">'ai'</span>, <span class="st">'money-markets'</span>, <span class="st">'politics'</span>]
+<span class="kw">const</span> SORTS      = [<span class="st">'newest'</span>, <span class="st">'oldest'</span>, <span class="st">'popular'</span>] <span class="kw">as const</span>
+
+<span class="kw">export function</span> <span class="fn">FilterBar</span>() {
+  <span class="kw">const</span> router       = useRouter()
+  <span class="kw">const</span> pathname     = usePathname()
+  <span class="kw">const</span> searchParams = useSearchParams()
+
+  <span class="kw">const</span> currentCat  = searchParams.get(<span class="st">'category'</span>) ?? <span class="st">'all'</span>
+  <span class="kw">const</span> currentSort = searchParams.get(<span class="st">'sort'</span>)     ?? <span class="st">'newest'</span>
+
+  <span class="kw">function</span> <span class="fn">update</span>(key: <span class="ty">string</span>, value: <span class="ty">string</span>) {
+    <span class="kw">const</span> params = <span class="kw">new</span> <span class="ty">URLSearchParams</span>(searchParams.toString())
+    params.set(key, value)
+    params.delete(<span class="st">'page'</span>)    <span class="cm">// ← reset pagination</span>
+    params.delete(<span class="st">'cursor'</span>)  <span class="cm">// ← reset cursor</span>
+    router.push(<span class="st">`${pathname}?${params.toString()}`</span>)
+  }
+
+  <span class="kw">return</span> (
+    &lt;<span class="ty">div</span>&gt;
+      &lt;<span class="cm">/* Category chips */</span>&gt;
+      &lt;<span class="ty">div</span> className=<span class="st">"chips"</span>&gt;
+        {CATEGORIES.map(cat => (
+          &lt;<span class="ty">button</span>
+            key={cat}
+            className={<span class="st">`chip ${cat === currentCat ? 'active' : ''}`</span>}
+            onClick={() => update(<span class="st">'category'</span>, cat)}
+          &gt;
+            {cat === <span class="st">'all'</span> ? <span class="st">'All'</span> : cat}
+          &lt;/<span class="ty">button</span>&gt;
+        ))}
+      &lt;/<span class="ty">div</span>&gt;
+
+      &lt;<span class="cm">/* Sort options */</span>&gt;
+      &lt;<span class="ty">div</span> className=<span class="st">"sort-options"</span>&gt;
+        {SORTS.map(s => (
+          &lt;<span class="ty">button</span>
+            key={s}
+            className={<span class="st">`sort-opt ${s === currentSort ? 'active' : ''}`</span>}
+            onClick={() => update(<span class="st">'sort'</span>, s)}
+          &gt;{s}&lt;/<span class="ty">button</span>&gt;
+        ))}
+      &lt;/<span class="ty">div</span>&gt;
+    &lt;/<span class="ty">div</span>&gt;
+  )
+}</pre>
+                    </div>
+
+                    <!-- URL param reference -->
+                    <h3
+                        style="font-family:var(--font-mono);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:22px 0 10px;">
+                        Complete URL Parameter Reference</h3>
+                    <table class="cmp-table">
+                        <thead>
+                            <tr>
+                                <th>Param</th>
+                                <th>Type</th>
+                                <th>Pattern</th>
+                                <th>Default</th>
+                                <th>Example</th>
+                                <th>Resets on change?</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="label-cell">page</td>
+                                <td>Numeric</td>
+                                <td>Offset only</td>
+                                <td>1</td>
+                                <td><code>?page=3</code></td>
+                                <td class="no">N/A (is the pagination)</td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">cursor</td>
+                                <td>Cursor</td>
+                                <td>Cursor only</td>
+                                <td>—</td>
+                                <td><code>?cursor=post_abc</code></td>
+                                <td class="no">N/A (is the pagination)</td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">category</td>
+                                <td>String slug</td>
+                                <td>Both</td>
+                                <td>all</td>
+                                <td><code>?category=ai</code></td>
+                                <td class="yes">Yes → removes page/cursor</td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">sort</td>
+                                <td>Enum</td>
+                                <td>Both</td>
+                                <td>newest</td>
+                                <td><code>?sort=popular</code></td>
+                                <td class="yes">Yes → removes page/cursor</td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">q</td>
+                                <td>String</td>
+                                <td>Offset (search)</td>
+                                <td>—</td>
+                                <td><code>?q=bitcoin</code></td>
+                                <td class="yes">Yes → removes page</td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">status</td>
+                                <td>Enum</td>
+                                <td>Offset (admin)</td>
+                                <td>all</td>
+                                <td><code>?status=draft</code></td>
+                                <td class="yes">Yes → removes page</td>
+                            </tr>
+                            <tr>
+                                <td class="label-cell">limit</td>
+                                <td>Number</td>
+                                <td>API only</td>
+                                <td>10</td>
+                                <td><code>?limit=20</code></td>
+                                <td class="no">No — part of request</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+
+                <!-- ═══════════════════════════════════════
+           §6 API COMPLETE REFERENCE
+      ═══════════════════════════════════════ -->
+                <section id="api" class="page-section">
+                    <div class="ribbon">
+                        <span class="ribbon-label">§ 06 — Pagination API Quick Reference</span>
+                        <div class="ribbon-rule"></div>
+                    </div>
+
+                    <div style="padding-top:18px;">
+                        <div class="three-col">
+                            <div class="info-card blue">
+                                <div class="badge-row"><span class="badge solid-blue">Cursor</span></div>
+                                <div class="card-title">GET /api/posts</div>
+                                <div class="card-desc">Public post list. Returns cursor envelope.</div>
+                                <ul class="flist">
+                                    <li><code>cursor</code> — last post ID (optional)</li>
+                                    <li><code>limit</code> — max 50, default 12</li>
+                                    <li><code>category</code> — slug filter</li>
+                                    <li><code>sort</code> — newest|oldest|popular</li>
+                                    <li>Returns: <code>posts[], nextCursor</code></li>
+                                </ul>
+                            </div>
+                            <div class="info-card blue">
+                                <div class="badge-row"><span class="badge solid-blue">Cursor</span></div>
+                                <div class="card-title">GET /api/posts/latest</div>
+                                <div class="card-desc">Aggregated latest across all categories.</div>
+                                <ul class="flist">
+                                    <li><code>cursor</code> — last post ID (optional)</li>
+                                    <li><code>limit</code> — max 50, default 20</li>
+                                    <li>Returns: <code>posts[], nextCursor</code></li>
+                                </ul>
+                            </div>
+                            <div class="info-card">
+                                <div class="badge-row"><span class="badge solid">Offset</span></div>
+                                <div class="card-title">GET /api/posts (admin)</div>
+                                <div class="card-desc">Admin full post list. Offset-based.</div>
+                                <ul class="flist">
+                                    <li><code>page</code> — 1-indexed, default 1</li>
+                                    <li><code>limit</code> — default 25</li>
+                                    <li><code>status</code> — all|published|draft</li>
+                                    <li><code>sort</code> — any sortable field</li>
+                                    <li>Returns: <code>posts[], total, totalPages</code></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-card" style="margin-top:4px;">
+                        <div class="badge-row"><span class="badge solid">Offset Response</span></div>
+                        <div class="card-title">Offset API Response Envelope</div>
+                        <div class="code-label">Response: GET /api/posts?page=2&amp;limit=25 (admin)</div>
+                        <pre class="code-block">{
+  <span class="st">"success"</span>: <span class="kw">true</span>,
+  <span class="st">"data"</span>: {
+    <span class="st">"posts"</span>:      [...],       <span class="cm">// 25 post objects</span>
+    <span class="st">"total"</span>:      <span class="nu">147</span>,         <span class="cm">// total matching records</span>
+    <span class="st">"page"</span>:       <span class="nu">2</span>,           <span class="cm">// current page</span>
+    <span class="st">"totalPages"</span>: <span class="nu">6</span>,           <span class="cm">// Math.ceil(total / limit)</span>
+    <span class="st">"limit"</span>:      <span class="nu">25</span>,          <span class="cm">// items per page</span>
+    <span class="st">"offset"</span>:     <span class="nu">25</span>           <span class="cm">// (page - 1) * limit</span>
+  }
+}</pre>
+                    </div>
+                </section>
+
+
+                <!-- ═══════════════════════════════════════
+           §7 PITFALLS
+      ═══════════════════════════════════════ -->
+                <section id="errors" class="page-section">
+                    <div class="ribbon red">
+                        <span class="ribbon-label">§ 07 — Common Pitfalls &amp; Fixes</span>
+                        <div class="ribbon-rule"></div>
+                    </div>
+
+                    <div style="padding-top:18px;">
+                        <table class="err-table">
+                            <thead>
+                                <tr>
+                                    <th>Mistake</th>
+                                    <th>Consequence</th>
+                                    <th>Fix</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="err-code">Offset on real-time public feed</td>
+                                    <td>New posts shift offsets → user sees duplicate posts or skipped stories between
+                                        pages</td>
+                                    <td class="err-fix">Use cursor pagination on all public feeds. Only use offset in
+                                        admin/search where insertions during browsing are rare</td>
+                                </tr>
+                                <tr>
+                                    <td class="err-code">Forgetting +1 overfetch</td>
+                                    <td>Cannot determine if there are more results without an extra <code>count()</code>
+                                        query</td>
+                                    <td class="err-fix">Always <code>take: limit + 1</code> and check
+                                        <code>posts.length &gt; limit</code> to set <code>hasMore</code> without a
+                                        separate count query</td>
+                                </tr>
+                                <tr>
+                                    <td class="err-code">No Suspense on useSearchParams()</td>
+                                    <td>Build fails: "useSearchParams() should be wrapped in a suspense boundary"</td>
+                                    <td class="err-fix">Wrap <code>FilterBar</code> (or any component calling
+                                        <code>useSearchParams</code>) in <code>&lt;Suspense fallback={…}&gt;</code></td>
+                                </tr>
+                                <tr>
+                                    <td class="err-code">Not resetting cursor on filter change</td>
+                                    <td>User changes category filter; Load More still fetches from old cursor offset —
+                                        wrong category</td>
+                                    <td class="err-fix">Always call <code>params.delete('cursor')</code> and
+                                        <code>params.delete('page')</code> before <code>router.push</code> on any filter
+                                        change</td>
+                                </tr>
+                                <tr>
+                                    <td class="err-code">Mutable page state in component</td>
+                                    <td>Browser Back button doesn't restore the previous page; user loses scroll
+                                        position</td>
+                                    <td class="err-fix">Always store pagination in URL (<code>?page=</code>,
+                                        <code>?cursor=</code>). URL is the source of truth for page position</td>
+                                </tr>
+                                <tr>
+                                    <td class="err-code">No loading state on Load More</td>
+                                    <td>User taps button twice → duplicate API calls → duplicate posts inserted</td>
+                                    <td class="err-fix">Disable the button while <code>isPending</code> is true.
+                                        <code>useTransition</code> handles this automatically; or use a manual
+                                        <code>isLoading</code> flag with early return</td>
+                                </tr>
+                                <tr>
+                                    <td class="err-code">Cursor on search / noindex content</td>
+                                    <td>Search results indexed by cursor URLs — meaningless to crawlers, wastes crawl
+                                        budget</td>
+                                    <td class="err-fix">Search and admin pages use <code>noindex</code>. Use offset+page
+                                        on these routes regardless, since SEO and result stability are not concerns</td>
+                                </tr>
+                                <tr>
+                                    <td class="err-code">Uncapped limit param</td>
+                                    <td><code>GET /api/posts?limit=99999</code> — a single request dumps the entire
+                                        database</td>
+                                    <td class="err-fix">
+                                        <code>const limit = Math.min(Number(searchParams.get('limit')) || 10, 50)</code>
+                                        — always clamp to a sane max</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Checklist -->
+                    <div class="info-card red" style="margin-top:20px;border-top-color:var(--red);">
+                        <div class="badge-row"><span class="badge solid-red">Pre-Deploy</span></div>
+                        <div class="card-title">Pagination Pre-Deploy Checklist</div>
+                        <ul class="checklist">
+                            <li><span class="ck pass">CHECK</span> All public feed routes use cursor pagination, not
+                                offset.</li>
+                            <li><span class="ck pass">CHECK</span> All cursor API handlers use
+                                <code>take: limit + 1</code> overfetch pattern.</li>
+                            <li><span class="ck pass">CHECK</span> <code>limit</code> is clamped:
+                                <code>Math.min(Number(x) || default, max)</code> in every API handler.</li>
+                            <li><span class="ck pass">CHECK</span> <code>FilterBar</code> and all
+                                <code>useSearchParams()</code> callers are wrapped in <code>&lt;Suspense&gt;</code>.
+                            </li>
+                            <li><span class="ck pass">CHECK</span> Filter/sort changes delete <code>cursor</code> and
+                                <code>page</code> from URL before push.</li>
+                            <li><span class="ck pass">CHECK</span> Load More button is disabled while
+                                <code>isPending</code>.</li>
+                            <li><span class="ck pass">CHECK</span> When <code>nextCursor === null</code>, button is
+                                hidden or shows "All stories loaded".</li>
+                            <li><span class="ck pass">CHECK</span> Paginator <code>href</code> links use
+                                <code>aria-current="page"</code> for accessibility.</li>
+                            <li><span class="ck warn">WARN</span> Numeric paginator on public routes: verify the page
+                                has a <code>noindex</code> tag if deep pages should not be indexed.</li>
+                            <li><span class="ck never">NEVER</span> Store pagination state in React
+                                <code>useState</code> as the sole source of truth — it breaks browser history.</li>
+                            <li><span class="ck never">NEVER</span> Use offset pagination on <code>/latest</code> or
+                                <code>/category/[slug]</code> — new post insertions will cause skips.</li>
+                        </ul>
+                    </div>
+                </section>
+
+            </main><!-- /main -->
+
+            <!-- SIDEBAR TOC -->
+            <aside>
+                <div class="toc">
+                    <div class="toc-title">Contents</div>
+                    <ul class="toc-list">
+                        <li><a href="#overview"><span class="toc-num">§01</span> Overview &amp; Pattern Map</a></li>
+                        <li><a href="#load-more"><span class="toc-num">§02</span> Load More / Cursor</a></li>
+                        <li><a href="#numeric"><span class="toc-num">§03</span> Numeric Pages</a></li>
+                        <li><a href="#infinite"><span class="toc-num">§04</span> Infinite Scroll</a></li>
+                        <li><a href="#filters"><span class="toc-num">§05</span> Filters &amp; Sort</a></li>
+                        <li><a href="#api"><span class="toc-num">§06</span> API Reference</a></li>
+                        <li><a href="#errors"><span class="toc-num">§07</span> Pitfalls &amp; Checklist</a></li>
+                    </ul>
+
+                    <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--hairline);">
+                        <div class="mono-bold" style="font-size:.62rem;margin-bottom:10px;">Pattern Summary</div>
+                        <table
+                            style="width:100%;font-family:var(--font-mono);font-size:.62rem;border-collapse:collapse;">
+                            <tr style="border-bottom:1px solid var(--hairline);">
+                                <td style="padding:4px 0;color:var(--caption);">Load More</td>
+                                <td style="padding:4px 0;text-align:right;font-weight:700;">/latest<br>/category</td>
+                            </tr>
+                            <tr style="border-bottom:1px solid var(--hairline);">
+                                <td style="padding:4px 0;color:var(--caption);">Numeric</td>
+                                <td style="padding:4px 0;text-align:right;font-weight:700;">
+                                    /search<br>/admin<br>/dashboard</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:4px 0;color:var(--caption);">Infinite</td>
+                                <td style="padding:4px 0;text-align:right;font-weight:700;">Optional<br>mobile</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--hairline);">
+                        <div class="mono-bold" style="font-size:.62rem;margin-bottom:10px;">Default Page Sizes</div>
+                        <table
+                            style="width:100%;font-family:var(--font-mono);font-size:.62rem;border-collapse:collapse;">
+                            <tr style="border-bottom:1px solid var(--hairline);">
+                                <td style="padding:4px 0;color:var(--caption);">/latest initial</td>
+                                <td style="padding:4px 0;text-align:right;font-weight:700;">20</td>
+                            </tr>
+                            <tr style="border-bottom:1px solid var(--hairline);">
+                                <td style="padding:4px 0;color:var(--caption);">/latest load more</td>
+                                <td style="padding:4px 0;text-align:right;font-weight:700;">10</td>
+                            </tr>
+                            <tr style="border-bottom:1px solid var(--hairline);">
+                                <td style="padding:4px 0;color:var(--caption);">/category initial</td>
+                                <td style="padding:4px 0;text-align:right;font-weight:700;">12</td>
+                            </tr>
+                            <tr style="border-bottom:1px solid var(--hairline);">
+                                <td style="padding:4px 0;color:var(--caption);">/category load more</td>
+                                <td style="padding:4px 0;text-align:right;font-weight:700;">8</td>
+                            </tr>
+                            <tr style="border-bottom:1px solid var(--hairline);">
+                                <td style="padding:4px 0;color:var(--caption);">/search</td>
+                                <td style="padding:4px 0;text-align:right;font-weight:700;">10</td>
+                            </tr>
+                            <tr style="border-bottom:1px solid var(--hairline);">
+                                <td style="padding:4px 0;color:var(--caption);">/admin/posts</td>
+                                <td style="padding:4px 0;text-align:right;font-weight:700;">25</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:4px 0;color:var(--caption);">API max cap</td>
+                                <td style="padding:4px 0;text-align:right;font-weight:700;">50</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </aside>
+
+        </div><!-- /two-col-aside -->
+    </div><!-- /wrapper -->
+
+    <!-- SCROLL BACK TO TOP PILL -->
+    <div class="scroll-pill" id="scroll-pill" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+        ↑ Back to top
+    </div>
+
+    <footer class="site-footer">
+        <div class="wrapper">
+            <div class="footer-logo">NEWSROOM</div>
+            <div class="footer-meta">Pagination Guide v1.0 · Cursor · Offset · Infinite Scroll · URL-First State</div>
+            <div class="footer-links">
+                <a href="#overview">Overview</a>
+                <a href="#load-more">Load More</a>
+                <a href="#numeric">Numeric</a>
+                <a href="#infinite">Infinite Scroll</a>
+                <a href="#filters">Filters</a>
+                <a href="#api">API</a>
+                <a href="#errors">Pitfalls</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        /* ── Mock data ── */
+        const POSTS = [
+            { id: 1, cat: 'BUSINESS', title: 'Fed signals rate pause as inflation nears target after 18-month battle', author: 'Sarah Chen', date: '12 min ago' },
+            { id: 2, cat: 'A.I.', title: 'OpenAI releases o3 reasoning model with 97.8% on ARC-AGI benchmark', author: 'Marcus Webb', date: '34 min ago' },
+            { id: 3, cat: 'MARKETS', title: 'Bitcoin surges past $104k on institutional ETF inflow data', author: 'Priya Sharma', date: '1 hr ago' },
+            { id: 4, cat: 'POLITICS', title: 'Senate passes landmark digital privacy act with bipartisan majority', author: 'James Torres', date: '2 hr ago' },
+            { id: 5, cat: 'TECH', title: 'TSMC 2nm node enters mass production two quarters ahead of schedule', author: 'Lin Zhao', date: '3 hr ago' },
+            { id: 6, cat: 'LIFESTYLE', title: 'Researchers find 7-hour sleep window optimal for cognitive performance', author: 'Emma Davis', date: '4 hr ago' },
+            { id: 7, cat: 'BUSINESS', title: 'Apple Vision Pro 2 leak reveals thinner form factor and lower price', author: 'Ryan Park', date: '5 hr ago' },
+            { id: 8, cat: 'A.I.', title: 'Anthropic releases Claude 4 Opus with 200k context and tool chaining', author: 'Nina Patel', date: '6 hr ago' },
+            { id: 9, cat: 'MARKETS', title: 'Nvidia quarterly earnings beat expectations by 22% on datacenter demand', author: 'Tom Wilson', date: '7 hr ago' },
+            { id: 10, cat: 'POLITICS', title: 'EU proposes AI liability framework that would cover foundation models', author: 'Anna Müller', date: '8 hr ago' },
+            { id: 11, cat: 'TECH', title: 'SpaceX Starship completes first fully reusable orbital test flight', author: 'Carlos Rivera', date: '9 hr ago' },
+            { id: 12, cat: 'LIFESTYLE', title: 'Scientists identify protein that reverses cellular aging in mouse models', author: 'Dr. Yuki Sato', date: '10 hr ago' },
+        ];
+
+        function makeCard(post, idx) {
+            const card = document.createElement('div');
+            card.className = 'mock-card';
+            card.style.animationDelay = `${idx * 60}ms`;
+            card.innerHTML = `
+    <div class="mock-card-img"><span>IMG</span></div>
+    <div>
+      <div class="mock-card-cat">${post.cat}</div>
+      <div class="mock-card-title">${post.title}</div>
+      <div class="mock-card-byline">By ${post.author} &nbsp;·&nbsp; ${post.date}</div>
+    </div>`;
+            return card;
+        }
+
+        /* ── Load More Demo ── */
+        let lmShown = 4;
+        const lmList = document.getElementById('cards-list');
+        const lmBtn = document.getElementById('load-more-btn');
+
+        function renderLoadMore() {
+            lmList.innerHTML = '';
+            POSTS.slice(0, lmShown).forEach((p, i) => lmList.appendChild(makeCard(p, i)));
+            document.getElementById('load-count').textContent = `Showing ${lmShown} of ${POSTS.length} stories`;
+            document.getElementById('load-cursor').textContent = lmShown < POSTS.length ? `cursor: post_00${lmShown}` : 'cursor: null';
+            if (lmShown >= POSTS.length) {
+                lmBtn.textContent = 'All Stories Loaded';
+                lmBtn.disabled = true;
+            }
+        }
+        renderLoadMore();
+
+        function loadMore() {
+            lmBtn.classList.add('loading');
+            lmBtn.disabled = true;
+            setTimeout(() => {
+                lmShown = Math.min(lmShown + 4, POSTS.length);
+                renderLoadMore();
+                lmBtn.classList.remove('loading');
+                if (lmShown < POSTS.length) lmBtn.disabled = false;
+            }, 900);
+        }
+
+        /* ── Sort / Chip helpers (demo only) ── */
+        function setSort(btn, _val) {
+            btn.closest('.sort-options').querySelectorAll('.sort-opt').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+        function setChip(btn, _val) {
+            btn.closest('.chips').querySelectorAll('.chip').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            lmShown = 4; lmBtn.textContent = 'Load More Stories'; lmBtn.disabled = false;
+            renderLoadMore();
+        }
+
+        /* ── Numeric Pager Demo ── */
+        function buildPager(containerId, currentPage, totalPages) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            container.innerHTML = '';
+
+            function btn(label, page, cls, disabled, active) {
+                const el = document.createElement(cls === 'pg-arrow' ? 'button' : 'button');
+                el.className = `pg-btn${cls ? ' ' + cls : ''}${active ? ' pg-active' : ''}`;
+                el.textContent = label;
+                if (disabled) el.disabled = true;
+                if (!disabled && !active && cls !== 'pg-dots') {
+                    el.addEventListener('click', () => activatePage(containerId, page, totalPages));
+                }
+                return el;
+            }
+
+            container.appendChild(btn('← Prev', currentPage - 1, 'pg-arrow', currentPage <= 1, false));
+
+            const pages = buildPages(currentPage, totalPages);
+            pages.forEach(p => {
+                if (p === '…') {
+                    const el = document.createElement('button');
+                    el.className = 'pg-btn pg-dots';
+                    el.textContent = '…';
+                    container.appendChild(el);
+                } else {
+                    container.appendChild(btn(p, p, '', false, p === currentPage));
+                }
+            });
+
+            container.appendChild(btn('Next →', currentPage + 1, 'pg-arrow', currentPage >= totalPages, false));
+        }
+
+        function buildPages(current, total) {
+            if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+            const pages = [1];
+            if (current > 3) pages.push('…');
+            const start = Math.max(2, current - 1), end = Math.min(total - 1, current + 1);
+            for (let i = start; i <= end; i++) pages.push(i);
+            if (current < total - 2) pages.push('…');
+            pages.push(total);
+            return pages;
+        }
+
+        function activatePage(containerId, page, total) {
+            buildPager(containerId, page, total);
+            document.getElementById('pg-url-num').textContent = page;
+            document.getElementById('pg-offset').textContent = (page - 1) * 25;
+            document.getElementById('pg-result-count').textContent =
+                `Showing ${(page - 1) * 25 + 1}–${Math.min(page * 25, 147)} of 147 results`;
+        }
+
+        buildPager('pg-demo-1', 1, 6);
+        buildPager('pg-demo-4', 4, 6);
+        buildPager('pg-demo-6', 6, 6);
+
+        /* ── Infinite Scroll Demo ── */
+        const infList = document.getElementById('inf-cards-list');
+        const infStatus = document.getElementById('inf-status');
+        const infSpinner = document.getElementById('inf-spinner');
+        const infCount = document.getElementById('inf-count');
+        let infShown = 4, infLoading = false;
+
+        POSTS.slice(0, infShown).forEach((p, i) => infList.appendChild(makeCard(p, i)));
+
+        const sentinel = document.createElement('div');
+        sentinel.style.height = '1px';
+        infList.appendChild(sentinel);
+
+        const observer = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting && !infLoading && infShown < POSTS.length) {
+                infLoading = true;
+                infSpinner.style.display = 'block';
+                infStatus.textContent = 'Loading…';
+                setTimeout(() => {
+                    const next = POSTS.slice(infShown, infShown + 3);
+                    next.forEach((p, i) => {
+                        const card = makeCard(p, i);
+                        infList.insertBefore(card, sentinel);
+                    });
+                    infShown += next.length;
+                    infCount.textContent = `Showing ${infShown} stories`;
+                    infSpinner.style.display = 'none';
+                    infLoading = false;
+                    infStatus.textContent = infShown < POSTS.length ? 'Scroll down to load more ↓' : 'All stories loaded ✓';
+                }, 1000);
+            }
+        }, { root: infList, rootMargin: '80px' });
+        observer.observe(sentinel);
+
+        /* ── Scroll-back-to-top pill ── */
+        const pill = document.getElementById('scroll-pill');
+        window.addEventListener('scroll', () => {
+            pill.classList.toggle('visible', window.scrollY > 600);
+        }, { passive: true });
+    </script>
+</body>
+
+</html>

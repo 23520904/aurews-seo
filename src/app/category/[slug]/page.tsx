@@ -1,12 +1,12 @@
-// Standard Node.js runtime (Cloudflare nodejs_compat)
-
 import { Metadata } from "next";
-
 import Link from "next/link";
 import { Ribbon } from "@/components/ui/Ribbon";
+import { prisma } from "@/lib/prisma";
+import { PostCard } from "@/components/PostCard";
+import { LoadMore } from "@/components/LoadMore";
 
 interface PageProps {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -17,9 +17,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
-import { prisma } from "@/lib/prisma";
+const PAGE_SIZE = 12;
 
-export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function CategoryPage({
+  params
+}: PageProps) {
   const { slug } = await params;
 
   const category = await prisma.category.findUnique({
@@ -28,7 +30,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
       posts: {
         where: { status: 'PUBLISHED' },
         orderBy: { createdAt: 'desc' },
-        include: { author: true }
+        include: { author: true, category: true },
+        take: PAGE_SIZE + 1
       }
     }
   });
@@ -36,49 +39,40 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   if (!category) {
     return (
       <div className="wired-wrapper" style={{ padding: '100px 0', textAlign: 'center' }}>
-        <h1 className="wired-display">Category Not Found</h1>
+        <h1 className="wired-display">Channel Not Found</h1>
         <Link href="/" className="wired-mono" style={{ textDecoration: 'underline' }}>Return to Home</Link>
       </div>
     );
   }
 
+  const posts = (category as any).posts || [];
+  const hasMore = posts.length > PAGE_SIZE;
+  const items = hasMore ? posts.slice(0, PAGE_SIZE) : posts;
+  const nextCursor = hasMore ? (items[items.length - 1] as any).id : null;
+
   return (
     <div className="wired-wrapper">
       <header style={{ marginBottom: '48px', borderBottom: '2px solid var(--wired-black)', paddingBottom: '24px' }}>
-
         <Ribbon>Channel</Ribbon>
         <h1 className="wired-display" style={{ fontSize: '72px', marginTop: '16px' }}>{category.name}</h1>
+        <div className="wired-mono" style={{ fontSize: '11px', color: 'var(--caption-gray)', marginTop: '8px' }}>
+          SEGMENT: {category.slug.toUpperCase()} // ARCHIVE_MODE
+        </div>
       </header>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '48px' }}>
-        {category.posts.map((post) => (
-          <article key={post.id} style={{ borderBottom: '1px solid var(--hairline-tint)', paddingBottom: '32px' }}>
-            {post.coverImage && (
-              <div style={{ aspectRatio: '16/9', border: '1px solid var(--wired-black)', overflow: 'hidden', marginBottom: '16px' }}>
-                <img
-                  src={post.coverImage}
-                  alt={post.title}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-              </div>
-            )}
-            <Link href={`/article/${post.slug}`}>
-              <h3 className="wired-display" style={{ fontSize: '28px', marginBottom: '12px' }}>
-                {post.title}
-              </h3>
-            </Link>
-
-            <p className="wired-body" style={{ fontSize: '15px', color: 'var(--caption-gray)', marginBottom: '16px' }}>
-              {post.excerpt || post.body.substring(0, 150) + "..."}
-            </p>
-            <div className="wired-mono" style={{ fontSize: '11px', color: 'var(--caption-gray)' }}>
-              {new Date(post.createdAt).toLocaleDateString()} / BY {post.author.name?.toUpperCase() || "STAFF"}
-            </div>
-          </article>
+        {items.map((post: any) => (
+          <PostCard key={post.id} post={post} />
         ))}
       </div>
 
-      {category.posts.length === 0 && (
+      <LoadMore
+        initialCursor={nextCursor}
+        endpoint={`/api/posts/latest?category=${slug}`}
+        pageSize={8}
+      />
+
+      {items.length === 0 && (
         <div style={{ padding: '64px 0', textAlign: 'center' }}>
           <p className="wired-body" style={{ color: 'var(--disabled-gray)', fontSize: '20px' }}>No stories available in this channel yet.</p>
         </div>
@@ -86,4 +80,3 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     </div>
   );
 }
-

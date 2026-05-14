@@ -1,21 +1,31 @@
 // Standard Node.js runtime (Cloudflare nodejs_compat)
 
 import { auth } from "@/auth";
-
 import { prisma } from "@/lib/prisma";
 import { Ribbon } from "@/components/ui/Ribbon";
 import { Button } from "@/components/ui/Button";
+import { Pagination } from "@/components/ui/Pagination";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-export default async function DashboardPage() {
+const PAGE_SIZE = 15;
+
+export default async function DashboardPage({ 
+  searchParams 
+}: { 
+  searchParams: Promise<{ page?: string }> 
+}) {
   const session = await auth();
 
   if (!session || !session.user?.id) {
     redirect("/auth/login");
   }
 
-  const [postCount, totalViews, recentPosts] = await Promise.all([
+  const sParams = await searchParams;
+  const page = Math.max(1, Number(sParams.page) || 1);
+  const skip = (page - 1) * PAGE_SIZE;
+
+  const [postCount, totalViews, posts, totalPosts] = await Promise.all([
     prisma.post.count({ where: { authorId: session.user.id, status: 'PUBLISHED' } }),
     prisma.post.aggregate({
       where: { authorId: session.user.id },
@@ -24,10 +34,16 @@ export default async function DashboardPage() {
     prisma.post.findMany({
       where: { authorId: session.user.id },
       orderBy: { createdAt: 'desc' },
-      take: 10,
+      skip,
+      take: PAGE_SIZE,
       include: { category: true }
+    }),
+    prisma.post.count({
+      where: { authorId: session.user.id }
     })
   ]);
+
+  const totalPages = Math.ceil(totalPosts / PAGE_SIZE);
 
   return (
     <div className="wired-wrapper">
@@ -55,7 +71,7 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      <div className="dashboard-grid" style={{ display: 'grid', gap: '48px' }}>
+      <div className="dashboard-grid" style={{ display: 'grid', gridTemplateColumns: '250px 1fr', gap: '48px' }}>
         {/* Sidebar Statistics */}
         <aside className="dashboard-sidebar">
           <h2 className="wired-mono" style={{ fontSize: '13px', fontWeight: 700, marginBottom: '32px', letterSpacing: '1px' }}>SYSTEM METRICS</h2>
@@ -76,19 +92,18 @@ export default async function DashboardPage() {
         {/* Main Content Area */}
         <main>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-            <h2 className="wired-mono" style={{ fontSize: '13px', fontWeight: 700, letterSpacing: '1px' }}>RECENT ACTIVITY LOG</h2>
+            <h2 className="wired-mono" style={{ fontSize: '13px', fontWeight: 700, letterSpacing: '1px' }}>POST ARCHIVE // PAGE {page}</h2>
           </div>
 
-
           <div style={{ border: '2px solid var(--wired-black)' }}>
-            {recentPosts.length > 0 ? (
+            {posts.length > 0 ? (
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                {recentPosts.map((post, index) => (
+                {posts.map((post, index) => (
                   <div
                     key={post.id}
                     style={{
                       padding: '24px',
-                      borderBottom: index === recentPosts.length - 1 ? 'none' : '1px solid var(--hairline-tint)',
+                      borderBottom: index === posts.length - 1 ? 'none' : '1px solid var(--hairline-tint)',
                       display: 'flex',
                       justifyContent: 'space-between',
                       alignItems: 'center',
@@ -97,7 +112,7 @@ export default async function DashboardPage() {
                   >
                     <div>
                       <span className="wired-mono" style={{ fontSize: '10px', color: 'var(--caption-gray)', display: 'block', marginBottom: '4px' }}>
-                        {post.category.name.toUpperCase()} // {new Date(post.createdAt).toLocaleDateString()}
+                        {(post as any).category?.name?.toUpperCase() || "UNCATEGORIZED"} // {new Date(post.createdAt).toLocaleDateString()} // {post.status}
                       </span>
                       <h3 className="wired-ui" style={{ fontWeight: 800, fontSize: '18px' }}>{post.title}</h3>
                     </div>
@@ -133,10 +148,14 @@ export default async function DashboardPage() {
               </div>
             )}
           </div>
+
+          <Pagination 
+            currentPage={page} 
+            totalPages={totalPages} 
+            baseUrl="/dashboard" 
+          />
         </main>
       </div>
     </div>
   );
 }
-
-
