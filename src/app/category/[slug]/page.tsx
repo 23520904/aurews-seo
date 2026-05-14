@@ -62,7 +62,7 @@ export default async function CategoryPage({
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '48px' }}>
         {items.map((post: any) => (
-          <PostCard key={post.id} post={post} />
+          <PostCard key={post.id} post={post} cardLocation="category_page_list" />
         ))}
       </div>
 
@@ -70,6 +70,7 @@ export default async function CategoryPage({
         initialCursor={nextCursor}
         endpoint={`/api/posts/latest?category=${slug}`}
         pageSize={8}
+        cardLocation="category_page_load_more"
       />
 
       {items.length === 0 && (

@@ -7,9 +7,10 @@ type Props = {
   initialCursor: string | null
   endpoint:      string
   pageSize:      number
+  cardLocation?: string
 }
 
-export function LoadMore({ initialCursor, endpoint, pageSize }: Props) {
+export function LoadMore({ initialCursor, endpoint, pageSize, cardLocation = 'unknown' }: Props) {
   const [posts,  setPosts ] = useState<any[]>([])
   const [cursor, setCursor] = useState(initialCursor)
   const [isPending, startTransition] = useTransition()
@@ -35,7 +36,7 @@ export function LoadMore({ initialCursor, endpoint, pageSize }: Props) {
   return (
     <>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '48px' }}>
-        {posts.map(post => <PostCard key={post.id} post={post} />)}
+        {posts.map(post => <PostCard key={post.id} post={post} cardLocation={cardLocation} />)}
       </div>
 
       {cursor ? (

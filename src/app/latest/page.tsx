@@ -35,7 +35,7 @@ export default async function LatestPage() {
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '48px' }}>
         {items.map((post) => (
-          <PostCard key={post.id} post={post} />
+          <PostCard key={post.id} post={post} cardLocation="latest_page_feed" />
         ))}
       </div>
 
@@ -43,6 +43,7 @@ export default async function LatestPage() {
         initialCursor={nextCursor}
         endpoint="/api/posts/latest"
         pageSize={10}
+        cardLocation="latest_page_load_more"
       />
 
       {items.length === 0 && (
