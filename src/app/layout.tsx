@@ -31,11 +31,11 @@ export const metadata: Metadata = {
     default: "Aurews — Next-Gen News Architecture",
     template: "%s | Aurews"
   },
-  description: "A WIRED-inspired editorial news platform built with Next.js App Router, optimized for SEO and performance.",
+  description: "Aurews is a modern news platform developed by a dedicated team of UIT students as part of their web development capstone project.",
   metadataBase: new URL(BASE_URL),
   openGraph: {
     title: "Aurews",
-    description: "Editorial News Platform",
+    description: "Aurews is a modern news platform developed by a dedicated team of UIT students as part of their web development capstone project.",
     url: BASE_URL,
     siteName: "Aurews",
     locale: "en_US",
@@ -90,10 +90,10 @@ export default function RootLayout({
       <body className="wired-body">
         {/* Google Tag Manager (noscript) */}
         <noscript>
-          <iframe 
+          <iframe
             src="https://www.googletagmanager.com/ns.html?id=GTM-N3T37ZSQ"
-            height="0" 
-            width="0" 
+            height="0"
+            width="0"
             style={{ display: 'none', visibility: 'hidden' }}
           />
         </noscript>
