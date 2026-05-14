@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Playfair_Display, Lora, Work_Sans, Space_Mono } from "next/font/google";
 import "./globals.css";
 import { BASE_URL } from "@/lib/constants";
+import { Analytics } from "@vercel/analytics/next"
 
 const playfair = Playfair_Display({
   variable: "--font-display",
@@ -65,6 +66,7 @@ export default function RootLayout({
         </main>
         <Footer />
         <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );
