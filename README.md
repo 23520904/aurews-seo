@@ -34,3 +34,24 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## SEO Tools and Workflow (IE204)
+
+This project is being optimized for SEO as part of the IE204 course.
+
+### SEO Folders
+- `docs/`: Reports and documentation.
+- `analysis/`: Keyword and competitor analysis files.
+- `content/`: Optimized SEO content.
+- `presentation/`: Presentation slides.
+
+### Recommended Tools
+- **Keyword Research:** [Google Keyword Planner](https://ads.google.com/home/tools/keyword-planner/), [Ahrefs](https://ahrefs.com/), [SEMrush](https://www.semrush.com/).
+- **On-page SEO:** [Google Search Console](https://search.google.com/search-console/about), [Screaming Frog](https://www.screamingfrog.co.uk/seo-spider/).
+- **Analytics:** [Google Analytics](https://analytics.google.com/), [Google PageSpeed Insights](https://pagespeed.web.dev/).
+- **Off-page SEO:** [Moz](https://moz.com/), [Majestic](https://majestic.com/).
+
+### How to use
+1. Run `npm run dev` to start the local server.
+2. Use PageSpeed Insights to test performance.
+3. Update `strategy.json` as you progress through the project stages.
