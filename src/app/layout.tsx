@@ -3,7 +3,6 @@ import { Playfair_Display, Lora, Work_Sans, Space_Mono } from "next/font/google"
 import "./globals.css";
 import { BASE_URL } from "@/lib/constants";
 import { Analytics } from "@vercel/analytics/next"
-import Script from "next/script";
 
 const playfair = Playfair_Display({
   variable: "--font-display",
@@ -51,7 +50,7 @@ import { UtilityBar } from "@/components/layout/UtilityBar";
 import { Masthead } from "@/components/layout/Masthead";
 import { Footer } from "@/components/layout/Footer";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-
+import { GoogleTagManager } from '@next/third-parties/google'
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -59,21 +58,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${playfair.variable} ${lora.variable} ${workSans.variable} ${spaceMono.variable}`}>
-      <head>
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-LD00Y10ZRH"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-
-            gtag('config', 'G-LD00Y10ZRH');
-          `}
-        </Script>
-      </head>
       <body className="wired-body">
         <UtilityBar />
         <Masthead />
@@ -83,7 +67,10 @@ export default function RootLayout({
         <Footer />
         <SpeedInsights />
         <Analytics />
+        <GoogleTagManager gtmId="G-LD00Y10ZRH" />
       </body>
     </html>
   );
 }
+
+
