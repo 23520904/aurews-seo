@@ -1,6 +1,7 @@
 export const runtime = "nodejs";
 
 import Link from "next/link";
+import Image from "next/image";
 
 import { prisma } from "@/lib/prisma";
 import { Ribbon } from "@/components/ui/Ribbon";
@@ -47,11 +48,13 @@ export default async function Home() {
                 cardLocation="homepage_hero"
               >
                 <div style={{ position: 'relative', aspectRatio: '16/9', border: '2px solid var(--black)', background: '#f0f0f0' }}>
-                  <img
+                  <Image
                     src={heroPost.coverImage || DEFAULT_IMAGE}
                     alt={heroPost.title}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                    fetchPriority="high"
+                    fill
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 60vw"
+                    style={{ objectFit: 'cover' }}
                   />
                 </div>
               </TrackedArticleLink>
@@ -101,10 +104,13 @@ export default async function Home() {
                   cardLocation="homepage_latest_feed"
                 >
                   <div style={{ position: 'relative', aspectRatio: '4/3', background: '#f8f8f8', border: '1px solid var(--hairline)' }}>
-                    <img
+                    <Image
                       src={post.coverImage || DEFAULT_IMAGE}
                       alt={post.title}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      fill
+                      sizes="200px"
+                      style={{ objectFit: 'cover' }}
+                      loading="lazy"
                     />
                   </div>
                 </TrackedArticleLink>

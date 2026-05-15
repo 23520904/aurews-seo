@@ -1,5 +1,7 @@
-import TrackedArticleLink from '@/components/analytics/TrackedArticleLink';
+import Link from "next/link";
+import Image from "next/image";
 import { DEFAULT_IMAGE } from "@/lib/constants";
+import TrackedArticleLink from '@/components/analytics/TrackedArticleLink';
 
 interface PostCardProps {
   post: any;
@@ -16,11 +18,21 @@ export function PostCard({ post, cardLocation = 'unknown' }: PostCardProps) {
         category={post.category?.name}
         cardLocation={cardLocation}
       >
-        <div style={{ aspectRatio: '16/9', border: '1px solid var(--wired-black)', overflow: 'hidden', marginBottom: '16px', background: '#f8f8f8' }}>
-          <img
+        <div style={{ 
+          position: 'relative', 
+          aspectRatio: '16/9', 
+          border: '1px solid var(--wired-black)', 
+          overflow: 'hidden', 
+          marginBottom: '16px', 
+          background: '#f8f8f8' 
+        }}>
+          <Image
             src={post.coverImage || DEFAULT_IMAGE}
             alt={post.title}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            style={{ objectFit: 'cover' }}
+            loading="lazy"
           />
         </div>
       </TrackedArticleLink>

@@ -1,7 +1,7 @@
 // Standard Node.js runtime (Cloudflare nodejs_compat)
 
 import { Metadata } from "next";
-
+import Image from "next/image";
 
 import { Ribbon } from "@/components/ui/Ribbon";
 
@@ -123,11 +123,13 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           border: '2px solid var(--black)',
           background: '#f8f8f8'
         }}>
-          <img
+          <Image
             src={post.coverImage || DEFAULT_IMAGE}
             alt={post.title}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            fetchPriority="high"
+            fill
+            priority
+            sizes="(max-width: 768px) 100vw, 800px"
+            style={{ objectFit: 'cover' }}
           />
         </div>
 
