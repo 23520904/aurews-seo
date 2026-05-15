@@ -58,7 +58,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${playfair.variable} ${lora.variable} ${workSans.variable} ${spaceMono.variable}`}>
+    <html 
+      lang="en" 
+      className={`${playfair.variable} ${lora.variable} ${workSans.variable} ${spaceMono.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         {/* Google Tag Manager */}
         <Script id="google-tag-manager" strategy="afterInteractive">

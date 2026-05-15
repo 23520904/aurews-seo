@@ -81,7 +81,11 @@ export function MobileMenu({ session }: MobileMenuProps) {
         <div style={{ padding: '0 var(--gutter)', marginBottom: 'var(--space-8)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '4px solid var(--black)', paddingBottom: 'var(--space-4)' }}>
             <h2 className="wired-display logo-text" style={{ margin: 0, letterSpacing: '-1px' }}>AUREWS</h2>
-            <button onClick={toggleMenu} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 'var(--space-2)', minWidth: 'var(--touch-min)', minHeight: 'var(--touch-min)' }}>
+            <button 
+              onClick={toggleMenu} 
+              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 'var(--space-2)', minWidth: 'var(--touch-min)', minHeight: 'var(--touch-min)' }}
+              aria-label="Close Menu"
+            >
               <X size={32} />
             </button>
           </div>
@@ -146,5 +150,3 @@ export function MobileMenu({ session }: MobileMenuProps) {
     </div>
   );
 }
-
-

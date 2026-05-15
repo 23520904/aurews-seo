@@ -51,6 +51,7 @@ export default async function Home() {
                     src={heroPost.coverImage || DEFAULT_IMAGE}
                     alt={heroPost.title}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    fetchPriority="high"
                   />
                 </div>
               </TrackedArticleLink>
@@ -137,7 +138,7 @@ export default async function Home() {
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {popularPosts.map((post, i) => (
               <div key={post.id} style={{ display: 'flex', gap: 'var(--space-4)', padding: 'var(--space-4) 0', borderBottom: '1px solid var(--hairline)' }}>
-                <span className="wired-display" style={{ fontSize: '40px', color: 'var(--hairline)', fontWeight: 700, lineHeight: 1 }}>0{i + 1}</span>
+                <span className="wired-display" style={{ fontSize: '40px', color: '#888', fontWeight: 700, lineHeight: 1 }}>0{i + 1}</span>
                 <TrackedArticleLink
                   href={`/article/${post.slug}`}
                   title={post.title}
