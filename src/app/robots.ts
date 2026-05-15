@@ -14,7 +14,6 @@ export default function robots(): MetadataRoute.Robots {
           '/dashboard/',
           '/api/',
           '/auth/',
-          '/_next/',
         ],
       },
       {
@@ -30,7 +29,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: 'Googlebot',
         allow: ['/'],
-        disallow: ['/admin', '/dashboard', '/api/', '/_next/'],
+        disallow: ['/admin', '/dashboard', '/api/', '/auth/', '/dashboard/', '/admin/'],
       },
     ],
     sitemap: [`${BASE_URL}/sitemap.xml`, `${BASE_URL}/news-sitemap.xml`],
