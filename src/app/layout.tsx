@@ -31,11 +31,11 @@ export const metadata: Metadata = {
     default: "Aurews — Next-Gen News Architecture",
     template: "%s | Aurews"
   },
-  description: "Aurews is a modern news platform developed by a dedicated team of UIT students as part of their web development capstone project.",
+  description: "Aurews delivers next-generation news and analysis on business, technology, AI, politics, markets, and lifestyle trends.",
   metadataBase: new URL(BASE_URL),
   openGraph: {
     title: "Aurews",
-    description: "Aurews is a modern news platform developed by a dedicated team of UIT students as part of their web development capstone project.",
+    description: "Aurews delivers next-generation news and analysis on business, technology, AI, politics, markets, and lifestyle trends. ",
     url: BASE_URL,
     siteName: "Aurews",
     locale: "en_US",
@@ -58,8 +58,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html 
-      lang="en" 
+    <html
+      lang="en"
       className={`${playfair.variable} ${lora.variable} ${workSans.variable} ${spaceMono.variable}`}
       suppressHydrationWarning
     >
