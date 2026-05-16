@@ -4,16 +4,115 @@ import { Ribbon } from "@/components/ui/Ribbon";
 import { prisma } from "@/lib/prisma";
 import { PostCard } from "@/components/PostCard";
 import { LoadMore } from "@/components/LoadMore";
+import { BASE_URL } from "@/lib/constants";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+const SITE_URL = BASE_URL;
+
+const CATEGORY_SEO: Record<
+  string,
+  {
+    title: string;
+    description: string;
+  }
+> = {
+  business: {
+    title: "Business News, Trends & Analysis | Aurews",
+    description:
+      "Explore the latest business news, corporate trends, market shifts, and analysis from Aurews.",
+  },
+
+  "tech-innovation": {
+    title: "Technology & Innovation News | Aurews",
+    description:
+      "Discover the latest technology news, digital innovation, emerging tools, and future-focused analysis from Aurews.",
+  },
+
+  ai: {
+    title: "AI News, Tools & Artificial Intelligence Trends | Aurews",
+    description:
+      "Read the latest AI news, artificial intelligence trends, emerging tools, and analysis from Aurews.",
+  },
+
+  "a.i.": {
+    title: "AI News, Tools & Artificial Intelligence Trends | Aurews",
+    description:
+      "Read the latest AI news, artificial intelligence trends, emerging tools, and analysis from Aurews.",
+  },
+
+  politics: {
+    title: "Politics News, Policy & Global Affairs | Aurews",
+    description:
+      "Follow the latest political news, public policy developments, and global affairs analysis from Aurews.",
+  },
+
+  lifestyle: {
+    title: "Lifestyle Trends, Culture & Modern Living | Aurews",
+    description:
+      "Explore lifestyle trends, culture, sustainable living, and modern life stories curated by Aurews.",
+  },
+
+  "money-markets": {
+    title: "Markets, Finance & Economic Trends | Aurews",
+    description:
+      "Stay updated on financial markets, economic shifts, investment trends, and business analysis from Aurews.",
+  },
+};
+
+function formatCategoryName(slug: string): string {
+  if (slug === "ai" || slug === "a.i.") return "AI";
+
+  return slug
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
   const { slug } = await params;
+
+  const categoryName = formatCategoryName(slug);
+  const seo = CATEGORY_SEO[slug] ?? {
+    title: `${categoryName} News & Analysis | Aurews`,
+    description: `Explore the latest ${categoryName.toLowerCase()} news, stories, trends, and analysis from Aurews.`,
+  };
+
+  const canonicalUrl = `${SITE_URL}/category/${slug}`;
+
   return {
-    title: `Category: ${slug.charAt(0).toUpperCase() + slug.slice(1)}`,
-    description: `Latest stories and analysis in ${slug}.`,
+    title: seo.title,
+    description: seo.description,
+
+    alternates: {
+      canonical: canonicalUrl,
+    },
+
+    robots: {
+      index: true,
+      follow: true,
+    },
+
+    openGraph: {
+      title: seo.title,
+      description: seo.description,
+      url: canonicalUrl,
+      siteName: "Aurews",
+      locale: "en_US",
+      type: "website",
+    },
+
+    twitter: {
+      card: "summary",
+      title: seo.title,
+      description: seo.description,
+    },
   };
 }
 
