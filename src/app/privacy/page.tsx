@@ -3,6 +3,9 @@ import { Ribbon } from "@/components/ui/Ribbon";
 export const metadata = {
   title: "Privacy Policy",
   description: "How Aurews handles your data and protects your digital footprint.",
+  alternates: {
+    canonical: "/privacy",
+  },
 };
 
 export default function PrivacyPage() {

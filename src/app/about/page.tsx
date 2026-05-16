@@ -1,4 +1,11 @@
 import { Ribbon } from "@/components/ui/Ribbon";
+export const metadata = {
+  title: "About",
+  description: "Learn about Aurews' mission, values, and the principles that guide our editorial vision.",
+  alternates: {
+    canonical: "/about",
+  },
+}
 
 export default function AboutPage() {
   return (

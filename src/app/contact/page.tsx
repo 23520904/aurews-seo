@@ -1,6 +1,12 @@
 import { Button } from "@/components/ui/Button";
 import { Ribbon } from "@/components/ui/Ribbon";
-
+export const metadata = {
+  title: "Contact",
+  description: "Get in touch with the Aurews team for inquiries, feedback, or media requests.",
+  alternates: {
+    canonical: "/contact",
+  },
+}
 export default function ContactPage() {
   return (
     <div className="wired-wrapper" style={{ padding: '80px 0' }}>

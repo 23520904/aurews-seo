@@ -6,6 +6,9 @@ import { LoadMore } from "@/components/LoadMore";
 export const metadata = {
   title: "Latest Stories",
   description: "Fresh perspectives on tech, business, and innovation.",
+  alternates: {
+    canonical: "/latest",
+  },
 };
 
 const PAGE_SIZE = 20;

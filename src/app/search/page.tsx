@@ -2,12 +2,18 @@
 export const dynamic = "force-dynamic";
 
 import { Ribbon } from "@/components/ui/Ribbon";
-import Link from "next/link";
+
 import { prisma } from "@/lib/prisma";
 import { Suspense } from "react";
 import { PostCard } from "@/components/PostCard";
 import { Pagination } from "@/components/ui/Pagination";
-
+export const metadata = {
+  title: "Search Archive",
+  description: "Explore the Aurews repository with advanced search capabilities.",
+  alternates: {
+    canonical: "/search",
+  },
+};
 const PAGE_SIZE = 15;
 
 async function SearchResults({ query, page }: { query: string, page: number }) {

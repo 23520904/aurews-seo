@@ -8,7 +8,13 @@ import { Ribbon } from "@/components/ui/Ribbon";
 import { OrganizationJsonLd } from "@/components/seo/JsonLd";
 import { DEFAULT_IMAGE } from "@/lib/constants";
 import TrackedArticleLink from "@/components/analytics/TrackedArticleLink";
-
+export const metadata = {
+  title: "Aurews Archive",
+  description: "Brutalist news and architectural analysis for the discerning reader.",
+  alternates: {
+    canonical: "/",
+  },
+};
 export default async function Home() {
   const [heroPost, latestPosts, popularPosts] = await Promise.all([
     prisma.post.findFirst({

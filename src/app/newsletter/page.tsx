@@ -1,6 +1,12 @@
 import { Button } from "@/components/ui/Button";
 import { Ribbon } from "@/components/ui/Ribbon";
-
+export const metadata = {
+  title: "Newsletter Subscription",
+  description: "Join the Aurews Briefing for weekly insights and breaking alerts.",
+  alternates: {
+    canonical: "/newsletter",
+  },
+};
 export default function NewsletterPage() {
   return (
     <div className="wired-wrapper" style={{ padding: '80px 0' }}>

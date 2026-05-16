@@ -3,6 +3,9 @@ import { Ribbon } from "@/components/ui/Ribbon";
 export const metadata = {
   title: "Terms of Service",
   description: "Operational framework and legal boundaries for the Aurews platform.",
+  alternates: {
+    canonical: "/terms",
+  },
 };
 
 export default function TermsPage() {
