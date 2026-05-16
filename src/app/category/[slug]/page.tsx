@@ -20,43 +20,43 @@ const CATEGORY_SEO: Record<
   }
 > = {
   business: {
-    title: "Business News, Trends & Analysis | Aurews",
+    title: "Business News, Trends & Analysis",
     description:
       "Explore the latest business news, corporate trends, market shifts, and analysis from Aurews.",
   },
 
   "tech-innovation": {
-    title: "Technology & Innovation News | Aurews",
+    title: "Technology & Innovation News",
     description:
       "Discover the latest technology news, digital innovation, emerging tools, and future-focused analysis from Aurews.",
   },
 
   ai: {
-    title: "AI News, Tools & Artificial Intelligence Trends | Aurews",
+    title: "AI News, Tools & Artificial Intelligence Trends",
     description:
       "Read the latest AI news, artificial intelligence trends, emerging tools, and analysis from Aurews.",
   },
 
   "a.i.": {
-    title: "AI News, Tools & Artificial Intelligence Trends | Aurews",
+    title: "AI News, Tools & Artificial Intelligence Trends",
     description:
       "Read the latest AI news, artificial intelligence trends, emerging tools, and analysis from Aurews.",
   },
 
   politics: {
-    title: "Politics News, Policy & Global Affairs | Aurews",
+    title: "Politics News, Policy & Global Affairs",
     description:
       "Follow the latest political news, public policy developments, and global affairs analysis from Aurews.",
   },
 
   lifestyle: {
-    title: "Lifestyle Trends, Culture & Modern Living | Aurews",
+    title: "Lifestyle Trends, Culture & Modern Living",
     description:
       "Explore lifestyle trends, culture, sustainable living, and modern life stories curated by Aurews.",
   },
 
   "money-markets": {
-    title: "Markets, Finance & Economic Trends | Aurews",
+    title: "Markets, Finance & Economic Trends",
     description:
       "Stay updated on financial markets, economic shifts, investment trends, and business analysis from Aurews.",
   },
@@ -80,7 +80,7 @@ export async function generateMetadata({
 
   const categoryName = formatCategoryName(slug);
   const seo = CATEGORY_SEO[slug] ?? {
-    title: `${categoryName} News & Analysis | Aurews`,
+    title: `${categoryName} News & Analysis`,
     description: `Explore the latest ${categoryName.toLowerCase()} news, stories, trends, and analysis from Aurews.`,
   };
 
