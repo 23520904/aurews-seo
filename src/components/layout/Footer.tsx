@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CONTACT_EMAIL, FACEBOOK_PAGE } from "@/lib/constants";
 
 export const Footer = () => {
   return (
@@ -30,7 +31,16 @@ export const Footer = () => {
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
               <li><Link href="/about" className="wired-ui hover-link" style={{ fontSize: '14px' }}>About Us</Link></li>
               <li><Link href="/contact" className="wired-ui hover-link" style={{ fontSize: '14px' }}>Contact</Link></li>
-              <li><Link href="/newsletter" className="wired-ui hover-link" style={{ fontSize: '14px' }}>Newsletter</Link></li>
+              <li>
+                <a href={`mailto:${CONTACT_EMAIL}`} className="wired-ui hover-link" style={{ fontSize: '14px' }}>
+                  Email
+                </a>
+              </li>
+              <li>
+                <a href={FACEBOOK_PAGE} target="_blank" rel="noopener noreferrer" className="wired-ui hover-link" style={{ fontSize: '14px' }}>
+                  Facebook
+                </a>
+              </li>
             </ul>
           </div>
         </div>
