@@ -25,22 +25,34 @@ const spaceMono = Space_Mono({
   weight: ["400", "700"],
   subsets: ["latin"],
 });
-
 export const metadata: Metadata = {
   title: {
     default: "Aurews — Next-Gen News Architecture",
-    template: "%s | Aurews"
+    template: "%s | Aurews",
   },
-  description: "Aurews delivers next-generation news and analysis on business, technology, AI, politics, markets, and lifestyle trends.",
+
+  description:
+    "Aurews delivers next-generation news and analysis on business, technology, AI, politics, markets, and lifestyle trends.",
+
   metadataBase: new URL(BASE_URL),
+
   openGraph: {
     title: "Aurews",
-    description: "Aurews delivers next-generation news and analysis on business, technology, AI, politics, markets, and lifestyle trends. ",
+    description:
+      "Aurews delivers next-generation news and analysis on business, technology, AI, politics, markets, and lifestyle trends.",
     url: BASE_URL,
     siteName: "Aurews",
     locale: "en_US",
     type: "website",
   },
+
+  twitter: {
+    card: "summary",
+    title: "Aurews",
+    description:
+      "Aurews delivers next-generation news and analysis on business, technology, AI, politics, markets, and lifestyle trends.",
+  },
+
   robots: {
     index: true,
     follow: true,
