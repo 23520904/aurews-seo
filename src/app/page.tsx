@@ -1,6 +1,4 @@
 export const runtime = "nodejs";
-
-import Link from "next/link";
 import Image from "next/image";
 
 import { prisma } from "@/lib/prisma";
@@ -15,6 +13,7 @@ export const metadata = {
     canonical: "/",
   },
 };
+
 export default async function Home() {
   const [heroPost, latestPosts, popularPosts] = await Promise.all([
     prisma.post.findFirst({
@@ -59,7 +58,8 @@ export default async function Home() {
                     alt={heroPost.title}
                     fill
                     priority
-                    sizes="(max-width: 1024px) 100vw, 60vw"
+                    fetchPriority="high"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 800px"
                     style={{ objectFit: 'cover' }}
                   />
                 </div>
@@ -114,7 +114,7 @@ export default async function Home() {
                       src={post.coverImage || DEFAULT_IMAGE}
                       alt={post.title}
                       fill
-                      sizes="200px"
+                      sizes="(max-width: 768px) 150px, 200px"
                       style={{ objectFit: 'cover' }}
                       loading="lazy"
                     />
@@ -169,7 +169,8 @@ export default async function Home() {
         </aside>
       </div>
 
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         @media (max-width: 1023px) {
           .feature-layout aside {
             margin-top: var(--space-16) !important;
