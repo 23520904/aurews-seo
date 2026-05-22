@@ -1,0 +1,1703 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MEDIA SHARE FUNCTION GUIDE — aurews.id.vn</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Space+Mono:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Work+Sans:wght@400;600;700&display=swap"
+        rel="stylesheet" />
+    <style>
+        :root {
+            --black: #000000;
+            --ink: #1a1a1a;
+            --paper: #ffffff;
+            --blue: #057dbc;
+            --caption: #757575;
+            --disabled: #999999;
+            --hairline: #e2e8f0;
+            --code-bg: #f4f4f0;
+
+            --font-display: 'Playfair Display', helvetica, serif;
+            --font-body: 'Lora', helvetica, serif;
+            --font-ui: 'Work Sans', helvetica, sans-serif;
+            --font-mono: 'Space Mono', 'Monaco', 'Courier New', monospace;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--paper);
+            color: var(--ink);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a {
+            color: var(--ink);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: color 150ms ease;
+        }
+
+        a:hover {
+            color: var(--blue);
+            border-bottom: 1px solid var(--blue);
+        }
+
+        img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* UTILITY CLASSES */
+        .mono {
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            letter-spacing: 0.92px;
+            font-size: 0.75rem;
+        }
+
+        .mono-bold {
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            letter-spacing: 1.1px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .hairline {
+            border: none;
+            border-top: 1px solid var(--hairline);
+            margin: 0;
+        }
+
+        .rule {
+            border: none;
+            border-top: 1px solid var(--black);
+            margin: 0;
+        }
+
+        /* HEADER & NAV */
+        .util-bar {
+            background: var(--black);
+            padding: 8px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .util-bar span,
+        .util-bar a {
+            color: var(--paper);
+            font-family: var(--font-mono);
+            font-size: 0.69rem;
+            text-transform: uppercase;
+            letter-spacing: 1.1px;
+        }
+
+        .util-bar a:hover {
+            color: var(--blue);
+            border-bottom: none;
+        }
+
+        .util-bar-links {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .masthead {
+            border-bottom: 2px solid var(--black);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            color: var(--black);
+            line-height: 1;
+        }
+
+        .masthead-sub {
+            font-family: var(--font-mono);
+            font-size: 0.63rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--caption);
+            margin-top: 4px;
+        }
+
+        /* MAIN LAYOUT */
+        .wrapper {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        @media (min-width: 1024px) {
+            .wrapper {
+                padding: 0 48px;
+            }
+        }
+
+        /* HERO */
+        .hero {
+            border-bottom: 2px solid var(--black);
+            padding: 48px 0 32px;
+            margin-bottom: 48px;
+        }
+
+        .hero-eyebrow {
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            letter-spacing: 0.92px;
+            font-size: 0.75rem;
+            color: var(--black);
+            margin-bottom: 8px;
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: 3.5rem;
+            line-height: 0.95;
+            font-weight: 400;
+            color: var(--black);
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+        }
+
+        .hero-deck {
+            font-family: var(--font-body);
+            font-size: 1.25rem;
+            line-height: 1.5;
+            color: var(--ink);
+            max-width: 800px;
+        }
+
+        @media (max-width: 767px) {
+            .hero {
+                padding: 32px 0 24px;
+                margin-bottom: 32px;
+            }
+
+            .hero h1 {
+                font-size: 1.75rem;
+                line-height: 1.1;
+                margin-bottom: 12px;
+            }
+
+            .hero-deck {
+                font-size: 1rem;
+            }
+        }
+
+        /* SECTION RIBBON */
+        .ribbon {
+            background: var(--black);
+            color: var(--paper);
+            padding: 8px 24px;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            margin: 48px 0 24px;
+        }
+
+        @media (max-width: 767px) {
+            .ribbon {
+                margin: 32px 0 16px;
+            }
+        }
+
+        /* CONTENT SECTIONS */
+        .content-block {
+            margin-bottom: 48px;
+        }
+
+        .content-block h2 {
+            font-family: var(--font-display);
+            font-size: 2.2rem;
+            line-height: 1.08;
+            color: var(--ink);
+            margin-bottom: 16px;
+            letter-spacing: -0.28px;
+        }
+
+        .content-block h3 {
+            font-family: var(--font-ui);
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--ink);
+            margin-top: 32px;
+            margin-bottom: 12px;
+            letter-spacing: -0.144px;
+        }
+
+        .content-block p {
+            margin-bottom: 16px;
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+        .content-block p:last-child {
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 767px) {
+            .content-block {
+                margin-bottom: 32px;
+            }
+
+            .content-block h2 {
+                font-size: 1.6rem;
+                margin-bottom: 12px;
+            }
+
+            .content-block h3 {
+                font-size: 1rem;
+                margin-top: 24px;
+            }
+        }
+
+        /* CODE BLOCK */
+        .code-block {
+            background: var(--code-bg);
+            border: 1px solid var(--hairline);
+            padding: 20px;
+            margin: 24px 0;
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        .code-block code {
+            color: var(--ink);
+            word-break: break-word;
+        }
+
+        /* CHECKLIST */
+        .checklist {
+            margin: 24px 0;
+        }
+
+        .checklist-item {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--hairline);
+        }
+
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+
+        .checklist-item input {
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
+            margin-top: 2px;
+            cursor: pointer;
+            accent-color: var(--black);
+        }
+
+        .checklist-item label {
+            flex: 1;
+            cursor: pointer;
+            line-height: 1.5;
+        }
+
+        /* SHARE DEMO SECTION */
+        .share-demo {
+            background: var(--paper);
+            border: 2px solid var(--black);
+            padding: 32px;
+            margin: 48px 0;
+        }
+
+        .share-demo h4 {
+            font-family: var(--font-ui);
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-bottom: 20px;
+            color: var(--ink);
+        }
+
+        .share-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .share-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 16px;
+            border: 2px solid var(--black);
+            background: var(--paper);
+            color: var(--ink);
+            font-family: var(--font-ui);
+            font-size: 0.88rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            transition: all 150ms ease;
+            text-decoration: none;
+        }
+
+        .share-btn:hover {
+            background: var(--black);
+            color: var(--paper);
+            border-bottom: none;
+        }
+
+        @media (max-width: 767px) {
+            .share-buttons {
+                gap: 8px;
+            }
+
+            .share-btn {
+                padding: 10px 12px;
+                font-size: 0.75rem;
+            }
+        }
+
+        /* BUTTON VARIANTS */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border: 2px solid var(--black);
+            background: var(--paper);
+            color: var(--ink);
+            font-family: var(--font-ui);
+            font-size: 0.88rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            transition: all 150ms ease;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background: var(--black);
+            color: var(--paper);
+            border-bottom: none;
+        }
+
+        .btn-secondary {
+            border: 2px solid var(--hairline);
+            background: transparent;
+        }
+
+        .btn-secondary:hover {
+            border: 2px solid var(--black);
+            background: var(--black);
+            color: var(--paper);
+        }
+
+        /* PLATFORM CARDS */
+        .platform-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin: 32px 0;
+        }
+
+        .platform-card {
+            border: 1px solid var(--hairline);
+            padding: 24px;
+        }
+
+        .platform-card h4 {
+            font-family: var(--font-ui);
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--ink);
+        }
+
+        .platform-card p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--caption);
+            margin-bottom: 12px;
+        }
+
+        .platform-meta {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.9px;
+            color: var(--disabled);
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--hairline);
+        }
+
+        @media (max-width: 767px) {
+            .platform-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+        }
+
+        /* FOOTER */
+        .footer {
+            background: var(--black);
+            color: var(--paper);
+            padding: 48px 24px;
+            margin-top: 48px;
+        }
+
+        .footer-content {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .footer-section {
+            margin-bottom: 32px;
+        }
+
+        .footer-section h3 {
+            font-family: var(--font-ui);
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-bottom: 12px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .footer-links a {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.1px;
+            color: var(--paper);
+            border-bottom: none;
+        }
+
+        .footer-links a:hover {
+            color: var(--blue);
+        }
+
+        .footer-note {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.9px;
+            color: var(--caption);
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width: 767px) {
+            .footer {
+                padding: 32px 24px;
+            }
+
+            .footer-section {
+                margin-bottom: 24px;
+            }
+        }
+
+        /* RESPONSIVE HELPERS */
+        .mobile-hide {
+            display: none;
+        }
+
+        @media (min-width: 768px) {
+            .mobile-hide {
+                display: block;
+            }
+        }
+
+        /* TABLE STYLES */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0;
+        }
+
+        th {
+            text-align: left;
+            padding: 12px 0;
+            border-bottom: 2px solid var(--black);
+            font-family: var(--font-ui);
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        td {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--hairline);
+            line-height: 1.6;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* EMPHASIS */
+        .highlight {
+            background: var(--code-bg);
+            padding: 2px 6px;
+            font-family: var(--font-mono);
+        }
+
+        strong {
+            font-weight: 700;
+        }
+
+        em {
+            font-style: italic;
+        }
+
+        /* DIVIDERS */
+        hr {
+            margin: 48px 0;
+        }
+
+        @media (max-width: 767px) {
+            hr {
+                margin: 32px 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- UTIL BAR -->
+    <div class="util-bar">
+        <span>📰 AUREWS.ID.VN MEDIA SHARE GUIDE</span>
+        <div class="util-bar-links">
+            <a href="#implementation">Implementation</a>
+            <a href="#platforms">Platforms</a>
+            <a href="#seo">SEO Setup</a>
+            <a href="#mobile">Mobile</a>
+        </div>
+    </div>
+
+    <!-- MASTHEAD -->
+    <div class="masthead">
+        <div>
+            <div class="logo">AUREWS</div>
+            <div class="masthead-sub">Media Share Function Guide</div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="wrapper">
+
+        <!-- HERO SECTION -->
+        <div class="hero">
+            <div class="hero-eyebrow">Essential Guide</div>
+            <h1>Implementing Social Media Share Buttons</h1>
+            <p class="hero-deck">A comprehensive technical guide for building effective, accessible, and SEO-optimized
+                media sharing functionality on aurews.id.vn news articles. Designed for responsive mobile-first
+                architecture following WIRED editorial principles.</p>
+        </div>
+
+        <hr class="rule" />
+
+        <!-- SECTION 1: OVERVIEW -->
+        <div class="ribbon">Overview & Strategy</div>
+
+        <div class="content-block">
+            <h2>Why Share Buttons Matter for News</h2>
+            <p><strong>Social sharing is no longer optional for news websites.</strong> When readers share your articles
+                on social media, they become brand ambassadors. Research shows that readers trust friend recommendations
+                over traditional advertising, making social sharing a critical distribution channel for news content.
+            </p>
+
+            <p>For aurews.id.vn, implementing media share buttons serves three key purposes:</p>
+
+            <h3>1. Reach & Traffic Distribution</h3>
+            <p>Shared links drive direct referral traffic back to your website. Each share creates multiple touchpoints
+                with potential readers in their native social feeds.</p>
+
+            <h3>2. Social Proof & Brand Authority</h3>
+            <p>Share counts (when displayed) signal content quality to new visitors. Platforms like Facebook, LinkedIn,
+                and WhatsApp use share metrics as relevance signals.</p>
+
+            <h3>3. SEO Impact (Indirect)</h3>
+            <p>While Open Graph tags don't directly influence Google rankings, better social previews generate higher
+                click-through rates. More clicks = more branded traffic = positive SEO signals. Additionally, shares
+                create backlink opportunities that do affect search rankings.</p>
+        </div>
+
+        <hr class="rule" />
+
+        <!-- SECTION 2: OPEN GRAPH SETUP -->
+        <div class="ribbon">SEO Foundation: Open Graph Tags</div>
+
+        <div class="content-block">
+            <h2 id="seo">Meta Tags for Social Sharing</h2>
+            <p><strong>Open Graph (OG) tags are the foundation of social sharing.</strong> Without them, platforms like
+                Facebook and LinkedIn guess what to display when your article is shared—often showing broken previews
+                with wrong images and titles.</p>
+
+            <h3>Essential OG Tags for News Articles</h3>
+            <p>Add these tags to the <span class="highlight">&lt;head&gt;</span> section of every article page on
+                aurews.id.vn:</p>
+
+            <div class="code-block"><code>&lt;!-- OPEN GRAPH TAGS - Article Metadata --&gt;
+&lt;meta property="og:title" content="Breaking News: Your Article Title Here" /&gt;
+&lt;meta property="og:description" content="A 150-160 character summary of the article that compels clicks." /&gt;
+&lt;meta property="og:type" content="article" /&gt;
+&lt;meta property="og:url" content="https://aurews.id.vn/articles/article-slug" /&gt;
+
+&lt;!-- CRITICAL: Share Image (1200x600px recommended) --&gt;
+&lt;meta property="og:image" content="https://aurews.id.vn/images/og-image-article.jpg" /&gt;
+&lt;meta property="og:image:width" content="1200" /&gt;
+&lt;meta property="og:image:height" content="600" /&gt;
+&lt;meta property="og:image:alt" content="Descriptive alt text for image" /&gt;
+
+&lt;!-- TWITTER/X CARD TAGS (overrides OG fallback) --&gt;
+&lt;meta name="twitter:card" content="summary_large_image" /&gt;
+&lt;meta name="twitter:title" content="Article Title for X" /&gt;
+&lt;meta name="twitter:description" content="Twitter description text" /&gt;
+&lt;meta name="twitter:image" content="https://aurews.id.vn/images/twitter-image.jpg" /&gt;
+
+&lt;!-- ARTICLE-SPECIFIC METADATA --&gt;
+&lt;meta property="article:published_time" content="2026-05-22T10:30:00Z" /&gt;
+&lt;meta property="article:modified_time" content="2026-05-22T14:45:00Z" /&gt;
+&lt;meta property="article:author" content="Author Name" /&gt;
+&lt;meta property="article:section" content="Technology" /&gt;
+&lt;meta property="article:tag" content="AI,Technology,News" /&gt;</code></div>
+
+            <h3>Critical Details: Image Specifications</h3>
+            <p><strong>Share images are the first thing readers see.</strong> The wrong dimensions cause platforms to
+                crop awkwardly or show thumbnails instead of full previews.</p>
+
+            <table>
+                <tr>
+                    <th>Platform</th>
+                    <th>Optimal Size</th>
+                    <th>Aspect Ratio</th>
+                    <th>Minimum Size</th>
+                </tr>
+                <tr>
+                    <td>Facebook, LinkedIn, Slack</td>
+                    <td>1200 × 600px</td>
+                    <td>2:1</td>
+                    <td>600 × 300px</td>
+                </tr>
+                <tr>
+                    <td>Twitter/X</td>
+                    <td>1200 × 675px</td>
+                    <td>16:9</td>
+                    <td>506 × 506px</td>
+                </tr>
+                <tr>
+                    <td>WhatsApp, Telegram</td>
+                    <td>1200 × 600px</td>
+                    <td>2:1</td>
+                    <td>300 × 300px</td>
+                </tr>
+                <tr>
+                    <td>Pinterest</td>
+                    <td>1000 × 1500px</td>
+                    <td>2:3</td>
+                    <td>600 × 600px</td>
+                </tr>
+            </table>
+
+            <h3>Implementation Best Practice</h3>
+            <p>Use <strong>dynamic OG tags</strong> that change per article. In your backend (PHP, Node.js, Python),
+                pull the headline, description, featured image, and publication date from your CMS and inject them into
+                the meta tags. This ensures every article has optimized sharing previews.</p>
+        </div>
+
+        <hr class="rule" />
+
+        <!-- SECTION 3: IMPLEMENTATION -->
+        <div class="ribbon">Implementation: Share Button Markup</div>
+
+        <div class="content-block">
+            <h2 id="implementation">HTML Structure for Share Buttons</h2>
+            <p>Build share buttons using semantic HTML with proper accessibility. Avoid relying on JavaScript libraries
+                for basic functionality—lightweight custom implementations perform better and give you full design
+                control.</p>
+
+            <h3>Recommended Button Placement for News</h3>
+            <p><strong>Place share buttons in three strategic locations:</strong></p>
+
+            <table>
+                <tr>
+                    <th>Location</th>
+                    <th>Purpose</th>
+                    <th>Best For</th>
+                </tr>
+                <tr>
+                    <td><strong>Below Article Title</strong><br>(Inline, above content)</td>
+                    <td>Early engagement</td>
+                    <td>Time-sensitive breaking news that readers share immediately</td>
+                </tr>
+                <tr>
+                    <td><strong>End of Article</strong><br>(Below last paragraph)</td>
+                    <td>Post-read sharing</td>
+                    <td>Readers who found value and want to share after reading</td>
+                </tr>
+                <tr>
+                    <td><strong>Floating Sidebar</strong><br>(Desktop only, hidden on mobile)</td>
+                    <td>Persistent visibility</td>
+                    <td>Long-form articles where readers scroll past initial buttons</td>
+                </tr>
+            </table>
+
+            <p><em>Data shows readers who reach the end of an article are most likely to share. Always include buttons
+                    below content as your primary placement.</em></p>
+
+            <h3>Below-Title Share Button Markup</h3>
+            <div class="code-block"><code>&lt;!-- SHARE SECTION - Placed below headline, above article body --&gt;
+&lt;div class="article-share-inline"&gt;
+  &lt;div class="share-label"&gt;
+    &lt;span class="mono-bold"&gt;Share This Article&lt;/span&gt;
+  &lt;/div&gt;
+  
+  &lt;div class="share-buttons"&gt;
+    &lt;a href="https://www.facebook.com/sharer/sharer.php?u=ARTICLE_URL" 
+       class="share-btn" 
+       target="_blank" 
+       rel="noopener noreferrer"
+       aria-label="Share on Facebook"&gt;
+      Facebook
+    &lt;/a&gt;
+    
+    &lt;a href="https://twitter.com/intent/tweet?url=ARTICLE_URL&amp;text=ARTICLE_TITLE" 
+       class="share-btn" 
+       target="_blank" 
+       rel="noopener noreferrer"
+       aria-label="Share on X (Twitter)"&gt;
+      X
+    &lt;/a&gt;
+    
+    &lt;a href="https://www.linkedin.com/sharing/share-offsite/?url=ARTICLE_URL" 
+       class="share-btn" 
+       target="_blank" 
+       rel="noopener noreferrer"
+       aria-label="Share on LinkedIn"&gt;
+      LinkedIn
+    &lt;/a&gt;
+    
+    &lt;a href="https://wa.me/?text=ARTICLE_TITLE%20ARTICLE_URL" 
+       class="share-btn" 
+       target="_blank" 
+       rel="noopener noreferrer"
+       aria-label="Share on WhatsApp"&gt;
+      WhatsApp
+    &lt;/a&gt;
+
+    &lt;button class="share-btn copy-btn" 
+            id="copy-link-btn"
+            aria-label="Copy article link"&gt;
+      Copy Link
+    &lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></div>
+
+            <h3>End-of-Article Share Button (Full Width)</h3>
+            <div class="code-block"><code>&lt;!-- SHARE SECTION - Bottom of article --&gt;
+&lt;div class="article-share-bottom"&gt;
+  &lt;hr class="rule" /&gt;
+  
+  &lt;div class="share-container"&gt;
+    &lt;p class="share-prompt"&gt;Found this helpful? Share with your network.&lt;/p&gt;
+    
+    &lt;div class="share-buttons-group"&gt;
+      &lt;a href="..." class="share-btn"&gt;Share on Facebook&lt;/a&gt;
+      &lt;a href="..." class="share-btn"&gt;Share on X&lt;/a&gt;
+      &lt;a href="..." class="share-btn"&gt;Share on LinkedIn&lt;/a&gt;
+      &lt;a href="..." class="share-btn"&gt;Share on WhatsApp&lt;/a&gt;
+      &lt;button class="share-btn copy-btn"&gt;Copy Link&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></div>
+
+            <h3>Dynamic URL & Text Generation (JavaScript)</h3>
+            <p>Replace <span class="highlight">ARTICLE_URL</span> and <span class="highlight">ARTICLE_TITLE</span> with
+                dynamic values:</p>
+
+            <div class="code-block"><code>// GET CURRENT ARTICLE DATA
+const articleURL = window.location.href;
+const articleTitle = document.querySelector('h1')?.textContent || 'Read this article';
+const encodedURL = encodeURIComponent(articleURL);
+const encodedTitle = encodeURIComponent(articleTitle);
+
+// UPDATE SHARE LINKS
+document.querySelectorAll('[href*="facebook.com/sharer"]')[0]
+  .href = `https://www.facebook.com/sharer/sharer.php?u=${encodedURL}`;
+
+document.querySelectorAll('[href*="twitter.com/intent"]')[0]
+  .href = `https://twitter.com/intent/tweet?url=${encodedURL}&amp;text=${encodedTitle}`;
+
+document.querySelectorAll('[href*="linkedin.com/sharing"]')[0]
+  .href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodedURL}`;
+
+document.querySelectorAll('[href*="wa.me"]')[0]
+  .href = `https://wa.me/?text=${encodedTitle}%20${encodedURL}`;
+
+// COPY TO CLIPBOARD FUNCTIONALITY
+document.getElementById('copy-link-btn').addEventListener('click', function() {
+  navigator.clipboard.writeText(articleURL).then(() => {
+    alert('Link copied to clipboard!');
+    this.textContent = 'Copied!';
+    setTimeout(() => { this.textContent = 'Copy Link'; }, 2000);
+  });
+});</code></div>
+        </div>
+
+        <hr class="rule" />
+
+        <!-- SECTION 4: SOCIAL PLATFORMS -->
+        <div class="ribbon">Social Platform Integration</div>
+
+        <div class="content-block">
+            <h2 id="platforms">Supported Platforms & Share URLs</h2>
+            <p><strong>Use these official share endpoints.</strong> They work without API keys and provide the cleanest
+                user experience.</p>
+
+            <div class="platform-grid">
+                <div class="platform-card">
+                    <h4>🔵 Facebook</h4>
+                    <p>Highest reach for general news sharing. Pulls OG tags automatically.</p>
+                    <div class="code-block" style="font-size: 0.75rem; padding: 12px;">
+                        <code>https://facebook.com/sharer/sharer.php?u=<br/>[URL]</code>
+                    </div>
+                    <div class="platform-meta">
+                        <strong>Share Count:</strong> Disabled by Facebook (as of 2024)<br />
+                        <strong>Reach:</strong> 3+ billion monthly active users<br />
+                        <strong>OG Priority:</strong> Critical
+                    </div>
+                </div>
+
+                <div class="platform-card">
+                    <h4>𝕏 X (formerly Twitter)</h4>
+                    <p>Essential for news distribution. Supports text customization.</p>
+                    <div class="code-block" style="font-size: 0.75rem; padding: 12px;">
+                        <code>https://twitter.com/intent/tweet?<br/>url=[URL]&text=[TITLE]</code>
+                    </div>
+                    <div class="platform-meta">
+                        <strong>Share Count:</strong> Not available<br />
+                        <strong>Reach:</strong> 550+ million users<br />
+                        <strong>Best For:</strong> Tech & breaking news
+                    </div>
+                </div>
+
+                <div class="platform-card">
+                    <h4>💼 LinkedIn</h4>
+                    <p>B2B and professional news sharing. Strong for business articles.</p>
+                    <div class="code-block" style="font-size: 0.75rem; padding: 12px;">
+                        <code>https://linkedin.com/sharing/<br/>share-offsite/?url=[URL]</code>
+                    </div>
+                    <div class="platform-meta">
+                        <strong>Share Count:</strong> Available<br />
+                        <strong>Reach:</strong> 900+ million users<br />
+                        <strong>Best For:</strong> Enterprise content
+                    </div>
+                </div>
+
+                <div class="platform-card">
+                    <h4>💬 WhatsApp</h4>
+                    <p>Direct messaging. Highest conversion rate for news sharing in Southeast Asia.</p>
+                    <div class="code-block" style="font-size: 0.75rem; padding: 12px;">
+                        <code>https://wa.me/?text=<br/>[TITLE]%20[URL]</code>
+                    </div>
+                    <div class="platform-meta">
+                        <strong>Share Count:</strong> No public data<br />
+                        <strong>Reach:</strong> 2+ billion users<br />
+                        <strong>Critical for:</strong> Indonesian market
+                    </div>
+                </div>
+
+                <div class="platform-card">
+                    <h4>📲 Telegram</h4>
+                    <p>Fast-growing messaging platform. Popular with tech-savvy readers.</p>
+                    <div class="code-block" style="font-size: 0.75rem; padding: 12px;">
+                        <code>https://t.me/share/url?<br/>url=[URL]&text=[TITLE]</code>
+                    </div>
+                    <div class="platform-meta">
+                        <strong>Share Count:</strong> No public data<br />
+                        <strong>Reach:</strong> 900+ million users<br />
+                        <strong>Best For:</strong> Tech enthusiasts
+                    </div>
+                </div>
+
+                <div class="platform-card">
+                    <h4>📋 Copy Link (Native)</h4>
+                    <p>Always include "Copy to Clipboard." Users often prefer it over platform-specific shares.</p>
+                    <div class="code-block" style="font-size: 0.75rem; padding: 12px;">
+                        <code>navigator.clipboard<br/>.writeText(articleURL)</code>
+                    </div>
+                    <div class="platform-meta">
+                        <strong>Usage:</strong> Highest engagement rate<br />
+                        <strong>Platform:</strong> All devices<br />
+                        <strong>Must-Have:</strong> Yes
+                    </div>
+                </div>
+            </div>
+
+            <h3>Platform Selection Strategy for aurews.id.vn</h3>
+            <p><strong>Don't overwhelm with all platforms.</strong> Research shows 3–5 options perform better than 10+
+                scattered buttons. For an Indonesian news site:</p>
+
+            <ul style="margin: 16px 0; padding-left: 20px;">
+                <li><strong>Primary:</strong> Facebook (highest reach), WhatsApp (Southeast Asia leader), Copy Link</li>
+                <li><strong>Secondary:</strong> X (tech/breaking news), LinkedIn (business content)</li>
+                <li><strong>Optional:</strong> Telegram (tech audience)</li>
+            </ul>
+        </div>
+
+        <hr class="rule" />
+
+        <!-- SECTION 5: RESPONSIVE DESIGN -->
+        <div class="ribbon">Mobile-First Responsive Design</div>
+
+        <div class="content-block">
+            <h2 id="mobile">Share Buttons on Mobile Devices</h2>
+            <p><strong>Mobile is critical for news sharing.</strong> Most social shares originate from mobile devices,
+                and your buttons must be touch-friendly and not intrusive.</p>
+
+            <h3>Mobile Button Layout Rules</h3>
+            <table>
+                <tr>
+                    <th>Device Type</th>
+                    <th>Button Size (Min)</th>
+                    <th>Tap Target Size</th>
+                    <th>Placement</th>
+                </tr>
+                <tr>
+                    <td>Mobile (&lt;768px)</td>
+                    <td>14px font</td>
+                    <td>44×44px (WCAG AAA)</td>
+                    <td>Full-width stacked buttons below title + end of article</td>
+                </tr>
+                <tr>
+                    <td>Tablet (768–1023px)</td>
+                    <td>15px font</td>
+                    <td>44×44px</td>
+                    <td>2-column layout below title, floating sidebar optional</td>
+                </tr>
+                <tr>
+                    <td>Desktop (&gt;1024px)</td>
+                    <td>16px font</td>
+                    <td>44×44px</td>
+                    <td>Horizontal layout + left-side sticky floating bar</td>
+                </tr>
+            </table>
+
+            <h3>Mobile CSS Implementation</h3>
+            <div class="code-block"><code>/* MOBILE-FIRST RESPONSIVE SHARE BUTTONS */
+
+/* Default (Mobile) */
+.share-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 20px 0;
+}
+
+.share-btn {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 0.88rem;
+  text-align: center;
+}
+
+/* Hide floating sidebar on mobile */
+.share-floating {
+  display: none;
+}
+
+/* TABLET (768px+) */
+@media (min-width: 768px) {
+  .share-buttons {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .share-btn {
+    width: auto;
+    flex: 1 1 calc(50% - 6px);
+    min-width: 120px;
+  }
+
+  .share-floating {
+    display: flex;
+  }
+}
+
+/* DESKTOP (1024px+) */
+@media (min-width: 1024px) {
+  .share-buttons {
+    gap: 12px;
+  }
+
+  .share-btn {
+    flex: 0 1 auto;
+  }
+
+  .share-floating {
+    position: fixed;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    flex-direction: column;
+    gap: 12px;
+    z-index: 999;
+  }
+
+  .share-floating .share-btn {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0;
+  }
+}</code></div>
+
+            <h3>Critical Mobile Considerations</h3>
+            <p><strong>Avoid these common mobile mistakes:</strong></p>
+
+            <div class="checklist">
+                <div class="checklist-item">
+                    <input type="checkbox" id="check1" />
+                    <label for="check1"><strong>Don't use floating sidebars on mobile.</strong> They cover content and
+                        hurt readability. Use bottom-of-article placement instead.</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check2" />
+                    <label for="check2"><strong>Ensure tap targets are 44×44px minimum</strong> (iOS WCAG AAA standard)
+                        to prevent accidental clicks.</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check3" />
+                    <label for="check3"><strong>Use full-width buttons on mobile</strong> (100% of container width) for
+                        better touch interaction.</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check4" />
+                    <label for="check4"><strong>Stack buttons vertically on phones</strong> (&lt;375px viewport). Allow
+                        horizontal layout on tablets and up.</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check5" />
+                    <label for="check5"><strong>Test on real devices.</strong> Emulators don't reveal actual tap
+                        precision or performance issues.</label>
+                </div>
+            </div>
+
+            <h3>Floating Sidebar (Desktop Only)</h3>
+            <p>For long-form articles, a left-side sticky bar keeps share options visible as readers scroll.
+                <strong>Important: Hide completely on mobile.</strong></p>
+
+            <div class="code-block"><code>&lt;!-- FLOATING SIDEBAR - Desktop only --&gt;
+&lt;aside class="share-floating" aria-label="Share article"&gt;
+  &lt;a href="..." class="share-btn" title="Share on Facebook"&gt;f&lt;/a&gt;
+  &lt;a href="..." class="share-btn" title="Share on X"&gt;𝕏&lt;/a&gt;
+  &lt;a href="..." class="share-btn" title="Share on LinkedIn"&gt;in&lt;/a&gt;
+  &lt;a href="..." class="share-btn" title="Copy link"&gt;🔗&lt;/a&gt;
+&lt;/aside&gt;
+
+&lt;style&gt;
+  @media (max-width: 1023px) {
+    .share-floating {
+      display: none !important;
+    }
+  }
+&lt;/style&gt;</code></div>
+        </div>
+
+        <hr class="rule" />
+
+        <!-- SECTION 6: STYLING GUIDE -->
+        <div class="ribbon">Design System Integration</div>
+
+        <div class="content-block">
+            <h2>Share Buttons Must Follow WIRED Design Rules</h2>
+            <p><strong>Your share buttons are part of the editorial system.</strong> They must follow the same design
+                discipline as the rest of aurews.id.vn to maintain brand consistency.</p>
+
+            <h3>Button Styling Rules (Non-Negotiable)</h3>
+
+            <div class="share-demo">
+                <h4>✓ Correct Button Implementation</h4>
+                <div class="share-buttons">
+                    <button class="share-btn">Share on Facebook</button>
+                    <button class="share-btn">Share on X</button>
+                    <button class="share-btn">Copy Link</button>
+                </div>
+            </div>
+
+            <h3>CSS Button Specification</h3>
+            <div class="code-block">
+                <code">/* BUTTON STYLING - Must follow WIRED system */
+
+                    .share-btn {
+                    /* BORDER: 2px hard black, square corners */
+                    border: 2px solid #000000;
+                    border-radius: 0; /* NO ROUNDED CORNERS EVER */
+
+                    /* SPACING & SIZE */
+                    padding: 12px 16px;
+                    min-height: 44px; /* Touch target minimum */
+                    line-height: 1.25;
+
+                    /* TYPOGRAPHY: Apercu / Work Sans UI weight */
+                    font-family: 'Work Sans', helvetica, sans-serif;
+                    font-size: 0.88rem; /* 14px */
+                    font-weight: 700; /* Bold */
+                    text-transform: uppercase;
+                    letter-spacing: 0.3px;
+
+                    /* COLOR & BACKGROUND */
+                    background: #ffffff; /* Paper white */
+                    color: #1a1a1a; /* Page ink */
+
+                    /* INTERACTION */
+                    cursor: pointer;
+                    transition: all 150ms ease; /* Smooth, not instant */
+                    text-decoration: none;
+                    }
+
+                    .share-btn:hover,
+                    .share-btn:active {
+                    background: #000000; /* WIRED black */
+                    color: #ffffff; /* Paper white text */
+                    border-color: #000000;
+                    }
+
+                    /* DO NOT ADD: box-shadow, border-radius, gradients, or color outside system */</code>
+            </div>
+
+            <h3>Share Button Label Guidelines</h3>
+            <p>Button text must be clear and action-oriented. Follow these patterns:</p>
+
+            <table>
+                <tr>
+                    <th>Layout</th>
+                    <th>Button Text Style</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td>Wide buttons (below content)</td>
+                    <td>Action + Platform</td>
+                    <td>"Share on Facebook" or "Share via WhatsApp"</td>
+                </tr>
+                <tr>
+                    <td>Narrow buttons (floating, compact)</td>
+                    <td>Platform name only</td>
+                    <td>"Facebook", "LinkedIn", "Copy Link"</td>
+                </tr>
+                <tr>
+                    <td>Icon-only buttons (future)</td>
+                    <td>Use aria-label</td>
+                    <td>&lt;button aria-label="Share on Facebook"&gt;f&lt;/button&gt;</td>
+                </tr>
+            </table>
+
+            <h3>What NOT to Do</h3>
+            <p><strong>Break from WIRED system and your share buttons will look out of place.</strong></p>
+
+            <div class="code-block"><code>/* ANTI-PATTERNS - NEVER DO THIS */
+
+❌ .share-btn {
+  border-radius: 8px; /* WRONG: use 0 */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* WRONG: no shadows */
+  background: linear-gradient(...); /* WRONG: no gradients */
+  color: #FF6B6B; /* WRONG: only use brand colors or grayscale */
+  transform: scale(1.05) on:hover; /* WRONG: no lift effects */
+}
+
+✓ CORRECT: Follow these only
+- 2px solid black border (or 1px hairline)
+- Square corners (border-radius: 0)
+- Paper white or black background
+- Grayscale + #057dbc link blue only
+- Smooth color transitions (150ms)
+- No decorative effects</code></div>
+        </div>
+
+        <hr class="rule" />
+
+        <!-- SECTION 7: TRACKING & ANALYTICS -->
+        <div class="ribbon">Analytics & UTM Parameters</div>
+
+        <div class="content-block">
+            <h2>Measure Share Button Performance</h2>
+            <p><strong>You can't improve what you don't measure.</strong> Add UTM parameters to track which shares drive
+                the most traffic and which platforms perform best.</p>
+
+            <h3>UTM Parameter Template</h3>
+            <div class="code-block">
+                <code">/* Add these UTM parameters to share URLs */
+
+                    Base Article URL: https://aurews.id.vn/articles/article-title
+
+                    Facebook Share URL:
+                    https://facebook.com/sharer/sharer.php?u=
+                    https://aurews.id.vn/articles/article-title?utm_source=facebook&utm_medium=social&utm_campaign=share
+
+                    Twitter/X Share URL:
+                    https://twitter.com/intent/tweet?url=
+                    https://aurews.id.vn/articles/article-title?utm_source=twitter&utm_medium=social&utm_campaign=share
+
+                    WhatsApp Share URL:
+                    https://wa.me/?text=Article%20Title%20
+                    https://aurews.id.vn/articles/article-title?utm_source=whatsapp&utm_medium=social&utm_campaign=share
+
+                    Copy-to-Clipboard (use original URL):
+                    https://aurews.id.vn/articles/article-title
+                    (No UTM needed; users paste manually)</code>
+            </div>
+
+            <h3>Tracking in Google Analytics 4</h3>
+            <p>Events sent when users click share buttons:</p>
+
+            <div class="code-block">
+                <code">// TRACK SHARE EVENTS IN GA4
+
+                    document.addEventListener('click', function(event) {
+                    const shareBtn = event.target.closest('.share-btn');
+                    if (!shareBtn) return;
+
+                    const platform = shareBtn.dataset.platform || 'generic';
+
+                    gtag('event', 'share', {
+                    'method': platform,
+                    'content_type': 'article',
+                    'content_id': document.querySelector('h1')?.textContent,
+                    'event_category': 'engagement',
+                    'event_label': 'article_share_' + platform
+                    });
+                    });</code>
+            </div>
+
+            <h3>Dashboard Metrics to Monitor</h3>
+            <p>In Google Analytics, create a custom dashboard showing:</p>
+
+            <ul style="margin: 16px 0; padding-left: 20px;">
+                <li><strong>Share clicks per platform</strong> - Which social network drives most engagement?</li>
+                <li><strong>Traffic from social referrals</strong> - How much return traffic do shares generate?</li>
+                <li><strong>Conversion rate by platform</strong> - Which platform brings most engaged readers?</li>
+                <li><strong>Button placement performance</strong> - Below-title vs. end-of-article vs. floating?</li>
+            </ul>
+        </div>
+
+        <hr class="rule" />
+
+        <!-- SECTION 8: IMPLEMENTATION CHECKLIST -->
+        <div class="ribbon">Implementation Checklist</div>
+
+        <div class="content-block">
+            <h2>Step-by-Step Deployment</h2>
+            <p>Follow this checklist to ensure your share buttons launch correctly:</p>
+
+            <h3>Phase 1: Foundation (Week 1)</h3>
+            <div class="checklist">
+                <div class="checklist-item">
+                    <input type="checkbox" id="task1" />
+                    <label for="task1"><strong>Add Open Graph meta tags</strong> to article template in your CMS. Make
+                        sure title, description, image, and URL are dynamic.</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="task2" />
+                    <label for="task2"><strong>Create share button markup</strong> in HTML. Use semantic elements. Start
+                        with below-article placement only.</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="task3" />
+                    <label for="task3"><strong>Style buttons to match WIRED system.</strong> 2px black border, square
+                        corners, Apercu/Work Sans weight 700.</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="task4" />
+                    <label for="task4"><strong>Test on Chrome, Firefox, Safari</strong> (desktop). Verify button hover
+                        states and text rendering.</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="task5" />
+                    <label for="task5"><strong>Test on real mobile devices</strong> (iOS iPhone, Android Samsung). Check
+                        tap targets and layout.</label>
+                </div>
+            </div>
+
+            <h3>Phase 2: Refinement (Week 2–3)</h3>
+            <div class="checklist">
+                <div class="checklist-item">
+                    <input type="checkbox" id="task6" />
+                    <label for="task6"><strong>Add copy-to-clipboard functionality.</strong> Provide fallback for older
+                        browsers.</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="task7" />
+                    <label for="task7"><strong>Implement responsive CSS breakpoints</strong> (768px tablet, 1024px
+                        desktop). Test collapse behavior.</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="task8" />
+                    <label for="task8"><strong>Add accessibility attributes:</strong> aria-label, role="button" on
+                        non-button elements, title attributes.</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="task9" />
+                    <label for="task9"><strong>Set up UTM parameters</strong> in all share URLs. Verify in Google
+                        Analytics.</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="task10" />
+                    <label for="task10"><strong>Test Open Graph previews</strong> on Facebook, LinkedIn, and Twitter
+                        using their debuggers.</label>
+                </div>
+            </div>
+
+            <h3>Phase 3: Optimization (Week 4+)</h3>
+            <div class="checklist">
+                <div class="checklist-item">
+                    <input type="checkbox" id="task11" />
+                    <label for="task11"><strong>Add floating sidebar</strong> (desktop only, hidden on mobile) for
+                        long-form articles.</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="task12" />
+                    <label for="task12"><strong>Analyze performance in GA4.</strong> Which platforms drive most
+                        referrals? Which placement converts best?</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="task13" />
+                    <label for="task13"><strong>A/B test button text</strong> ("Share on Facebook" vs. "Share"). Run for
+                        2 weeks minimum.</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="task14" />
+                    <label for="task14"><strong>Consider third-party platforms</strong> (AddToAny, ShareThis) only if
+                        custom solution doesn't meet needs.</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="task15" />
+                    <label for="task15"><strong>Monitor page load time.</strong> Share button JavaScript should not
+                        exceed 50KB total.</label>
+                </div>
+            </div>
+        </div>
+
+        <hr class="rule" />
+
+        <!-- SECTION 9: TROUBLESHOOTING -->
+        <div class="ribbon">Troubleshooting & Common Issues</div>
+
+        <div class="content-block">
+            <h2>Problems & Solutions</h2>
+
+            <h3>Problem: Wrong Image Showing on Facebook Shares</h3>
+            <p><strong>Cause:</strong> Facebook cache or incorrect og:image size.<br />
+                <strong>Solution:</strong>
+            </p>
+            <ul style="margin: 12px 0; padding-left: 20px;">
+                <li>Verify og:image is 1200×600px (not smaller)</li>
+                <li>Use Facebook Sharing Debugger: developers.facebook.com/tools/debug</li>
+                <li>Click "Scrape Again" to clear cached preview</li>
+                <li>Ensure image URL is publicly accessible (not behind authentication)</li>
+            </ul>
+
+            <h3>Problem: Share Buttons Misaligned on Mobile</h3>
+            <p><strong>Cause:</strong> Missing responsive CSS breakpoints or overflow hidden.<br />
+                <strong>Solution:</strong>
+            </p>
+            <ul style="margin: 12px 0; padding-left: 20px;">
+                <li>Add @media (max-width: 768px) with full-width button styles</li>
+                <li>Remove fixed widths; use flex: 1 1 auto for mobile</li>
+                <li>Check overflow: visible on parent containers</li>
+                <li>Use browser DevTools to test at 375px (iPhone SE) width</li>
+            </ul>
+
+            <h3>Problem: Social Shares Not Tracking in Analytics</h3>
+            <p><strong>Cause:</strong> UTM parameters missing or GA4 event not configured.<br />
+                <strong>Solution:</strong>
+            </p>
+            <ul style="margin: 12px 0; padding-left: 20px;">
+                <li>Add utm_source, utm_medium, utm_campaign to all share URLs</li>
+                <li>Verify gtag('event', 'share', {...}) fires in browser console</li>
+                <li>Check GA4 conversion event configuration (not just pageviews)</li>
+                <li>Allow 24 hours for GA4 data to populate</li>
+            </ul>
+
+            <h3>Problem: Page Load Slower After Adding Share Buttons</h3>
+            <p><strong>Cause:</strong> Heavy JavaScript libraries or render-blocking assets.<br />
+                <strong>Solution:</strong>
+            </p>
+            <ul style="margin: 12px 0; padding-left: 20px;">
+                <li>Use native HTML/CSS for buttons (not JavaScript frameworks)</li>
+                <li>Load GTM/GA4 scripts asynchronously (async defer)</li>
+                <li>Defer non-critical JavaScript to end of body</li>
+                <li>Use Lighthouse (Chrome DevTools) to measure impact</li>
+            </ul>
+
+            <h3>Problem: Copy-to-Clipboard Not Working on Older Browsers</h3>
+            <p><strong>Cause:</strong> Older browsers don't support navigator.clipboard API.<br />
+                <strong>Solution:</strong>
+            </p>
+            <div class="code-block">
+                <code">// FALLBACK FOR OLDER BROWSERS
+                    function copyLink(url) {
+                    // Modern browsers
+                    if (navigator.clipboard) {
+                    navigator.clipboard.writeText(url);
+                    } else {
+                    // Fallback for older browsers
+                    const textarea = document.createElement('textarea');
+                    textarea.value = url;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                    }
+                    }</code>
+            </div>
+        </div>
+
+        <hr class="rule" />
+
+        <!-- SECTION 10: ADVANCED TOPICS -->
+        <div class="ribbon">Advanced Implementation</div>
+
+        <div class="content-block">
+            <h2>Progressive Enhancement & Performance</h2>
+
+            <h3>Progressive Enhancement Strategy</h3>
+            <p>Build share buttons that work even without JavaScript:</p>
+
+            <div class="code-block">
+                <code">/* LAYER 1: HTML (Works without JS) */
+                    &lt;a href="https://facebook.com/sharer/sharer.php?u=ARTICLE_URL"
+                    target="_blank"
+                    rel="noopener noreferrer"&gt;
+                    Share on Facebook
+                    &lt;/a&gt;
+
+                    /* LAYER 2: CSS (Better styling) */
+                    .share-btn {
+                    border: 2px solid #000;
+                    padding: 12px 16px;
+                    /* ... more styles ... */
+                    }
+
+                    /* LAYER 3: JavaScript (Enhanced UX) */
+                    // Copy button, analytics, URL generation, etc.
+                    // Only adds convenience, not required for functionality</code>
+            </div>
+
+            <h3>Loading Performance</h3>
+            <p><strong>Share buttons should add minimal overhead:</strong></p>
+
+            <ul style="margin: 16px 0; padding-left: 20px;">
+                <li><strong>Inline CSS:</strong> Keep button styles in main stylesheet (~500 bytes)</li>
+                <li><strong>SVG Icons (optional):</strong> Use inline SVG, not image requests (~2KB for 4 platforms)
+                </li>
+                <li><strong>JavaScript:</strong> Lazy-load GA4 event tracking (async defer tag)</li>
+                <li><strong>Target:</strong> Entire share module &lt;10KB over the wire</li>
+            </ul>
+
+            <h3>Accessibility Requirements</h3>
+            <div class="code-block">
+                <code">/* ACCESSIBILITY CHECKLIST */
+
+                    ✓ All buttons have descriptive aria-labels
+                    ✓ Links use target="_blank" + rel="noopener noreferrer"
+                    ✓ Keyboard navigation works (Tab key)
+                    ✓ Focus visible on buttons (outline or border)
+                    ✓ Color contrast passes WCAG AA (4.5:1 minimum)
+                    ✓ No color-only conveys meaning (use text labels too)
+
+                    /* IMPLEMENTATION */
+                    &lt;a href="..."
+                    class="share-btn"
+                    aria-label="Share this article on Facebook"
+                    target="_blank"
+                    rel="noopener noreferrer"&gt;
+                    Share on Facebook
+                    &lt;/a&gt;</code>
+            </div>
+        </div>
+
+        <hr class="rule" />
+
+        <!-- SECTION 11: FINAL CHECKLIST -->
+        <div class="ribbon">Launch Readiness Checklist</div>
+
+        <div class="content-block">
+            <h2>Before Going Live</h2>
+
+            <div class="checklist">
+                <div class="checklist-item">
+                    <input type="checkbox" id="final1" />
+                    <label for="final1"><strong>Open Graph tags are dynamic</strong> per article (title, description,
+                        image, URL all change)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="final2" />
+                    <label for="final2"><strong>Share images are 1200×600px</strong> and properly sized on all
+                        articles</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="final3" />
+                    <label for="final3"><strong>Button styling matches WIRED design system:</strong> 2px black border,
+                        square corners, Apercu weight 700</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="final4" />
+                    <label for="final4"><strong>Mobile responsive:</strong> Buttons stack vertically on &lt;768px,
+                        horizontal on larger screens</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="final5" />
+                    <label for="final5"><strong>Touch targets are 44×44px minimum</strong> (WCAG AAA compliant)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="final6" />
+                    <label for="final6"><strong>Floating sidebar is hidden on mobile</strong> (hidden with display: none
+                        at &lt;1024px)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="final7" />
+                    <label for="final7"><strong>Share button URLs include UTM parameters</strong> for tracking in
+                        GA4</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="final8" />
+                    <label for="final8"><strong>Copy-to-clipboard works</strong> on Chrome, Firefox, Safari, Edge
+                        (desktop + mobile)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="final9" />
+                    <label for="final9"><strong>Facebook & LinkedIn previews tested</strong> using their share
+                        debuggers</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="final10" />
+                    <label for="final10"><strong>No box-shadows, gradients, or rounded corners</strong> on any button
+                        element</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="final11" />
+                    <label for="final11"><strong>Page load time unchanged</strong> (measure with Lighthouse
+                        before/after)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="final12" />
+                    <label for="final12"><strong>Buttons have aria-labels</strong> and pass accessibility audit</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="final13" />
+                    <label for="final13"><strong>GA4 events fire</strong> when buttons are clicked (check browser
+                        console)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="final14" />
+                    <label for="final14"><strong>No third-party widgets loaded</strong> (all custom HTML/CSS/JS)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="final15" />
+                    <label for="final15"><strong>Documentation created</strong> for content team (how to set share
+                        images)</label>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Implementation Resources</h3>
+                <div class="footer-links">
+                    <a href="#" aria-label="Facebook Share Debugger">Facebook Debugger</a>
+                    <a href="#" aria-label="LinkedIn Post Inspector">LinkedIn Inspector</a>
+                    <a href="#" aria-label="Twitter Card Validator">Twitter Card Validator</a>
+                    <a href="#" aria-label="Mobile Testing Tool">Mobile Test Tool</a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>Official Documentation</h3>
+                <div class="footer-links">
+                    <a href="#" aria-label="Open Graph Protocol">Open Graph Spec</a>
+                    <a href="#" aria-label="Twitter Cards Documentation">Twitter Cards</a>
+                    <a href="#" aria-label="LinkedIn Article Guidelines">LinkedIn Guidelines</a>
+                    <a href="#" aria-label="Web Accessibility Standards">WCAG 2.1 AAA</a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>Best Practices</h3>
+                <div class="footer-links">
+                    <a href="#" aria-label="Share Button Placement Guide">Placement Strategy</a>
+                    <a href="#" aria-label="Performance Optimization">Performance Tips</a>
+                    <a href="#" aria-label="Analytics Setup">Analytics Guide</a>
+                    <a href="#" aria-label="Mobile UX Testing">Mobile Testing</a>
+                </div>
+            </div>
+
+            <div class="footer-note">
+                <strong>Last Updated:</strong> May 2026 | <strong>For:</strong> aurews.id.vn | <strong>Design
+                    System:</strong> WIRED Editorial Principles<br />
+                This guide reflects current SEO, UX, and social media best practices. Social platform APIs and
+                specifications change frequently—verify documentation before implementation.
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

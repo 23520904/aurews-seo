@@ -258,4 +258,120 @@ img {
 
 .skip-link:focus {
   top: 8px;
-}
+}
+
+/* ==========================================================================
+   SHARE BUTTONS - WIRED EDITORIAL SYSTEM
+   ========================================================================== */
+
+.share-buttons-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.share-btn {
+  /* Border: 2px hard black, square corners */
+  border: 2px solid var(--black);
+  border-radius: 0 !important; /* NO ROUNDED CORNERS EVER */
+  
+  /* Spacing & Size */
+  padding: 12px 16px;
+  min-height: var(--touch-min);
+  line-height: 1.25;
+  
+  /* Typography */
+  font-family: var(--font-ui);
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  
+  /* Color & Background */
+  background: var(--paper);
+  color: var(--ink);
+  
+  /* Interaction */
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+}
+
+.share-btn:hover,
+.share-btn:active {
+  background: var(--black);
+  color: var(--paper);
+  border-color: var(--black);
+}
+
+/* Floating Sidebar (Desktop only) */
+.share-floating {
+  display: none;
+}
+
+/* Tablet Breakpoint (768px+) */
+@media (min-width: 768px) {
+  .share-buttons-group {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  
+  .share-btn {
+    width: auto;
+    flex: 1 1 calc(50% - 6px);
+    min-width: 120px;
+  }
+}
+
+/* Desktop Breakpoint (1024px+) */
+@media (min-width: 1024px) {
+  .share-btn {
+    flex: 0 1 auto;
+    min-width: auto;
+  }
+  
+  .share-floating {
+    display: flex;
+    position: fixed;
+    left: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    flex-direction: column;
+    gap: 12px;
+    z-index: 999;
+  }
+  
+  .share-btn-compact {
+    width: var(--touch-min);
+    height: var(--touch-min);
+    border: 2px solid var(--black);
+    border-radius: 0 !important;
+    background: var(--paper);
+    color: var(--ink);
+    cursor: pointer;
+    transition: background 150ms ease, color 150ms ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+  }
+  
+  .share-btn-compact:hover {
+    background: var(--black);
+    color: var(--paper);
+  }
+  
+  .share-btn-icon {
+    font-family: var(--font-ui);
+    font-weight: 700;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+  }
+}
+

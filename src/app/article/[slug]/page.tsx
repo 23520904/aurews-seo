@@ -14,6 +14,7 @@ import { NewsArticleJsonLd } from "@/components/seo/JsonLd";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { BASE_URL, DEFAULT_IMAGE } from "@/lib/constants";
+import { ShareButtons, ShareButtonsBottom } from "@/components/seo/ShareButtons";
 
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -48,7 +49,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         {
           url: ogImage,
           width: 1200,
-          height: 630,
+          height: 600,
           alt: post.title,
         },
       ],
@@ -85,6 +86,8 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   if (!post) {
     notFound();
   }
+
+  const articleUrl = `${BASE_URL}/article/${post.slug}`;
    const relatedPosts = await prisma.post.findMany({
     where: {
       status: "PUBLISHED",
@@ -139,6 +142,8 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           </div>
         </div>
 
+        <ShareButtons url={articleUrl} title={post.title} />
+
         <div style={{
           position: 'relative',
           aspectRatio: '16/9',
@@ -159,7 +164,10 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
         <div className="wired-body" style={{ whiteSpace: 'pre-wrap', color: 'var(--ink)' }}>
           {post.body}
         </div>
-                {relatedPosts.length > 0 && (
+
+        <ShareButtonsBottom url={articleUrl} title={post.title} />
+
+        {relatedPosts.length > 0 && (
           <section
             aria-labelledby="related-articles-title"
             style={{
