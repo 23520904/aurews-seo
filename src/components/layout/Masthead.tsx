@@ -22,7 +22,7 @@ export const Masthead = async () => {
           </div>
 
           <Link href="/" aria-label="Aurews Home">
-            <h1 className="wired-display logo-text" style={{ margin: 0, letterSpacing: '-2px' }}>AUREWS</h1>
+            <span className="wired-display" style={{ fontSize: '40px', color: 'var(--black)', fontWeight: 700, letterSpacing: '-0.02em' }}>AUREWS</span>
           </Link>
           <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
             <MobileMenu session={session} />

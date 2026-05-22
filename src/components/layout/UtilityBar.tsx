@@ -8,7 +8,7 @@ export const UtilityBar = async () => {
   return (
     <div className="wired-black-bg desktop-only" style={{ background: 'var(--wired-black)', color: 'var(--paper-white)', padding: '8px 0' }}>
       <div className="wired-wrapper" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span className="wired-mono" style={{ fontSize: '11px' }}>AUREWS</span>
+        <Link href="/" className="wired-mono" style={{ fontSize: '11px', color: 'inherit' }}>AUREWS</Link>
 
         <nav style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
           <Link href="/latest" className="wired-mono" style={{ fontSize: '11px', color: 'inherit' }}>Latest</Link>
