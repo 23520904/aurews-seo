@@ -12,7 +12,7 @@ export const Footer = () => {
           marginBottom: 'var(--space-16)' 
         }}>
           <div>
-            <h2 className="wired-display" style={{ fontSize: '24px', marginBottom: 'var(--space-6)' }}>AUREWS</h2>
+            <span className="wired-display" style={{ fontSize: '24px', marginBottom: 'var(--space-6)' }}>AUREWS</span>
             <p className="wired-body" style={{ fontSize: '14px', color: '#a3a3a3' }}>
               Next-generation news architecture inspired by editorial excellence and technical precision.
             </p>
