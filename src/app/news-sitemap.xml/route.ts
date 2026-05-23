@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   const cutoff = new Date(Date.now() - 48 * 60 * 60 * 1000); // 48 hours ago
 
-  const articles = await prisma.post.findMany({
+  let articles = await prisma.post.findMany({
     where: {
       status: 'PUBLISHED',
       createdAt: { gte: cutoff },
@@ -20,6 +20,24 @@ export async function GET() {
     orderBy: { createdAt: 'desc' },
     take: 1000,
   });
+
+  // FALLBACK MECHANIC: If no articles were published in the last 48 hours,
+  // retrieve the most recent 5 published articles. This ensures the sitemap 
+  // is never empty/blank, preventing Google Search Console from throwing indexing errors.
+  if (articles.length === 0) {
+    articles = await prisma.post.findMany({
+      where: {
+        status: 'PUBLISHED',
+      },
+      select: {
+        slug: true,
+        title: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 5,
+    });
+  }
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
