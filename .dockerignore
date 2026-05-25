@@ -1,0 +1,10 @@
+node_modules
+.next
+.git
+.env
+*.log
+README.md
+PLANFORDEVOPS.md
+DEVOPS_CHECKLIST.md
+docs/
+.github/

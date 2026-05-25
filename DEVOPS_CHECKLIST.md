@@ -24,10 +24,10 @@
 
 ## Phase 3 — Docker
 
-- [ ] `Dockerfile` created (3-stage: deps → builder → runner)
-- [ ] `docker-compose.yml` created (Next.js + local Redis)
-- [ ] `.dockerignore` created
-- [ ] `docker compose up --build` runs successfully locally
+- [x] `Dockerfile` created (3-stage: deps → builder → runner)
+- [x] `docker-compose.yml` created (Next.js + local Redis)
+- [x] `.dockerignore` created
+- [x] `docker compose up --build` runs successfully locally
 - [ ] Git tag `v0.1.0` pushed → Docker image published to GitHub Container Registry
 
 ---
@@ -62,4 +62,4 @@
 
 ---
 
-**Progress: 8 / 22 tasks done**
+**Progress: 12 / 22 tasks done**
