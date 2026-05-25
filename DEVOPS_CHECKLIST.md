@@ -28,7 +28,7 @@
 - [x] `docker-compose.yml` created (Next.js + local Redis)
 - [x] `.dockerignore` created
 - [x] `docker compose up --build` runs successfully locally
-- [ ] Git tag `v0.1.0` pushed → Docker image published to GitHub Container Registry
+- [x] Git tag `v0.1.0` pushed → Docker image published to GitHub Container Registry
 
 ---
 
@@ -62,4 +62,4 @@
 
 ---
 
-**Progress: 12 / 22 tasks done**
+**Progress: 13 / 22 tasks done**
