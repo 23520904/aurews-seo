@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Required for Netlify serverless bundling
   output: 'standalone',
 
   // Catch React + Next.js bugs at build time
@@ -25,7 +24,6 @@ const nextConfig: NextConfig = {
   // Enable Turbopack (Next.js 16 default)
   turbopack: {},
 
-  // Trailing slash consistency (Netlify prefers false)
   trailingSlash: false,
 
 
