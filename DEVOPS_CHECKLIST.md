@@ -18,7 +18,7 @@
 - [x] `.github/workflows/ci.yml` 
 - [x] GitHub Actions secrets added (`DATABASE_URL`, `NEXTAUTH_SECRET`, `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`)
 - [x] `.github/dependabot.yml` 
-- [ ] CI passes on a test push/PR
+- [x] CI passes on a test push/PR
 
 ---
 
@@ -62,4 +62,4 @@
 
 ---
 
-**Progress: 7 / 22 tasks done**
+**Progress: 8 / 22 tasks done**
