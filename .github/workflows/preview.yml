@@ -72,6 +72,16 @@ jobs:
           npx playwright install --with-deps chromium
           npx playwright test e2e/smoke.spec.ts
 
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-preview
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+
       # ── 4. CẬP NHẬT TRẠNG THÁI TEST THÀNH CÔNG VÀO COMMENT CŨ ──
       - name: Update comment on success
         if: success()
