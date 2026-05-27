@@ -21,8 +21,13 @@ async function SearchResults({ query, page }: { query: string, page: number }) {
 
   const skip = (page - 1) * PAGE_SIZE;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let results: any[] = [];
+  let total = 0;
+  let fetchError = false;
+
   try {
-    const [results, total] = await Promise.all([
+    const [fetchedResults, fetchedTotal] = await Promise.all([
       prisma.post.findMany({
         where: {
           status: 'PUBLISHED',
@@ -48,38 +53,44 @@ async function SearchResults({ query, page }: { query: string, page: number }) {
         }
       })
     ]);
-
-    const totalPages = Math.ceil(total / PAGE_SIZE);
-
-    return (
-      <div style={{ marginTop: '48px' }}>
-        <h2 className="wired-mono" style={{ fontSize: '14px', marginBottom: '32px' }}>
-          RESULTS FOR: "{query.toUpperCase()}" — FOUND {total} ENTRIES
-        </h2>
-        
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '48px' }}>
-          {results.map((post) => (
-            <PostCard key={post.id} post={post} />
-          ))}
-        </div>
-
-        {results.length === 0 && (
-          <div style={{ padding: '64px 0', textAlign: 'center' }}>
-            <p className="wired-body" style={{ fontSize: '20px' }}>No matching documents found in the current archive segment.</p>
-          </div>
-        )}
-
-        <Pagination 
-          currentPage={page} 
-          totalPages={totalPages} 
-          baseUrl={`/search?q=${encodeURIComponent(query)}`} 
-        />
-      </div>
-    );
+    results = fetchedResults;
+    total = fetchedTotal;
   } catch (error) {
     console.error("Search failed:", error);
+    fetchError = true;
+  }
+
+  if (fetchError) {
     return <p className="wired-body" style={{ color: 'red' }}>Archival retrieval failed. Please check connection.</p>;
   }
+
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+
+  return (
+    <div style={{ marginTop: '48px' }}>
+      <h2 className="wired-mono" style={{ fontSize: '14px', marginBottom: '32px' }}>
+        RESULTS FOR: &quot;{query.toUpperCase()}&quot; — FOUND {total} ENTRIES
+      </h2>
+      
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '48px' }}>
+        {results.map((post) => (
+          <PostCard key={post.id} post={post} />
+        ))}
+      </div>
+
+      {results.length === 0 && (
+        <div style={{ padding: '64px 0', textAlign: 'center' }}>
+          <p className="wired-body" style={{ fontSize: '20px' }}>No matching documents found in the current archive segment.</p>
+        </div>
+      )}
+
+      <Pagination 
+        currentPage={page} 
+        totalPages={totalPages} 
+        baseUrl={`/search?q=${encodeURIComponent(query)}`} 
+      />
+    </div>
+  );
 }
 
 export default async function SearchPage({ 

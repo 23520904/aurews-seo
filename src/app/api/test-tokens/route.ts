@@ -36,12 +36,12 @@ export async function GET() {
       redis_storage: storedToken === refreshToken ? "MATCHED" : "MISMATCHED",
       payload: decodedAccess
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Token test failed:", error);
     return NextResponse.json({
       error: "TEST_FAILED",
-      message: error.message,
-      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      message: error instanceof Error ? error.message : "Unknown error",
+      stack: error instanceof Error && process.env.NODE_ENV === 'development' ? error.stack : undefined
     }, { status: 500 });
   }
 }

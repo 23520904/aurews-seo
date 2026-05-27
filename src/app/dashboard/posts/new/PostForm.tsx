@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/Button";
 
 import { ImageUpload } from "@/components/ui/ImageUpload";
 
-export function PostForm({ categories, initialData }: { categories: any[], initialData?: any }) {
+export function PostForm({ categories, initialData }: { categories: { id: string, name: string }[], initialData?: { id?: string, coverImage?: string | null, title?: string, body?: string, categoryId?: string, status?: string } }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [coverImage, setCoverImage] = useState(initialData?.coverImage || "");

@@ -1,0 +1,40 @@
+name: Lighthouse CI — SEO Health
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 6 * * 1'  # Chạy tự động vào lúc 6h sáng thứ Hai hàng tuần
+  workflow_dispatch:     # Cho phép bấm nút chạy thủ công bất cứ lúc nào
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+
+      # Cài đặt thư viện cục bộ (local) theo phiên bản cố định để đảm bảo an toàn bảo mật
+      - name: Install Lighthouse CI CLI
+        run: npm install @lhci/cli@0.14.0
+
+      # Bước 1: Thu thập dữ liệu (Quét qua các link web thật bạn đã cấu hình trong file json)
+      - name: Collect Lighthouse Reports
+        run: npx lhci collect
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+      # Bước 2: Tự động đánh giá điểm số (Đọc cấu hình categories:seo tối thiểu 0.95 từ file của bạn)
+      # Lệnh này sẽ tự động báo lỗi (Fail Pipeline) nếu web thật bị tụt điểm SEO, Performance dưới mức sàn
+      - name: Assert Performance & SEO Thresholds
+        run: npx lhci assert
+
+      # Bước 3: Lưu lại báo cáo chi tiết dưới dạng Artifact để bạn tải về xem giao diện trực quan nếu cần
+      - name: Upload Lighthouse Reports Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci/
+          retention-days: 7

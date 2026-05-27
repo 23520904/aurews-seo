@@ -46,7 +46,7 @@ export default function PrivacyPage() {
 
           <h2 className="wired-display" style={{ fontSize: '32px', margin: '64px 0 24px' }}>02. USAGE PROTOCOLS</h2>
           <p>
-            Your information is used exclusively to facilitate the "Command Center" (Dashboard) experience and to personalize the archival feed. We do not sell data to third-party archival brokers.
+            Your information is used exclusively to facilitate the &quot;Command Center&quot; (Dashboard) experience and to personalize the archival feed. We do not sell data to third-party archival brokers.
           </p>
 
           <h2 className="wired-display" style={{ fontSize: '32px', margin: '64px 0 24px' }}>03. STORAGE ARCHITECTURE</h2>

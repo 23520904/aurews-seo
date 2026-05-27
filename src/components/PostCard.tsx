@@ -1,10 +1,9 @@
-import Link from "next/link";
 import Image from "next/image";
 import { DEFAULT_IMAGE } from "@/lib/constants";
 import TrackedArticleLink from '@/components/analytics/TrackedArticleLink';
 
 interface PostCardProps {
-  post: any;
+  post: { slug: string, title: string, coverImage?: string | null, category?: { name: string } | null, excerpt?: string | null, body?: string | null, createdAt: string | Date, author?: { name: string | null } | null };
   cardLocation?: string;
 }
 

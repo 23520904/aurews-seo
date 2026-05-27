@@ -41,7 +41,7 @@ export default async function MyPostsPage({
         <Ribbon>Archive Management</Ribbon>
         <h1 className="wired-display" style={{ fontSize: '56px', marginTop: '12px' }}>My Stories</h1>
         <div className="wired-mono" style={{ fontSize: '12px', marginTop: '8px', color: 'var(--caption-gray)' }}>
-          TOTAL_ENTRIES: {total} // PAGE_{page}_OF_{totalPages}
+          TOTAL_ENTRIES: {total} {'//'} PAGE_{page}_OF_{totalPages}
         </div>
       </header>
 
@@ -62,7 +62,7 @@ export default async function MyPostsPage({
               >
                 <div>
                   <span className="wired-mono" style={{ fontSize: '10px', color: 'var(--caption-gray)', display: 'block', marginBottom: '4px' }}>
-                    {(post as any).category?.name?.toUpperCase() || "UNCATEGORIZED"} // {new Date(post.createdAt).toLocaleDateString()} // {post.status}
+                    {(post as { category?: { name?: string } }).category?.name?.toUpperCase() || "UNCATEGORIZED"} {'//'} {new Date(post.createdAt).toLocaleDateString()} {'//'} {post.status}
                   </span>
                   <h3 className="wired-ui" style={{ fontWeight: 800, fontSize: '18px' }}>{post.title}</h3>
                 </div>

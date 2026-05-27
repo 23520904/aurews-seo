@@ -36,7 +36,7 @@ export async function register(formData: FormData) {
     });
 
     return { success: "Account created successfully" };
-  } catch (error) {
+  } catch {
     return { error: "Something went wrong" };
   }
 }

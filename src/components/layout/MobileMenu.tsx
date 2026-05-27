@@ -6,7 +6,7 @@ import { Menu, X, User, LogOut, LayoutDashboard, Search } from "lucide-react";
 import { logout } from "@/lib/actions/auth";
 
 interface MobileMenuProps {
-  session: any;
+  session: { user?: { name?: string | null } } | null;
 }
 
 export function MobileMenu({ session }: MobileMenuProps) {

@@ -1,0 +1,3 @@
+# Ignore unfixable third-party vulnerability
+CVE-2026-XXXX
+CVE-2025-YYYY

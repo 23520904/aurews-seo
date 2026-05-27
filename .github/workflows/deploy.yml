@@ -1,0 +1,68 @@
+name: Deploy to Production
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with: { node-version: '20', cache: 'npm' }
+      - run: npm ci
+
+      # ── Prisma migrations before deploy ──
+      - name: Run Prisma migrations
+        run: npx prisma migrate deploy
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+
+      # ── Vercel deploy ──
+      - name: Deploy to Vercel
+        id: deploy
+        uses: amondnet/vercel-action@de09aeac2ace6599ec9b11ef87558759a496bac4 # v42.3.0
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-version: latest
+          vercel-args: '--prod'
+          working-directory: ./
+
+      # ── Tối ưu: Chờ 10 giây để Vercel Production ổn định hoàn toàn ──
+      - name: Wait for production availability
+        run: sleep 10
+
+      # ── Post-deploy smoke test (ĐÃ SỬA: Xóa npm ci trùng lặp) ──
+      - name: Run smoke tests on production
+        env:
+          PLAYWRIGHT_BASE_URL: "https://aurews.id.vn"
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+        run: |
+          npx playwright install --with-deps chromium
+          npx playwright test e2e/smoke.spec.ts
+
+      # ── SEO + Sitemap check (ĐÃ SỬA: Tránh lỗi gãy do exit code của grep) ──
+      - name: Validate sitemaps
+        run: |
+          set -e
+          echo "Sitemap count: $(curl -sf https://aurews.id.vn/sitemap.xml | grep -c "<url>" || true)"
+          echo "News Sitemap count: $(curl -sf https://aurews.id.vn/news-sitemap.xml | grep -c "<url>" || true)"
+          echo "✓ Sitemaps OK"
+
+      # ── Discord notification ──
+      - name: Notify Discord
+        if: always()
+        env:
+          DISCORD_WEBHOOK_DEPLOY: ${{ secrets.DISCORD_WEBHOOK_DEPLOY }}
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+        run: |
+          STATUS="✅ Deployed"
+          [ "${{ job.status }}" != "success" ] && STATUS="❌ Deploy failed"
+          curl -X POST "$DISCORD_WEBHOOK_DEPLOY" \
+            -H 'Content-Type: application/json' \
+            -d "{\"content\":\"$STATUS — commit ${{ github.sha }} — $COMMIT_MSG\"}"

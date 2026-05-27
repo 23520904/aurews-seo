@@ -3,6 +3,8 @@ services:
     build:
       context: .
       target: runner
+      args:
+        NEXT_PUBLIC_SITE_URL: https://aurews.id.vn
     ports:
       - "3000:3000"
     env_file:
@@ -10,3 +12,10 @@ services:
     environment:
       - NODE_ENV=production
     restart: unless-stopped
+    # Align with Dockerfile HEALTHCHECK — uses curl (installed in runner stage)
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 5s
+      start_period: 15s
+      retries: 3

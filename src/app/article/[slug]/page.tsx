@@ -5,9 +5,6 @@ import Image from "next/image";
 
 import { Ribbon } from "@/components/ui/Ribbon";
 import Link from "next/link";
-interface PageProps {
-  params: { slug: string };
-}
 
 import { NewsArticleJsonLd } from "@/components/seo/JsonLd";
 

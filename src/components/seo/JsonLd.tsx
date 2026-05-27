@@ -22,7 +22,7 @@ export const OrganizationJsonLd = () => {
   );
 };
 
-export const NewsArticleJsonLd = ({ post }: { post: any }) => {
+export const NewsArticleJsonLd = ({ post }: { post: { title: string, excerpt?: string | null, coverImage?: string | null, createdAt: string | Date, updatedAt: string | Date, author?: { name: string | null } | null, slug: string } }) => {
   const schema = {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
