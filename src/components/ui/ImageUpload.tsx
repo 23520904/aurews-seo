@@ -5,12 +5,12 @@ import { getCloudinarySignature } from "@/lib/actions/cloudinary";
 
 interface ImageUploadProps {
   onUpload: (url: string) => void;
-  defaultValue?: string;
+  defaultValue?: string | null;
 }
 
 export function ImageUpload({ onUpload, defaultValue = "" }: ImageUploadProps) {
   const [loading, setLoading] = useState(false);
-  const [preview, setPreview] = useState(defaultValue);
+  const [preview, setPreview] = useState(defaultValue || "");
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -68,7 +68,10 @@ export function ImageUpload({ onUpload, defaultValue = "" }: ImageUploadProps) {
         background: '#f8f8f8'
       }}>
         {preview ? (
-          <img src={preview} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={preview} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          </>
         ) : (
           <span className="wired-mono" style={{ fontSize: '11px', color: 'var(--caption-gray)' }}>
             {loading ? "UPLOADING..." : "NO IMAGE SELECTED"}

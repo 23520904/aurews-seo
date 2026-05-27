@@ -144,10 +144,10 @@ export default async function CategoryPage({
     );
   }
 
-  const posts = (category as any).posts || [];
+  const posts = category.posts;
   const hasMore = posts.length > PAGE_SIZE;
   const items = hasMore ? posts.slice(0, PAGE_SIZE) : posts;
-  const nextCursor = hasMore ? (items[items.length - 1] as any).id : null;
+  const nextCursor = hasMore ? items[items.length - 1].id : null;
 
   return (
     <div className="wired-wrapper">
@@ -155,12 +155,12 @@ export default async function CategoryPage({
         <Ribbon>Channel</Ribbon>
         <h1 className="wired-display" style={{ fontSize: '72px', marginTop: '16px' }}>{category.name}</h1>
         <div className="wired-mono" style={{ fontSize: '11px', color: 'var(--caption-gray)', marginTop: '8px' }}>
-          SEGMENT: {category.slug.toUpperCase()} // ARCHIVE_MODE
+          SEGMENT: {category.slug.toUpperCase()} {'//'} ARCHIVE_MODE
         </div>
       </header>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '48px' }}>
-        {items.map((post: any) => (
+        {items.map((post) => (
           <PostCard key={post.id} post={post} cardLocation="category_page_list" />
         ))}
       </div>

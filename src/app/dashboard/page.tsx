@@ -56,7 +56,7 @@ export default async function DashboardPage({
             Control Center
           </h1>
           <div className="wired-mono" style={{ fontSize: '12px', marginTop: '8px', color: 'var(--caption-gray)' }}>
-            OPERATOR: {session.user?.name?.toUpperCase()} // STATUS: ACTIVE
+            OPERATOR: {session.user?.name?.toUpperCase()} {'//'} STATUS: ACTIVE
           </div>
         </div>
         <div style={{ display: 'flex', gap: '12px' }}>
@@ -92,7 +92,7 @@ export default async function DashboardPage({
         {/* Main Content Area */}
         <main>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-            <h2 className="wired-mono" style={{ fontSize: '13px', fontWeight: 700, letterSpacing: '1px' }}>POST ARCHIVE // PAGE {page}</h2>
+            <h2 className="wired-mono" style={{ fontSize: '13px', fontWeight: 700, letterSpacing: '1px' }}>POST ARCHIVE {'//'} PAGE {page}</h2>
           </div>
 
           <div style={{ border: '2px solid var(--wired-black)' }}>
@@ -112,7 +112,7 @@ export default async function DashboardPage({
                   >
                     <div>
                       <span className="wired-mono" style={{ fontSize: '10px', color: 'var(--caption-gray)', display: 'block', marginBottom: '4px' }}>
-                        {(post as any).category?.name?.toUpperCase() || "UNCATEGORIZED"} // {new Date(post.createdAt).toLocaleDateString()} // {post.status}
+                        {(post as { category?: { name?: string } }).category?.name?.toUpperCase() || "UNCATEGORIZED"} {'//'} {new Date(post.createdAt).toLocaleDateString()} {'//'} {post.status}
                       </span>
                       <h3 className="wired-ui" style={{ fontWeight: 800, fontSize: '18px' }}>{post.title}</h3>
                     </div>

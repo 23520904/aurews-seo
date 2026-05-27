@@ -17,7 +17,7 @@ const createPrismaClient = () => {
     connectionTimeoutMillis: 2000,
   });
   
-  const adapter = new PrismaPg(pool as any);
+  const adapter = new PrismaPg(pool as never);
 
   return new PrismaClient({
     adapter,

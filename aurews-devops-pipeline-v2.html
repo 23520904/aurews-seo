@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aurews DevOps Pipeline v2 — Optimized</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#0a0b0d;--surface:#111316;--surface2:#181b1f;--border:#1e2227;--border2:#252b33;
+  --ink:#e8eaed;--muted:#7a8494;--dim:#4a5568;
+  --blue:#3b82f6;--blue-dim:#1d4ed8;--blue-glow:rgba(59,130,246,0.15);
+  --green:#22c55e;--green-dim:#15803d;--green-glow:rgba(34,197,94,0.12);
+  --red:#ef4444;--red-dim:#b91c1c;--red-glow:rgba(239,68,68,0.12);
+  --amber:#f59e0b;--amber-dim:#b45309;--amber-glow:rgba(245,158,11,0.12);
+  --purple:#a78bfa;--purple-dim:#6d28d9;--purple-glow:rgba(167,139,250,0.12);
+  --cyan:#06b6d4;--cyan-glow:rgba(6,182,212,0.12);
+  --mono:'IBM Plex Mono',monospace;
+  --sans:'Syne',sans-serif;
+  --body:'DM Sans',sans-serif;
+}
+html{scroll-behavior:smooth;}
+body{font-family:var(--body);background:var(--bg);color:var(--ink);line-height:1.6;font-size:15px;}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:var(--surface);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+/* ── NAV ── */
+nav{position:sticky;top:0;z-index:100;background:rgba(10,11,13,0.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;gap:0;overflow-x:auto;white-space:nowrap;}
+nav a{font-family:var(--mono);font-size:0.72rem;font-weight:600;color:var(--muted);text-decoration:none;
+  padding:0.9rem 1rem;border-bottom:2px solid transparent;transition:color .2s,border-color .2s;letter-spacing:.05em;text-transform:uppercase;}
+nav a:hover{color:var(--ink);border-bottom-color:var(--blue);}
+.nav-logo{font-family:var(--sans);font-weight:800;font-size:0.9rem;color:var(--ink);margin-right:2rem;letter-spacing:-.02em;flex-shrink:0;}
+.nav-logo span{color:var(--blue);}
+
+/* ── HERO ── */
+.hero{padding:5rem 2rem 4rem;max-width:1100px;margin:0 auto;}
+.hero-eyebrow{font-family:var(--mono);font-size:0.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--blue);margin-bottom:1.5rem;
+  display:flex;align-items:center;gap:.5rem;}
+.hero-eyebrow::before{content:'';display:inline-block;width:2rem;height:1px;background:var(--blue);}
+h1{font-family:var(--sans);font-size:clamp(2.2rem,5vw,3.8rem);font-weight:800;line-height:1.1;letter-spacing:-.04em;margin-bottom:1.5rem;}
+h1 em{color:var(--blue);font-style:normal;}
+.hero-desc{font-size:1.05rem;color:var(--muted);max-width:680px;line-height:1.7;margin-bottom:2.5rem;}
+.hero-tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:3rem;}
+.tag{font-family:var(--mono);font-size:0.68rem;font-weight:600;letter-spacing:.05em;padding:.35rem .75rem;border-radius:3px;text-transform:uppercase;}
+.tag-blue{background:var(--blue-glow);color:var(--blue);border:1px solid rgba(59,130,246,.3);}
+.tag-green{background:var(--green-glow);color:var(--green);border:1px solid rgba(34,197,94,.3);}
+.tag-red{background:var(--red-glow);color:var(--red);border:1px solid rgba(239,68,68,.3);}
+.tag-amber{background:var(--amber-glow);color:var(--amber);border:1px solid rgba(245,158,11,.3);}
+.tag-purple{background:var(--purple-glow);color:var(--purple);border:1px solid rgba(167,139,250,.3);}
+.tag-cyan{background:var(--cyan-glow);color:var(--cyan);border:1px solid rgba(6,182,212,.3);}
+
+/* ── DIFF BOX ── */
+.diff-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:2rem 0;}
+@media(max-width:700px){.diff-grid{grid-template-columns:1fr;}}
+.diff-box{padding:1.5rem;border-radius:6px;border:1px solid;}
+.diff-old{background:var(--red-glow);border-color:rgba(239,68,68,.25);}
+.diff-new{background:var(--green-glow);border-color:rgba(34,197,94,.25);}
+.diff-label{font-family:var(--mono);font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.75rem;}
+.diff-old .diff-label{color:var(--red);}
+.diff-new .diff-label{color:var(--green);}
+.diff-box ul{list-style:none;margin:0;}
+.diff-box li{font-size:.88rem;padding:.25rem 0;color:var(--muted);}
+.diff-box li::before{margin-right:.5rem;}
+.diff-old li::before{content:'✗';color:var(--red);}
+.diff-new li::before{content:'✓';color:var(--green);}
+
+/* ── CONTAINER ── */
+.container{max-width:1100px;margin:0 auto;padding:0 2rem 5rem;}
+
+/* ── SECTION ── */
+.section{margin-bottom:5rem;}
+.section-header{display:flex;align-items:center;gap:1rem;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid var(--border);}
+.section-num{font-family:var(--mono);font-size:0.7rem;color:var(--blue);background:var(--blue-glow);border:1px solid rgba(59,130,246,.25);
+  padding:.3rem .6rem;border-radius:3px;font-weight:700;letter-spacing:.05em;flex-shrink:0;}
+h2{font-family:var(--sans);font-size:1.6rem;font-weight:800;letter-spacing:-.03em;}
+h3{font-family:var(--sans);font-size:1.1rem;font-weight:700;margin:2rem 0 .75rem;color:var(--ink);}
+h4{font-family:var(--mono);font-size:.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:1.5rem 0 .5rem;}
+p{color:var(--muted);margin-bottom:.75rem;line-height:1.7;}
+
+/* ── PIPELINE VISUAL ── */
+.pipeline-flow{display:flex;flex-direction:column;gap:0;margin:2rem 0;position:relative;}
+.pipeline-flow::before{content:'';position:absolute;left:1.75rem;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--blue),var(--purple),var(--green));opacity:.3;}
+.pipeline-step{display:flex;gap:1.25rem;align-items:flex-start;padding:.5rem 0;}
+.step-dot{width:3.5rem;height:3.5rem;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:.75rem;font-weight:700;flex-shrink:0;position:relative;z-index:1;border:2px solid;}
+.dot-blue{background:var(--blue-glow);border-color:var(--blue);color:var(--blue);}
+.dot-green{background:var(--green-glow);border-color:var(--green);color:var(--green);}
+.dot-amber{background:var(--amber-glow);border-color:var(--amber);color:var(--amber);}
+.dot-red{background:var(--red-glow);border-color:var(--red);color:var(--red);}
+.dot-purple{background:var(--purple-glow);border-color:var(--purple);color:var(--purple);}
+.dot-cyan{background:var(--cyan-glow);border-color:var(--cyan);color:var(--cyan);}
+.step-content{padding:.5rem 0 1.5rem;flex:1;}
+.step-title{font-family:var(--sans);font-weight:700;font-size:1rem;margin-bottom:.25rem;}
+.step-desc{font-size:.85rem;color:var(--dim);}
+.step-tags{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.5rem;}
+
+/* ── CODE BLOCK ── */
+.code-wrap{background:var(--surface);border:1px solid var(--border2);border-radius:6px;margin:1rem 0;overflow:hidden;}
+.code-header{background:var(--surface2);padding:.6rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.code-filename{font-family:var(--mono);font-size:.72rem;color:var(--muted);font-weight:600;}
+.code-lang{font-family:var(--mono);font-size:.65rem;color:var(--dim);background:var(--border);padding:.2rem .5rem;border-radius:2px;}
+pre{padding:1.25rem;overflow-x:auto;font-family:var(--mono);font-size:.78rem;line-height:1.65;color:#cdd6f4;}
+pre .kw{color:#cba6f7;}
+pre .str{color:#a6e3a1;}
+pre .cm{color:#585b70;}
+pre .fn{color:#89b4fa;}
+pre .nu{color:#fab387;}
+pre .var{color:#f38ba8;}
+pre .op{color:#89dceb;}
+
+/* ── ALERT BOXES ── */
+.alert{padding:1.25rem 1.5rem;border-radius:6px;border-left:3px solid;margin:1rem 0;font-size:.9rem;line-height:1.6;}
+.alert strong{display:block;margin-bottom:.35rem;font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;font-family:var(--mono);}
+.alert-blue{background:var(--blue-glow);border-color:var(--blue);color:var(--ink);}
+.alert-blue strong{color:var(--blue);}
+.alert-green{background:var(--green-glow);border-color:var(--green);color:var(--ink);}
+.alert-green strong{color:var(--green);}
+.alert-amber{background:var(--amber-glow);border-color:var(--amber);color:var(--ink);}
+.alert-amber strong{color:var(--amber);}
+.alert-red{background:var(--red-glow);border-color:var(--red);color:var(--ink);}
+.alert-red strong{color:var(--red);}
+
+/* ── CARDS GRID ── */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;margin:1.5rem 0;}
+.card{background:var(--surface);border:1px solid var(--border2);border-radius:6px;padding:1.25rem;transition:border-color .2s,transform .2s;}
+.card:hover{border-color:var(--blue);transform:translateY(-2px);}
+.card-icon{font-size:1.4rem;margin-bottom:.75rem;}
+.card-title{font-family:var(--sans);font-weight:700;font-size:.95rem;margin-bottom:.4rem;}
+.card-desc{font-size:.82rem;color:var(--dim);line-height:1.5;}
+
+/* ── TEST PYRAMID ── */
+.pyramid{margin:2rem auto;max-width:600px;}
+.pyramid-level{border-radius:4px;padding:1rem 1.5rem;margin:.4rem auto;text-align:center;border:1px solid;}
+.pyramid-level:nth-child(1){width:100%;background:rgba(6,182,212,.08);border-color:rgba(6,182,212,.25);}
+.pyramid-level:nth-child(2){width:85%;background:rgba(167,139,250,.08);border-color:rgba(167,139,250,.25);}
+.pyramid-level:nth-child(3){width:65%;background:rgba(59,130,246,.08);border-color:rgba(59,130,246,.25);}
+.pyramid-level:nth-child(4){width:45%;background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.25);}
+.pyramid-label{font-family:var(--sans);font-weight:700;font-size:.9rem;}
+.pyramid-sub{font-size:.75rem;color:var(--dim);margin-top:.2rem;font-family:var(--mono);}
+
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto;margin:1rem 0;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+th{font-family:var(--mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);
+  padding:.7rem 1rem;text-align:left;border-bottom:1px solid var(--border2);background:var(--surface2);}
+td{padding:.7rem 1rem;border-bottom:1px solid var(--border);color:var(--ink);}
+tr:hover td{background:var(--surface);}
+td code{font-family:var(--mono);font-size:.78rem;color:var(--blue);background:var(--blue-glow);padding:.15rem .4rem;border-radius:3px;}
+
+/* ── CHECKLIST ── */
+.checklist{list-style:none;margin:1rem 0;}
+.checklist li{padding:.4rem 0 .4rem 1.75rem;position:relative;font-size:.9rem;color:var(--muted);border-bottom:1px solid var(--border);}
+.checklist li:last-child{border-bottom:none;}
+.checklist li::before{content:'□';position:absolute;left:0;color:var(--blue);font-size:1rem;line-height:1.4;}
+.checklist li.done::before{content:'✓';color:var(--green);}
+.checklist li span{color:var(--ink);}
+
+/* ── TIMELINE ── */
+.timeline-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin:1.5rem 0;}
+.timeline-card{background:var(--surface);border:1px solid var(--border2);border-radius:6px;padding:1.25rem;position:relative;overflow:hidden;}
+.timeline-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.tc-1::before{background:var(--blue);}
+.tc-2::before{background:var(--purple);}
+.tc-3::before{background:var(--amber);}
+.tc-4::before{background:var(--green);}
+.tc-5::before{background:var(--cyan);}
+.tc-6::before{background:var(--red);}
+.tc-7::before{background:linear-gradient(90deg,var(--green),var(--blue));}
+.timeline-day{font-family:var(--mono);font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;}
+.timeline-title{font-family:var(--sans);font-weight:700;font-size:.9rem;margin-bottom:.5rem;}
+.timeline-items{font-size:.78rem;color:var(--dim);line-height:1.7;}
+
+/* ── ARCH DIAGRAM ── */
+.arch{background:var(--surface);border:1px solid var(--border2);border-radius:6px;padding:1.5rem;margin:1.5rem 0;font-family:var(--mono);font-size:.78rem;line-height:2;color:#8899aa;overflow-x:auto;}
+.arch .hl-blue{color:var(--blue);}
+.arch .hl-green{color:var(--green);}
+.arch .hl-amber{color:var(--amber);}
+.arch .hl-purple{color:var(--purple);}
+.arch .hl-cyan{color:var(--cyan);}
+.arch .hl-red{color:var(--red);}
+
+/* ── FOOTER ── */
+footer{background:var(--surface);border-top:1px solid var(--border);padding:3rem 2rem;text-align:center;}
+footer h3{font-family:var(--sans);font-weight:800;font-size:1.1rem;margin-bottom:.5rem;}
+footer p{font-size:.82rem;color:var(--dim);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:700px){
+  nav{gap:0;}nav a{padding:.75rem .6rem;font-size:.65rem;}
+  .hero{padding:3rem 1rem 2rem;}
+  .container{padding:0 1rem 4rem;}
+  .cards{grid-template-columns:1fr;}
+  .timeline-grid{grid-template-columns:1fr 1fr;}
+  .section-header{flex-direction:column;align-items:flex-start;gap:.5rem;}
+}
+@media(max-width:450px){
+  .timeline-grid{grid-template-columns:1fr;}
+}
+
+/* ── STICKY TOC ── */
+.toc-float{position:fixed;bottom:2rem;right:2rem;z-index:50;display:flex;flex-direction:column;gap:.4rem;}
+@media(max-width:900px){.toc-float{display:none;}}
+.toc-dot{width:8px;height:8px;border-radius:50%;background:var(--border2);border:1px solid var(--border2);cursor:pointer;transition:background .2s,transform .2s;}
+.toc-dot:hover{background:var(--blue);transform:scale(1.3);}
+
+/* ── BADGE inline ── */
+.badge-inline{font-family:var(--mono);font-size:.65rem;padding:.2rem .45rem;border-radius:3px;font-weight:700;vertical-align:middle;}
+.bi-blue{background:var(--blue-glow);color:var(--blue);}
+.bi-green{background:var(--green-glow);color:var(--green);}
+.bi-red{background:var(--red-glow);color:var(--red);}
+.bi-amber{background:var(--amber-glow);color:var(--amber);}
+.bi-new{background:rgba(34,197,94,.2);color:var(--green);border:1px solid rgba(34,197,94,.4);}
+.bi-fix{background:rgba(239,68,68,.2);color:var(--red);border:1px solid rgba(239,68,68,.4);}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">AUREWS <span>DEVOPS</span> v2</div>
+  <a href="#problems">Gaps Found</a>
+  <a href="#overview">Pipeline</a>
+  <a href="#tests">Test Strategy</a>
+  <a href="#workflows">Workflows</a>
+  <a href="#docker">Docker</a>
+  <a href="#monitoring">Monitoring</a>
+  <a href="#timeline">Timeline</a>
+  <a href="#checklist">Checklist</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Optimized Pipeline — aurews.id.vn</div>
+  <h1>CI/CD Rebuilt<br>for a <em>News Platform</em></h1>
+  <p class="hero-desc">
+    Deep-audited from your GitHub repo (<code style="font-family:var(--mono);font-size:.85em;color:var(--blue)">23520904/aurews-seo</code>), 
+    live site inspection of <strong style="color:var(--ink)">aurews.id.vn</strong>, and your existing pipeline HTML.
+    Rebuilt from the ground up with proper test coverage, secure pinned actions, and a 10-phase CI/CD flow.
+  </p>
+  <div class="hero-tags">
+    <span class="tag tag-blue">Next.js 16</span>
+    <span class="tag tag-green">Vitest + Playwright</span>
+    <span class="tag tag-amber">GitHub Actions</span>
+    <span class="tag tag-purple">Vercel + Preview</span>
+    <span class="tag tag-cyan">Prisma + Neon</span>
+    <span class="tag tag-red">Trivy + npm audit</span>
+  </div>
+
+  <div class="diff-grid">
+    <div class="diff-box diff-old">
+      <div class="diff-label">❌ Old Pipeline — Critical Gaps</div>
+      <ul>
+        <li>No test framework in package.json</li>
+        <li><code>npm run test || true</code> ignores failures</li>
+        <li>trivy-action@master (unpinned)</li>
+        <li>codeql-action/upload-sarif@v2 (outdated)</li>
+        <li>No PR preview deployments</li>
+        <li>No Prisma migration step</li>
+        <li>No E2E / Playwright tests</li>
+        <li>No post-deploy smoke tests</li>
+        <li>No Lighthouse CI / Core Web Vitals</li>
+        <li>No bundle size guard</li>
+        <li>Docker build but never used/pushed</li>
+        <li>No secret scanning</li>
+        <li>SEO check only weekly (not post-deploy)</li>
+      </ul>
+    </div>
+    <div class="diff-box diff-new">
+      <div class="diff-label">✅ New Pipeline — Optimized</div>
+      <ul>
+        <li>Vitest (unit) + Playwright (E2E) installed</li>
+        <li>Test failures BLOCK deployment</li>
+        <li>All actions pinned to SHA/semver</li>
+        <li>PR preview → Vercel preview URL</li>
+        <li>Prisma migrate deploy in CD</li>
+        <li>Playwright smoke on live preview URL</li>
+        <li>Post-deploy smoke + rollback trigger</li>
+        <li>Lighthouse CI on every merge</li>
+        <li>Bundle size delta comment on PRs</li>
+        <li>Trufflehog secret detection</li>
+        <li>SEO validation after every production deploy</li>
+        <li>JSON-LD & sitemap assertion in tests</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- CONTAINER -->
+<div class="container">
+
+<!-- ╔══════════════════════════════════╗ -->
+<!-- ║  SECTION: GAPS                   ║ -->
+<!-- ╚══════════════════════════════════╝ -->
+<section class="section" id="problems">
+  <div class="section-header">
+    <span class="section-num">AUDIT</span>
+    <h2>Critical Gaps Found in Your Codebase</h2>
+  </div>
+
+  <div class="alert alert-red">
+    <strong>🚨 Zero Test Coverage</strong>
+    Your <code style="color:var(--amber)">package.json</code> has no test runner installed (<em>no vitest, no jest, no playwright</em>).
+    The CI runs <code>npm run test || true</code> — the <code>|| true</code> means any test failure is silently ignored and deployments proceed. This is a production risk.
+  </div>
+
+  <div class="alert alert-amber">
+    <strong>⚠️ Unpinned Action Versions</strong>
+    <code>aquasecurity/trivy-action@master</code> and <code>vercel/action@master</code> are unpinned — a supply-chain attack can inject malicious code on any run. Always pin to a specific version tag or SHA.
+  </div>
+
+  <div class="alert alert-amber">
+    <strong>⚠️ No Database Migration in Deployment</strong>
+    Your Prisma schema changes are never automatically migrated in production. A deploy with schema changes but no migration will cause runtime crashes on Neon DB.
+  </div>
+
+  <div class="alert alert-blue">
+    <strong>ℹ️ No Preview Deployments for Pull Requests</strong>
+    You have 4 open PRs. None trigger a Vercel preview deployment with automated tests. Preview URLs let you catch visual regressions before merging.
+  </div>
+
+  <div class="alert alert-blue">
+    <strong>ℹ️ No Core Web Vitals Guard for SEO</strong>
+    aurews.id.vn is an SEO-first news platform. A Lighthouse CI check blocking deploys on CWV regression is standard practice for news sites competing in Google News.
+  </div>
+</section>
+
+<!-- ╔══════════════════════════════════╗ -->
+<!-- ║  SECTION: PIPELINE OVERVIEW      ║ -->
+<!-- ╚══════════════════════════════════╝ -->
+<section class="section" id="overview">
+  <div class="section-header">
+    <span class="section-num">PHASE MAP</span>
+    <h2>The 10-Phase Optimized Pipeline</h2>
+  </div>
+
+  <p>Every commit to any branch triggers phases 1–4. PRs to <code style="font-family:var(--mono);color:var(--blue)">main</code> or <code style="font-family:var(--mono);color:var(--blue)">develop</code> trigger 1–7. Merges to <code style="font-family:var(--mono);color:var(--blue)">main</code> trigger the full 1–10 pipeline.</p>
+
+  <div class="pipeline-flow">
+    <div class="pipeline-step">
+      <div class="step-dot dot-blue">P1</div>
+      <div class="step-content">
+        <div class="step-title">Validate — Lint, Type-Check, Format</div>
+        <div class="step-desc">ESLint, <code>tsc --noEmit</code>, Prettier check. Fast fail gate — 60–90s. Runs on every push.</div>
+        <div class="step-tags"><span class="tag tag-blue">ESLint</span><span class="tag tag-blue">TypeScript</span></div>
+      </div>
+    </div>
+    <div class="pipeline-step">
+      <div class="step-dot dot-blue">P2</div>
+      <div class="step-content">
+        <div class="step-title">Unit Tests — Vitest</div>
+        <div class="step-desc">Utility functions, SEO metadata generators, sitemap route logic, Prisma query helpers, auth helpers, Redis caching utils. Mocked DB. Target: &gt;80% coverage.</div>
+        <div class="step-tags"><span class="tag tag-blue">Vitest</span><span class="tag tag-blue">React Testing Library</span></div>
+      </div>
+    </div>
+    <div class="pipeline-step">
+      <div class="step-dot dot-blue">P3</div>
+      <div class="step-content">
+        <div class="step-title">Integration Tests — Vitest + RTL</div>
+        <div class="step-desc">Server Components with mocked Prisma, API route handlers (articles, categories, search), auth middleware, dashboard access control, share button logic.</div>
+        <div class="step-tags"><span class="tag tag-blue">Vitest</span><span class="tag tag-blue">MSW</span></div>
+      </div>
+    </div>
+    <div class="pipeline-step">
+      <div class="step-dot dot-red">P4</div>
+      <div class="step-content">
+        <div class="step-title">Security Scan — Trivy + npm audit + Trufflehog</div>
+        <div class="step-desc">Filesystem vulnerability scan, dependency audit at moderate+ level, secret detection in git history. Blocks on CRITICAL CVEs.</div>
+        <div class="step-tags"><span class="tag tag-red">Trivy</span><span class="tag tag-red">Trufflehog</span><span class="tag tag-red">npm audit</span></div>
+      </div>
+    </div>
+    <div class="pipeline-step">
+      <div class="step-dot dot-amber">P5</div>
+      <div class="step-content">
+        <div class="step-title">Build — Next.js Production + Bundle Analysis</div>
+        <div class="step-desc">Full <code>npm run build</code> (includes Prisma generate). Bundle size delta posted as PR comment. Blocks on &gt;10% bundle increase without approval.</div>
+        <div class="step-tags"><span class="tag tag-amber">next build</span><span class="tag tag-amber">@next/bundle-analyzer</span></div>
+      </div>
+    </div>
+    <div class="pipeline-step">
+      <div class="step-dot dot-purple">P6</div>
+      <div class="step-content">
+        <div class="step-title">E2E Tests — Playwright against Production Build</div>
+        <div class="step-desc">Homepage load, article page JSON-LD validation, sitemap XML assertions, news-sitemap fallback behavior, auth flows, dashboard RBAC, social share, 404, search.</div>
+        <div class="step-tags"><span class="tag tag-purple">Playwright</span><span class="tag tag-purple">MSW server-side</span></div>
+      </div>
+    </div>
+    <div class="pipeline-step">
+      <div class="step-dot dot-purple">P7</div>
+      <div class="step-content">
+        <div class="step-title">Deploy Preview (PRs) — Vercel Preview URL</div>
+        <div class="step-desc">Auto-deploys every PR to a Vercel preview URL. Playwright smoke runs against this live URL. Preview link posted as PR comment.</div>
+        <div class="step-tags"><span class="tag tag-purple">Vercel</span><span class="tag tag-purple">Playwright smoke</span></div>
+      </div>
+    </div>
+    <div class="pipeline-step">
+      <div class="step-dot dot-green">P8</div>
+      <div class="step-content">
+        <div class="step-title">Deploy Production — Vercel + Prisma Migrations</div>
+        <div class="step-desc">Runs <code>prisma migrate deploy</code> before Vercel deployment. Discord notification on success/failure with commit SHA and preview link.</div>
+        <div class="step-tags"><span class="tag tag-green">Vercel</span><span class="tag tag-green">Prisma</span></div>
+      </div>
+    </div>
+    <div class="pipeline-step">
+      <div class="step-dot dot-green">P9</div>
+      <div class="step-content">
+        <div class="step-title">Post-Deploy Verification — Smoke + SEO + Lighthouse</div>
+        <div class="step-desc">Playwright smoke against aurews.id.vn. Sitemap validation. Lighthouse CI for Performance &gt;80, SEO &gt;95. Blocks rollback trigger if smoke fails.</div>
+        <div class="step-tags"><span class="tag tag-green">Lighthouse CI</span><span class="tag tag-green">Sitemap check</span></div>
+      </div>
+    </div>
+    <div class="pipeline-step">
+      <div class="step-dot dot-cyan">P10</div>
+      <div class="step-content">
+        <div class="step-title">Continuous Monitoring — Daily Cron</div>
+        <div class="step-desc">Daily: npm audit, Trivy scan, uptime check. Weekly: Lighthouse audit, sitemap health, broken link scan. Alerts to Discord on any failure.</div>
+        <div class="step-tags"><span class="tag tag-cyan">Cron</span><span class="tag tag-cyan">Sentry</span><span class="tag tag-cyan">UptimeRobot</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ╔══════════════════════════════════╗ -->
+<!-- ║  SECTION: TEST STRATEGY          ║ -->
+<!-- ╚══════════════════════════════════╝ -->
+<section class="section" id="tests">
+  <div class="section-header">
+    <span class="section-num">TESTING</span>
+    <h2>Test Strategy — Low to High Level</h2>
+  </div>
+
+  <p>Your repo has <strong style="color:var(--ink)">zero test files</strong> and no test runner installed. Here's the complete pyramid tailored specifically to Aurews (Next.js 16, Prisma, Auth.js, news sitemap, Cloudinary, Upstash Redis).</p>
+
+  <div class="pyramid">
+    <div class="pyramid-level">
+      <div class="pyramid-label" style="color:var(--cyan)">🎭 E2E Tests (Playwright)</div>
+      <div class="pyramid-sub">~20 tests · Real browser · slowest · highest confidence</div>
+    </div>
+    <div class="pyramid-level">
+      <div class="pyramid-label" style="color:var(--purple)">🔗 Integration Tests (Vitest + RTL)</div>
+      <div class="pyramid-sub">~40 tests · Mocked DB + API · medium speed</div>
+    </div>
+    <div class="pyramid-level">
+      <div class="pyramid-label" style="color:var(--blue)">⚙️ Unit Tests (Vitest)</div>
+      <div class="pyramid-sub">~60 tests · Pure functions · fastest</div>
+    </div>
+    <div class="pyramid-level">
+      <div class="pyramid-label" style="color:var(--green)">🔍 Static Analysis</div>
+      <div class="pyramid-sub">ESLint · TypeScript · instant · no execution</div>
+    </div>
+  </div>
+
+  <h3>Level 1 — Unit Tests (Vitest) <span class="badge-inline bi-new">ADD THESE FIRST</span></h3>
+  <p>Pure functions, no browser, no DB. Install: <code style="font-family:var(--mono);color:var(--blue)">npm install -D vitest @vitejs/plugin-react jsdom @testing-library/react @testing-library/dom vite-tsconfig-paths</code></p>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">🗺️</div>
+      <div class="card-title">Sitemap Logic</div>
+      <div class="card-desc">Test news-sitemap 48h fallback: if no recent posts → returns 5 latest. Empty DB returns valid XML, not 500. Invalid slugs excluded.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔍</div>
+      <div class="card-title">SEO Metadata</div>
+      <div class="card-desc">generateMetadata() returns correct title, description, canonical URL, og:image for article pages. NewsArticle JSON-LD schema shape validation.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔐</div>
+      <div class="card-title">Auth Helpers</div>
+      <div class="card-desc">bcryptjs password hash/compare. Role enum checks (ADMIN, EDITOR, USER). Session token generation. NEXTAUTH_SECRET validation.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">📦</div>
+      <div class="card-title">Utility Functions</div>
+      <div class="card-desc">Slug generation (spaces → hyphens, Unicode safe). Date formatting (ISO 8601 for news sitemaps). Excerpt truncation. URL hostname remapping (localhost → prod).</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">💾</div>
+      <div class="card-title">Prisma Query Helpers</div>
+      <div class="card-desc">getPaginatedPosts() returns correct LIMIT/OFFSET. getPostBySlug() handles not-found. Category filter correct SQL. Views increment atomic.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">⚡</div>
+      <div class="card-title">Redis Cache Utils</div>
+      <div class="card-desc">Cache key generation consistent. TTL values per content type. Cache miss fallback to DB. Upstash Redis mock with vitest-mock-extended.</div>
+    </div>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-filename">src/__tests__/unit/sitemap.test.ts</span><span class="code-lang">TypeScript</span></div>
+    <pre><span class="cm">// Level 1: Unit test — news-sitemap 48h fallback logic</span>
+<span class="kw">import</span> { describe, it, expect, vi, beforeEach } <span class="kw">from</span> <span class="str">'vitest'</span>
+<span class="kw">import</span> { buildNewsSitemap } <span class="kw">from</span> <span class="str">'@/lib/sitemap-builder'</span>
+
+<span class="kw">const</span> <span class="var">mockRecentPost</span> = {
+  id: <span class="str">'1'</span>, slug: <span class="str">'ai-news-today'</span>, title: <span class="str">'AI News Today'</span>,
+  createdAt: <span class="kw">new</span> <span class="fn">Date</span>(), status: <span class="str">'PUBLISHED'</span>
+}
+<span class="kw">const</span> <span class="var">mockOldPost</span> = {
+  ...mockRecentPost, id: <span class="str">'2'</span>,
+  createdAt: <span class="kw">new</span> <span class="fn">Date</span>(Date.now() - <span class="nu">72</span> * <span class="nu">3600000</span>) <span class="cm">// 72h ago</span>
+}
+
+<span class="fn">describe</span>(<span class="str">'News Sitemap Builder'</span>, () => {
+  <span class="fn">it</span>(<span class="str">'includes posts published within 48 hours'</span>, <span class="kw">async</span> () => {
+    <span class="kw">const</span> xml = <span class="kw">await</span> <span class="fn">buildNewsSitemap</span>([mockRecentPost])
+    <span class="fn">expect</span>(xml).<span class="fn">toContain</span>(<span class="str">'ai-news-today'</span>)
+    <span class="fn">expect</span>(xml).<span class="fn">toContain</span>(<span class="str">'&lt;news:news&gt;'</span>)
+  })
+
+  <span class="fn">it</span>(<span class="str">'falls back to 5 latest when no recent posts exist'</span>, <span class="kw">async</span> () => {
+    <span class="cm">// No posts within 48h — should use fallback</span>
+    <span class="kw">const</span> xml = <span class="kw">await</span> <span class="fn">buildNewsSitemap</span>([], [mockOldPost])
+    <span class="fn">expect</span>(xml).<span class="fn">toContain</span>(<span class="str">'ai-news-today'</span>) <span class="cm">// fallback included</span>
+    <span class="fn">expect</span>(xml).<span class="fn">not</span>.<span class="fn">toMatch</span>(<span class="str">/&lt;urlset[^&gt;]*&gt;\s*&lt;\/urlset&gt;/</span>) <span class="cm">// not empty</span>
+  })
+
+  <span class="fn">it</span>(<span class="str">'returns valid XML structure'</span>, <span class="kw">async</span> () => {
+    <span class="kw">const</span> xml = <span class="kw">await</span> <span class="fn">buildNewsSitemap</span>([mockRecentPost])
+    <span class="fn">expect</span>(xml).<span class="fn">toContain</span>(<span class="str">'&lt;?xml version="1.0"'</span>)
+    <span class="fn">expect</span>(xml).<span class="fn">toContain</span>(<span class="str">'xmlns:news='</span>)
+  })
+})</pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-filename">src/__tests__/unit/seo-metadata.test.ts</span><span class="code-lang">TypeScript</span></div>
+    <pre><span class="cm">// Unit test — JSON-LD NewsArticle schema</span>
+<span class="kw">import</span> { describe, it, expect } <span class="kw">from</span> <span class="str">'vitest'</span>
+<span class="kw">import</span> { buildArticleJsonLd } <span class="kw">from</span> <span class="str">'@/lib/seo'</span>
+
+<span class="fn">describe</span>(<span class="str">'Article JSON-LD Schema'</span>, () => {
+  <span class="kw">const</span> post = {
+    title: <span class="str">'AI Regulation 2026'</span>, slug: <span class="str">'ai-regulation-2026'</span>,
+    excerpt: <span class="str">'Governments focus on risk-based frameworks'</span>,
+    coverImage: <span class="str">'https://res.cloudinary.com/aurews/image/upload/v1/cover.jpg'</span>,
+    createdAt: <span class="kw">new</span> <span class="fn">Date</span>(<span class="str">'2026-05-01'</span>), author: { name: <span class="str">'Admin'</span> },
+    category: { name: <span class="str">'A.I.'</span> }
+  }
+
+  <span class="fn">it</span>(<span class="str">'produces @type NewsArticle'</span>, () => {
+    <span class="kw">const</span> ld = <span class="fn">buildArticleJsonLd</span>(post)
+    <span class="fn">expect</span>(ld[<span class="str">'@type'</span>]).<span class="fn">toBe</span>(<span class="str">'NewsArticle'</span>)
+  })
+
+  <span class="fn">it</span>(<span class="str">'canonical URL uses production domain'</span>, () => {
+    <span class="kw">const</span> ld = <span class="fn">buildArticleJsonLd</span>(post)
+    <span class="fn">expect</span>(ld.mainEntityOfPage).<span class="fn">toContain</span>(<span class="str">'aurews.id.vn'</span>)
+    <span class="fn">expect</span>(ld.mainEntityOfPage).<span class="fn">not</span>.<span class="fn">toContain</span>(<span class="str">'localhost'</span>)
+  })
+
+  <span class="fn">it</span>(<span class="str">'datePublished is ISO 8601'</span>, () => {
+    <span class="kw">const</span> ld = <span class="fn">buildArticleJsonLd</span>(post)
+    <span class="fn">expect</span>(ld.datePublished).<span class="fn">toMatch</span>(<span class="str">/^\d{4}-\d{2}-\d{2}T/</span>)
+  })
+})</pre>
+  </div>
+
+  <h3>Level 2 — Integration Tests (Vitest + RTL) <span class="badge-inline bi-new">ADD SECOND</span></h3>
+  <p>Components with mocked services. Uses MSW for API interception. Tests Next.js Server Components behavior with injected Prisma mock.</p>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-filename">src/__tests__/integration/article-page.test.tsx</span><span class="code-lang">TypeScript</span></div>
+    <pre><span class="cm">// Integration — Article page with mocked Prisma</span>
+<span class="kw">import</span> { render, screen } <span class="kw">from</span> <span class="str">'@testing-library/react'</span>
+<span class="kw">import</span> { describe, it, expect, vi } <span class="kw">from</span> <span class="str">'vitest'</span>
+<span class="kw">import</span> ArticlePage <span class="kw">from</span> <span class="str">'@/app/article/[slug]/page'</span>
+
+<span class="cm">// Mock Prisma at module level</span>
+vi.<span class="fn">mock</span>(<span class="str">'@/lib/prisma'</span>, () => ({
+  prisma: {
+    post: {
+      findUnique: vi.<span class="fn">fn</span>().<span class="fn">mockResolvedValue</span>({
+        id: <span class="str">'1'</span>, title: <span class="str">'AI News 2026'</span>, slug: <span class="str">'ai-news-2026'</span>,
+        body: <span class="str">'&lt;p&gt;Content here&lt;/p&gt;'</span>, status: <span class="str">'PUBLISHED'</span>,
+        author: { name: <span class="str">'Admin'</span> }, category: { name: <span class="str">'A.I.'</span>, slug: <span class="str">'a.i.'</span> },
+        createdAt: <span class="kw">new</span> <span class="fn">Date</span>(), coverImage: <span class="str">'/cover.jpg'</span>
+      })
+    }
+  }
+}))
+
+<span class="fn">describe</span>(<span class="str">'Article Page'</span>, () => {
+  <span class="fn">it</span>(<span class="str">'renders article title'</span>, <span class="kw">async</span> () => {
+    <span class="kw">const</span> jsx = <span class="kw">await</span> <span class="fn">ArticlePage</span>({ params: { slug: <span class="str">'ai-news-2026'</span> } })
+    <span class="fn">render</span>(jsx)
+    <span class="fn">expect</span>(<span class="fn">screen</span>.<span class="fn">getByRole</span>(<span class="str">'heading'</span>, { level: <span class="nu">1</span> })).<span class="fn">toHaveTextContent</span>(<span class="str">'AI News 2026'</span>)
+  })
+
+  <span class="fn">it</span>(<span class="str">'shows category label'</span>, <span class="kw">async</span> () => {
+    <span class="kw">const</span> jsx = <span class="kw">await</span> <span class="fn">ArticlePage</span>({ params: { slug: <span class="str">'ai-news-2026'</span> } })
+    <span class="fn">render</span>(jsx)
+    <span class="fn">expect</span>(<span class="fn">screen</span>.<span class="fn">getByText</span>(<span class="str">/A\.I\./i</span>)).<span class="fn">toBeInTheDocument</span>()
+  })
+})</pre>
+  </div>
+
+  <h3>Level 3 — E2E Tests (Playwright) <span class="badge-inline bi-new">ADD THIRD</span></h3>
+  <p>Install: <code style="font-family:var(--mono);color:var(--blue)">npm install -D @playwright/test && npx playwright install --with-deps chromium</code></p>
+  <p>Always test against production build (<code style="font-family:var(--mono);color:var(--amber)">next build && next start</code>), never <code>next dev</code>. Playwright runs in parallel — 20 tests finish in ~60s.</p>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Test</th><th>What it validates</th><th>Why for aurews.id.vn</th></tr></thead>
+      <tbody>
+        <tr><td><code>homepage.spec.ts</code></td><td>Homepage loads, article cards render, categories in nav</td><td>Core reader entry point</td></tr>
+        <tr><td><code>article-page.spec.ts</code></td><td>Article HTML, JSON-LD script tag present, og:title meta, canonical URL</td><td>Google News indexing depends on JSON-LD</td></tr>
+        <tr><td><code>sitemap.spec.ts</code></td><td>sitemap.xml is valid XML, &lt;url&gt; entries exist</td><td>GSC will reject malformed sitemaps</td></tr>
+        <tr><td><code>news-sitemap.spec.ts</code></td><td>Returns XML, &lt;news:news&gt; elements present OR fallback active</td><td>The 48h fallback must not produce empty XML</td></tr>
+        <tr><td><code>auth.spec.ts</code></td><td>Login form submits, session cookie set, redirect to /dashboard</td><td>Auth.js v5 beta — easy to break</td></tr>
+        <tr><td><code>dashboard-access.spec.ts</code></td><td>Unauthenticated → redirect /auth/login</td><td>RBAC security check</td></tr>
+        <tr><td><code>category.spec.ts</code></td><td>Category pages load filtered articles correctly</td><td>6 categories, each must render</td></tr>
+        <tr><td><code>search.spec.ts</code></td><td>Search input → results appear, empty query shows state</td><td>User experience critical path</td></tr>
+        <tr><td><code>share-buttons.spec.ts</code></td><td>Social share URLs contain production domain (not localhost)</td><td>The localhost→prod remapping must work</td></tr>
+        <tr><td><code>404.spec.ts</code></td><td>/nonexistent returns 404 status, renders 404 page</td><td>SEO — Google deindexes 404 pages</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-filename">e2e/article-page.spec.ts</span><span class="code-lang">Playwright</span></div>
+    <pre><span class="kw">import</span> { test, expect } <span class="kw">from</span> <span class="str">'@playwright/test'</span>
+
+<span class="fn">test.describe</span>(<span class="str">'Article Page — SEO critical paths'</span>, () => {
+  <span class="fn">test</span>(<span class="str">'has JSON-LD NewsArticle schema'</span>, <span class="kw">async</span> ({ page }) => {
+    <span class="kw">await</span> page.<span class="fn">goto</span>(<span class="str">'/article/ai-news-2026-the-hardware-revolution'</span>)
+
+    <span class="kw">const</span> ld = <span class="kw">await</span> page.<span class="fn">locator</span>(<span class="str">'script[type="application/ld+json"]'</span>).<span class="fn">first</span>().<span class="fn">textContent</span>()
+    <span class="kw">const</span> schema = <span class="fn">JSON</span>.<span class="fn">parse</span>(ld!)
+    <span class="fn">expect</span>(schema[<span class="str">'@type'</span>]).<span class="fn">toBe</span>(<span class="str">'NewsArticle'</span>)
+    <span class="fn">expect</span>(schema.mainEntityOfPage).<span class="fn">toContain</span>(<span class="str">'aurews.id.vn'</span>)
+  })
+
+  <span class="fn">test</span>(<span class="str">'canonical URL is production domain'</span>, <span class="kw">async</span> ({ page }) => {
+    <span class="kw">await</span> page.<span class="fn">goto</span>(<span class="str">'/article/ai-news-2026-the-hardware-revolution'</span>)
+    <span class="kw">const</span> canonical = <span class="kw">await</span> page.<span class="fn">locator</span>(<span class="str">'link[rel="canonical"]'</span>).<span class="fn">getAttribute</span>(<span class="str">'href'</span>)
+    <span class="fn">expect</span>(canonical).<span class="fn">toMatch</span>(<span class="str">/^https:\/\/(www\.)?aurews\.id\.vn/</span>)
+  })
+
+  <span class="fn">test</span>(<span class="str">'og:image is a Cloudinary URL'</span>, <span class="kw">async</span> ({ page }) => {
+    <span class="kw">await</span> page.<span class="fn">goto</span>(<span class="str">'/article/ai-news-2026-the-hardware-revolution'</span>)
+    <span class="kw">const</span> ogImg = <span class="kw">await</span> page.<span class="fn">locator</span>(<span class="str">'meta[property="og:image"]'</span>).<span class="fn">getAttribute</span>(<span class="str">'content'</span>)
+    <span class="fn">expect</span>(ogImg).<span class="fn">toMatch</span>(<span class="str">/cloudinary\.com|res\.cloudinary/</span>)
+  })
+})
+
+<span class="fn">test.describe</span>(<span class="str">'News Sitemap — 48h fallback'</span>, () => {
+  <span class="fn">test</span>(<span class="str">'never returns empty sitemap'</span>, <span class="kw">async</span> ({ page }) => {
+    <span class="kw">const</span> res = <span class="kw">await</span> page.<span class="fn">goto</span>(<span class="str">'/news-sitemap.xml'</span>)
+    <span class="fn">expect</span>(res!.status()).<span class="fn">toBe</span>(<span class="nu">200</span>)
+    <span class="kw">const</span> body = <span class="kw">await</span> res!.<span class="fn">text</span>()
+    <span class="fn">expect</span>(body).<span class="fn">toContain</span>(<span class="str">'&lt;url&gt;'</span>)
+    <span class="fn">expect</span>(body).<span class="fn">not</span>.<span class="fn">toMatch</span>(<span class="str">/&lt;urlset[^&gt;]*&gt;\s*&lt;\/urlset&gt;/</span>)
+  })
+})</pre>
+  </div>
+
+  <h3>Setup — vitest.config.ts</h3>
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-filename">vitest.config.ts</span><span class="code-lang">TypeScript</span></div>
+    <pre><span class="kw">import</span> { defineConfig } <span class="kw">from</span> <span class="str">'vitest/config'</span>
+<span class="kw">import</span> react <span class="kw">from</span> <span class="str">'@vitejs/plugin-react'</span>
+<span class="kw">import</span> tsconfigPaths <span class="kw">from</span> <span class="str">'vite-tsconfig-paths'</span>
+
+<span class="kw">export default</span> <span class="fn">defineConfig</span>({
+  plugins: [<span class="fn">react</span>(), <span class="fn">tsconfigPaths</span>()],
+  test: {
+    environment: <span class="str">'jsdom'</span>,
+    globals: <span class="kw">true</span>,
+    setupFiles: [<span class="str">'./src/__tests__/setup.ts'</span>],
+    include: [<span class="str">'src/__tests__/**/*.test.{ts,tsx}'</span>],
+    exclude: [<span class="str">'e2e/**'</span>],
+    coverage: {
+      provider: <span class="str">'v8'</span>,
+      reporter: [<span class="str">'text'</span>, <span class="str">'json'</span>, <span class="str">'html'</span>],
+      thresholds: { lines: <span class="nu">70</span>, functions: <span class="nu">70</span>, branches: <span class="nu">60</span> }
+    }
+  }
+})</pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-filename">playwright.config.ts</span><span class="code-lang">TypeScript</span></div>
+    <pre><span class="kw">import</span> { defineConfig, devices } <span class="kw">from</span> <span class="str">'@playwright/test'</span>
+
+<span class="kw">export default</span> <span class="fn">defineConfig</span>({
+  testDir: <span class="str">'./e2e'</span>,
+  fullyParallel: <span class="kw">true</span>,
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? <span class="nu">2</span> : <span class="nu">0</span>,
+  workers: process.env.CI ? <span class="nu">1</span> : <span class="kw">undefined</span>,
+  reporter: <span class="str">'html'</span>,
+  use: {
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || <span class="str">'http://localhost:3000'</span>,
+    trace: <span class="str">'on-first-retry'</span>,
+    screenshot: <span class="str">'only-on-failure'</span>
+  },
+  projects: [
+    { name: <span class="str">'chromium'</span>, use: { ...devices[<span class="str">'Desktop Chrome'</span>] } }
+  ],
+  webServer: {
+    command: <span class="str">'npm run build && npm run start'</span>,
+    url: <span class="str">'http://localhost:3000'</span>,
+    reuseExistingServer: !process.env.CI,
+    timeout: <span class="nu">120_000</span>
+  }
+})</pre>
+  </div>
+
+  <p>Add to <code style="font-family:var(--mono);color:var(--blue)">package.json</code> scripts:</p>
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-filename">package.json — scripts additions</span><span class="code-lang">JSON</span></div>
+    <pre><span class="str">"test"</span>: <span class="str">"vitest run"</span>,
+<span class="str">"test:watch"</span>: <span class="str">"vitest"</span>,
+<span class="str">"test:coverage"</span>: <span class="str">"vitest run --coverage"</span>,
+<span class="str">"test:e2e"</span>: <span class="str">"playwright test"</span>,
+<span class="str">"test:e2e:ui"</span>: <span class="str">"playwright test --ui"</span>,
+<span class="str">"type-check"</span>: <span class="str">"tsc --noEmit"</span></pre>
+  </div>
+</section>
+
+<!-- ╔══════════════════════════════════╗ -->
+<!-- ║  SECTION: WORKFLOWS              ║ -->
+<!-- ╚══════════════════════════════════╝ -->
+<section class="section" id="workflows">
+  <div class="section-header">
+    <span class="section-num">WORKFLOWS</span>
+    <h2>GitHub Actions — All Workflow Files</h2>
+  </div>
+
+  <h3>.github/workflows/ci.yml <span class="badge-inline bi-fix">REPLACE EXISTING</span></h3>
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-filename">.github/workflows/ci.yml</span><span class="code-lang">YAML</span></div>
+    <pre><span class="op">name:</span> CI Pipeline
+<span class="op">on:</span>
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+<span class="op">concurrency:</span>
+  group: <span class="str">${{ github.workflow }}-${{ github.ref }}</span>
+  cancel-in-progress: <span class="kw">true</span>   <span class="cm"># cancel stale runs on force-push</span>
+
+<span class="op">jobs:</span>
+  <span class="cm"># ── 1. VALIDATE ──────────────────────────────</span>
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: <span class="str">'20'</span>, cache: <span class="str">'npm'</span> }
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run type-check
+
+  <span class="cm"># ── 2. UNIT + INTEGRATION TESTS ──────────────</span>
+  test:
+    needs: validate
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: <span class="str">"file:./test.db"</span>  <span class="cm"># SQLite for unit tests</span>
+      NEXTAUTH_SECRET: <span class="str">"test-secret-32-chars-minimum-xyz"</span>
+      NEXT_PUBLIC_SITE_URL: <span class="str">"http://localhost:3000"</span>
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: <span class="str">'20'</span>, cache: <span class="str">'npm'</span> }
+      - run: npm ci
+      - run: npm run test:coverage
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with: { token: <span class="str">${{ secrets.CODECOV_TOKEN }}</span> }
+
+  <span class="cm"># ── 3. SECURITY ──────────────────────────────</span>
+  security:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: <span class="nu">0</span> }  <span class="cm"># full history for trufflehog</span>
+      - name: Trivy filesystem scan
+        uses: aquasecurity/trivy-action@0.28.0  <span class="cm"># PINNED version</span>
+        with:
+          scan-type: <span class="str">'fs'</span>
+          scan-ref: <span class="str">'.'</span>
+          format: <span class="str">'sarif'</span>
+          output: <span class="str">'trivy-results.sarif'</span>
+          severity: <span class="str">'CRITICAL,HIGH'</span>
+          exit-code: <span class="str">'1'</span>  <span class="cm"># BLOCK on CRITICAL/HIGH</span>
+      - uses: github/codeql-action/upload-sarif@v3  <span class="cm"># updated v3</span>
+        if: always()
+        with: { sarif_file: <span class="str">'trivy-results.sarif'</span> }
+      - name: npm audit
+        run: npm audit --audit-level=moderate
+      - name: Trufflehog secret scan
+        uses: trufflesecurity/trufflehog@v3.88.13  <span class="cm"># PINNED</span>
+        with:
+          path: ./
+          base: <span class="str">${{ github.event.repository.default_branch }}</span>
+          head: HEAD
+
+  <span class="cm"># ── 4. BUILD ─────────────────────────────────</span>
+  build:
+    needs: [test, security]
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: <span class="str">${{ secrets.DATABASE_URL }}</span>
+      NEXTAUTH_SECRET: <span class="str">${{ secrets.NEXTAUTH_SECRET }}</span>
+      NEXT_PUBLIC_SITE_URL: <span class="str">"https://aurews.id.vn"</span>
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: <span class="str">'20'</span>, cache: <span class="str">'npm'</span> }
+      - run: npm ci
+      - run: npx prisma generate
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: <span class="nu">1</span>
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nextjs-build-<span class="str">${{ github.sha }}</span>
+          path: .next/
+          retention-days: <span class="nu">1</span>
+
+  <span class="cm"># ── 5. E2E TESTS ─────────────────────────────</span>
+  e2e:
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: <span class="str">${{ secrets.DATABASE_URL }}</span>
+      NEXTAUTH_SECRET: <span class="str">${{ secrets.NEXTAUTH_SECRET }}</span>
+      NEXT_PUBLIC_SITE_URL: <span class="str">"http://localhost:3000"</span>
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: <span class="str">'20'</span>, cache: <span class="str">'npm'</span> }
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with: { name: nextjs-build-<span class="str">${{ github.sha }}</span>, path: .next/ }
+      - name: Run E2E
+        run: npx playwright test
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report/</pre>
+  </div>
+
+  <h3>.github/workflows/deploy.yml <span class="badge-inline bi-fix">REPLACE EXISTING</span></h3>
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-filename">.github/workflows/deploy.yml</span><span class="code-lang">YAML</span></div>
+    <pre><span class="op">name:</span> Deploy to Production
+<span class="op">on:</span>
+  push:
+    branches: [main]
+
+<span class="op">jobs:</span>
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with: { node-version: <span class="str">'20'</span>, cache: <span class="str">'npm'</span> }
+      - run: npm ci
+
+      <span class="cm"># ── Prisma migrations before deploy ──</span>
+      - name: Run Prisma migrations
+        run: npx prisma migrate deploy
+        env:
+          DATABASE_URL: <span class="str">${{ secrets.DATABASE_URL }}</span>
+          DIRECT_URL: <span class="str">${{ secrets.DIRECT_URL }}</span>
+
+      <span class="cm"># ── Vercel deploy ──</span>
+      - name: Deploy to Vercel
+        id: deploy
+        uses: amondnet/vercel-action@v25.2.0  <span class="cm"># PINNED</span>
+        with:
+          vercel-token: <span class="str">${{ secrets.VERCEL_TOKEN }}</span>
+          vercel-org-id: <span class="str">${{ secrets.VERCEL_ORG_ID }}</span>
+          vercel-project-id: <span class="str">${{ secrets.VERCEL_PROJECT_ID }}</span>
+          vercel-args: <span class="str">'--prod'</span>
+          working-directory: ./
+
+      <span class="cm"># ── Post-deploy smoke test ──</span>
+      - name: Run smoke tests on production
+        env:
+          PLAYWRIGHT_BASE_URL: <span class="str">"https://aurews.id.vn"</span>
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          npx playwright test e2e/smoke.spec.ts
+
+      <span class="cm"># ── SEO + Sitemap check ──</span>
+      - name: Validate sitemaps
+        run: |
+          curl -sf https://aurews.id.vn/sitemap.xml | grep -c <span class="str">"&lt;url&gt;"</span>
+          curl -sf https://aurews.id.vn/news-sitemap.xml | grep -c <span class="str">"&lt;url&gt;"</span>
+          echo <span class="str">"✓ Sitemaps OK"</span>
+
+      <span class="cm"># ── Discord notification ──</span>
+      - name: Notify Discord
+        if: always()
+        run: |
+          STATUS=<span class="str">"✅ Deployed"</span>
+          [ <span class="str">"${{}{ job.status }}"</span> != <span class="str">"success"</span> ] && STATUS=<span class="str">"❌ Deploy failed"</span>
+          curl -X POST <span class="str">${{ secrets.DISCORD_WEBHOOK_DEPLOY }}</span> \
+            -H <span class="str">'Content-Type: application/json'</span> \
+            -d <span class="str">"{\"content\":\"$STATUS — commit ${{}{ github.sha }} — ${{}{ github.event.head_commit.message }}\"}"</span></pre>
+  </div>
+
+  <h3>.github/workflows/preview.yml <span class="badge-inline bi-new">NEW — PR PREVIEW DEPLOYMENTS</span></h3>
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-filename">.github/workflows/preview.yml</span><span class="code-lang">YAML</span></div>
+    <pre><span class="op">name:</span> Preview Deployment (PR)
+<span class="op">on:</span>
+  pull_request:
+    branches: [main, develop]
+
+<span class="op">jobs:</span>
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: <span class="str">'20'</span>, cache: <span class="str">'npm'</span> }
+      - run: npm ci
+
+      - name: Deploy Preview to Vercel
+        id: vercel-preview
+        uses: amondnet/vercel-action@v25.2.0
+        with:
+          vercel-token: <span class="str">${{ secrets.VERCEL_TOKEN }}</span>
+          vercel-org-id: <span class="str">${{ secrets.VERCEL_ORG_ID }}</span>
+          vercel-project-id: <span class="str">${{ secrets.VERCEL_PROJECT_ID }}</span>
+          working-directory: ./
+
+      - name: Run smoke tests on preview
+        env:
+          PLAYWRIGHT_BASE_URL: <span class="str">${{ steps.vercel-preview.outputs.preview-url }}</span>
+        run: |
+          npx playwright install --with-deps chromium
+          npx playwright test e2e/smoke.spec.ts
+
+      - name: Comment preview URL on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: <span class="str">'🚀 **Preview URL:** ${{ steps.vercel-preview.outputs.preview-url }}\n\n✓ Smoke tests passed'</span>
+            })</pre>
+  </div>
+
+  <h3>.github/workflows/lighthouse.yml <span class="badge-inline bi-new">NEW — CORE WEB VITALS</span></h3>
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-filename">.github/workflows/lighthouse.yml</span><span class="code-lang">YAML</span></div>
+    <pre><span class="op">name:</span> Lighthouse CI — SEO Health
+<span class="op">on:</span>
+  push: { branches: [main] }
+  schedule:
+    - cron: <span class="str">'0 6 * * 1'</span>  <span class="cm"># Weekly Monday 6am</span>
+  workflow_dispatch:
+
+<span class="op">jobs:</span>
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: <span class="str">'20'</span> }
+      - run: npm install -g @lhci/cli@0.14.x
+      - name: Run Lighthouse CI
+        run: lhci autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: <span class="str">${{ secrets.LHCI_GITHUB_APP_TOKEN }}</span>
+      - name: Assert thresholds
+        run: |
+          SCORE=$(cat .lighthouseci/lhr-*.json | jq <span class="str">'.categories.seo.score * 100'</span> | head -1)
+          echo <span class="str">"SEO Score: $SCORE"</span>
+          [ <span class="str">"${SCORE%.*}"</span> -ge <span class="nu">95</span> ] || (echo <span class="str">"❌ SEO score below 95"</span> && exit 1)
+
+<span class="cm"># .lighthouserc.json — create this file too:</span>
+<span class="cm"># {</span>
+<span class="cm">#   "ci": {</span>
+<span class="cm">#     "collect": { "url": ["https://aurews.id.vn", "https://aurews.id.vn/article/ai-news-2026-the-hardware-revolution"] },</span>
+<span class="cm">#     "assert": {</span>
+<span class="cm">#       "assertions": {</span>
+<span class="cm">#         "categories:performance": ["warn", {"minScore": 0.8}],</span>
+<span class="cm">#         "categories:seo": ["error", {"minScore": 0.95}],</span>
+<span class="cm">#         "categories:accessibility": ["warn", {"minScore": 0.85}]</span>
+<span class="cm">#       }</span>
+<span class="cm">#     }</span>
+<span class="cm">#   }</span>
+<span class="cm"># }</span></pre>
+  </div>
+
+  <h3>.github/workflows/daily-security.yml <span class="badge-inline bi-fix">REPLACE EXISTING</span></h3>
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-filename">.github/workflows/daily-security.yml</span><span class="code-lang">YAML</span></div>
+    <pre><span class="op">name:</span> Daily Security Scan
+<span class="op">on:</span>
+  schedule: [{cron: <span class="str">'0 2 * * *'</span>}]
+  workflow_dispatch:
+
+<span class="op">jobs:</span>
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: <span class="str">'20'</span>, cache: <span class="str">'npm'</span> }
+      - run: npm ci
+
+      - name: npm audit
+        id: audit
+        continue-on-error: true
+        run: |
+          VULN=$(npm audit --json 2>/dev/null | jq <span class="str">'.metadata.vulnerabilities.total // 0'</span>)
+          HIGH=$(npm audit --json 2>/dev/null | jq <span class="str">'.metadata.vulnerabilities.high // 0'</span>)
+          echo <span class="str">"VULN_COUNT=$VULN"</span> >> $GITHUB_OUTPUT
+          echo <span class="str">"HIGH_COUNT=$HIGH"</span> >> $GITHUB_OUTPUT
+
+      - name: Trivy scan
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: <span class="str">'fs'</span>
+          scan-ref: <span class="str">'.'</span>
+          severity: <span class="str">'CRITICAL,HIGH'</span>
+          format: <span class="str">'json'</span>
+          output: <span class="str">'trivy.json'</span>
+        continue-on-error: true
+
+      - name: Check uptime
+        run: |
+          HTTP_CODE=$(curl -s -o /dev/null -w <span class="str">"%{http_code}"</span> https://aurews.id.vn)
+          [ <span class="str">"$HTTP_CODE"</span> -eq <span class="str">"200"</span> ] || echo <span class="str">"⚠️ Site returned $HTTP_CODE"</span>
+
+      - name: Discord alert if issues
+        if: steps.audit.outputs.HIGH_COUNT > <span class="str">'0'</span>
+        run: |
+          curl -X POST <span class="str">${{ secrets.DISCORD_WEBHOOK_SECURITY }}</span> \
+            -H <span class="str">'Content-Type: application/json'</span> \
+            -d <span class="str">"{\"content\":\"🔐 Security: ${{}{ steps.audit.outputs.HIGH_COUNT }} HIGH vulns, ${{}{ steps.audit.outputs.VULN_COUNT }} total\"}"</span></pre>
+  </div>
+
+  <h3>e2e/smoke.spec.ts <span class="badge-inline bi-new">NEW — POST-DEPLOY SMOKE</span></h3>
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-filename">e2e/smoke.spec.ts</span><span class="code-lang">Playwright</span></div>
+    <pre><span class="cm">// Minimal smoke suite — runs after every deploy (fast: ~15s)</span>
+<span class="kw">import</span> { test, expect } <span class="kw">from</span> <span class="str">'@playwright/test'</span>
+
+<span class="fn">test</span>(<span class="str">'homepage is reachable and shows articles'</span>, <span class="kw">async</span> ({ page }) => {
+  <span class="kw">const</span> res = <span class="kw">await</span> page.<span class="fn">goto</span>(<span class="str">'/'</span>)
+  <span class="fn">expect</span>(res!.status()).<span class="fn">toBe</span>(<span class="nu">200</span>)
+  <span class="kw">await</span> <span class="fn">expect</span>(page.<span class="fn">locator</span>(<span class="str">'h1, h2, h3'</span>).<span class="fn">first</span>()).<span class="fn">toBeVisible</span>()
+})
+
+<span class="fn">test</span>(<span class="str">'sitemap.xml is accessible'</span>, <span class="kw">async</span> ({ page }) => {
+  <span class="kw">const</span> res = <span class="kw">await</span> page.<span class="fn">goto</span>(<span class="str">'/sitemap.xml'</span>)
+  <span class="fn">expect</span>(res!.status()).<span class="fn">toBe</span>(<span class="nu">200</span>)
+  <span class="kw">const</span> ct = res!.headers()[<span class="str">'content-type'</span>]
+  <span class="fn">expect</span>(ct).<span class="fn">toMatch</span>(<span class="str">/xml/</span>)
+})
+
+<span class="fn">test</span>(<span class="str">'news-sitemap.xml is never empty'</span>, <span class="kw">async</span> ({ page }) => {
+  <span class="kw">const</span> res = <span class="kw">await</span> page.<span class="fn">goto</span>(<span class="str">'/news-sitemap.xml'</span>)
+  <span class="fn">expect</span>(res!.status()).<span class="fn">toBe</span>(<span class="nu">200</span>)
+  <span class="fn">expect</span>(<span class="kw">await</span> res!.<span class="fn">text</span>()).<span class="fn">toContain</span>(<span class="str">'&lt;url&gt;'</span>)
+})
+
+<span class="fn">test</span>(<span class="str">'login page renders'</span>, <span class="kw">async</span> ({ page }) => {
+  <span class="kw">await</span> page.<span class="fn">goto</span>(<span class="str">'/auth/login'</span>)
+  <span class="kw">await</span> <span class="fn">expect</span>(page.<span class="fn">locator</span>(<span class="str">'input[type="email"]'</span>)).<span class="fn">toBeVisible</span>()
+})</pre>
+  </div>
+</section>
+
+<!-- ╔══════════════════════════════════╗ -->
+<!-- ║  SECTION: DOCKER                 ║ -->
+<!-- ╚══════════════════════════════════╝ -->
+<section class="section" id="docker">
+  <div class="section-header">
+    <span class="section-num">DOCKER</span>
+    <h2>Optimized Dockerfile</h2>
+  </div>
+
+  <p>Your existing Dockerfile is <em>mostly good</em> — multi-stage, non-root user, standalone output. Two issues: it doesn't install a health check, and it copies full <code>node_modules</code> instead of using standalone output properly. Here's the corrected version:</p>
+
+  <div class="alert alert-green">
+    <strong>✓ What your Dockerfile already does right</strong>
+    3-stage build (deps → builder → runner), non-root nextjs user, standalone output, NEXT_TELEMETRY_DISABLED. Keep all of this.
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-filename">Dockerfile — optimized</span><span class="code-lang">Dockerfile</span></div>
+    <pre><span class="cm"># Stage 1: Dependencies</span>
+<span class="kw">FROM</span> node:20-alpine <span class="kw">AS</span> deps
+<span class="kw">WORKDIR</span> /app
+RUN apk add --no-cache libc6-compat
+<span class="kw">COPY</span> package.json package-lock.json ./
+<span class="kw">COPY</span> prisma ./prisma/
+<span class="cm"># Generate Prisma client during install</span>
+RUN npm ci --legacy-peer-deps && npx prisma generate
+
+<span class="cm"># Stage 2: Builder</span>
+<span class="kw">FROM</span> node:20-alpine <span class="kw">AS</span> builder
+<span class="kw">WORKDIR</span> /app
+<span class="kw">COPY</span> --from=deps /app/node_modules ./node_modules
+<span class="kw">COPY</span> . .
+<span class="kw">ENV</span> NEXT_TELEMETRY_DISABLED=1
+<span class="cm"># Build requires these at build-time (non-secret)</span>
+<span class="kw">ARG</span> NEXT_PUBLIC_SITE_URL=https://aurews.id.vn
+<span class="kw">ENV</span> NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
+RUN npm run build
+
+<span class="cm"># Stage 3: Production runner</span>
+<span class="kw">FROM</span> node:20-alpine <span class="kw">AS</span> runner
+<span class="kw">WORKDIR</span> /app
+<span class="kw">ENV</span> NODE_ENV=production
+<span class="kw">ENV</span> NEXT_TELEMETRY_DISABLED=1
+
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+
+<span class="kw">COPY</span> --from=builder /app/public ./public
+<span class="kw">COPY</span> --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+<span class="kw">COPY</span> --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+<span class="kw">USER</span> nextjs
+<span class="kw">EXPOSE</span> 3000
+<span class="kw">ENV</span> PORT=3000
+<span class="kw">ENV</span> HOSTNAME=<span class="str">"0.0.0.0"</span>
+
+<span class="cm"># Health check — crucial for container orchestration</span>
+<span class="kw">HEALTHCHECK</span> --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    <span class="kw">CMD</span> wget -q --spider http://localhost:3000/ || exit 1
+
+<span class="kw">CMD</span> [<span class="str">"node"</span>, <span class="str">"server.js"</span>]</pre>
+  </div>
+
+  <div class="alert alert-amber">
+    <strong>⚠️ Make sure next.config.ts has output: 'standalone'</strong>
+    Without this, the standalone copy in the runner stage will fail silently with an empty directory.
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><span class="code-filename">next.config.ts — required addition</span><span class="code-lang">TypeScript</span></div>
+    <pre><span class="kw">const</span> nextConfig = {
+  output: <span class="str">'standalone'</span>,  <span class="cm">// Required for Docker standalone build</span>
+  <span class="cm">// ... your existing config</span>
+}</pre>
+  </div>
+</section>
+
+<!-- ╔══════════════════════════════════╗ -->
+<!-- ║  SECTION: MONITORING             ║ -->
+<!-- ╚══════════════════════════════════╝ -->
+<section class="section" id="monitoring">
+  <div class="section-header">
+    <span class="section-num">MONITORING</span>
+    <h2>Monitoring Stack for aurews.id.vn</h2>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">🐛</div>
+      <div class="card-title">Sentry — Error Tracking</div>
+      <div class="card-desc">Next.js SDK already pairs with App Router. Track server-side errors from Prisma queries, Auth.js sessions, and edge function crashes. Free tier is enough.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">⏱️</div>
+      <div class="card-title">UptimeRobot — Uptime</div>
+      <div class="card-desc">Monitor aurews.id.vn every 5 minutes. Add separate monitors for /sitemap.xml and /news-sitemap.xml — sitemap outages hurt Google News indexing.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">📊</div>
+      <div class="card-title">Vercel Analytics + Speed Insights</div>
+      <div class="card-desc">Already in your package.json. Enable in Vercel dashboard. Monitor LCP, CLS, FID per page. Article pages need LCP &lt; 2.5s for Google News.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔐</div>
+      <div class="card-title">GitHub Security Alerts</div>
+      <div class="card-desc">Enable Dependabot for auto-PRs on vulnerable deps. Enable Secret Scanning to catch accidentally committed API keys (Cloudinary, Resend, etc).</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔔</div>
+      <div class="card-title">Discord Webhook Channels</div>
+      <div class="card-desc">3 channels recommended: #deploys (deploy success/fail), #security (daily scan alerts), #monitoring (uptime + error spikes). Keeps signal-to-noise clean.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🗺️</div>
+      <div class="card-title">Google Search Console</div>
+      <div class="card-desc">Submit both /sitemap.xml and /news-sitemap.xml. The weekly seo-check workflow validates these before GSC reindexes. Monitor coverage errors.</div>
+    </div>
+  </div>
+
+  <h3>Required GitHub Secrets</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Secret Name</th><th>Where to get it</th><th>Used in</th></tr></thead>
+      <tbody>
+        <tr><td><code>DATABASE_URL</code></td><td>Neon dashboard → Connection string</td><td>CI build, deploy</td></tr>
+        <tr><td><code>DIRECT_URL</code></td><td>Neon dashboard → Direct connection</td><td>Prisma migrations</td></tr>
+        <tr><td><code>NEXTAUTH_SECRET</code></td><td><code>openssl rand -base64 32</code></td><td>CI, deploy</td></tr>
+        <tr><td><code>VERCEL_TOKEN</code></td><td>Vercel → Settings → Tokens</td><td>deploy, preview</td></tr>
+        <tr><td><code>VERCEL_ORG_ID</code></td><td><code>vercel projects ls</code></td><td>deploy, preview</td></tr>
+        <tr><td><code>VERCEL_PROJECT_ID</code></td><td><code>vercel projects ls</code></td><td>deploy, preview</td></tr>
+        <tr><td><code>DISCORD_WEBHOOK_DEPLOY</code></td><td>Discord → Server Settings → Integrations</td><td>deploy.yml</td></tr>
+        <tr><td><code>DISCORD_WEBHOOK_SECURITY</code></td><td>Discord → Server Settings → Integrations</td><td>daily-security.yml</td></tr>
+        <tr><td><code>CODECOV_TOKEN</code></td><td>codecov.io after connecting repo</td><td>ci.yml</td></tr>
+        <tr><td><code>LHCI_GITHUB_APP_TOKEN</code></td><td>Lighthouse CI GitHub App install</td><td>lighthouse.yml</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ╔══════════════════════════════════╗ -->
+<!-- ║  SECTION: ARCHITECTURE           ║ -->
+<!-- ╚══════════════════════════════════╝ -->
+<section class="section" id="architecture">
+  <div class="section-header">
+    <span class="section-num">ARCHITECTURE</span>
+    <h2>Complete Pipeline Architecture</h2>
+  </div>
+
+  <div class="arch">
+<span class="hl-blue">DEVELOPER</span> → git push feature/* or PR to main/develop
+                 │
+                 ▼
+<span class="hl-blue">PHASE 1  VALIDATE</span>    ESLint + tsc --noEmit + Prettier               (~60s)
+                 │ FAIL → block, no further execution
+                 ▼
+<span class="hl-blue">PHASE 2  TEST</span>        Vitest unit + integration tests (mocked DB)     (~90s)
+<span class="hl-blue">PHASE 4  SECURITY</span>    Trivy@0.28 + npm audit + Trufflehog@v3.88       (parallel)
+                 │ FAIL → block deploy, GitHub Security tab alert
+                 ▼
+<span class="hl-amber">PHASE 5  BUILD</span>       npm run build (prisma generate included)         (~120s)
+                      Bundle size delta → PR comment
+                 │
+                 ▼
+<span class="hl-purple">PHASE 6  E2E</span>         Playwright 20 tests against built app           (~60s)
+                      JSON-LD ✓ · sitemaps ✓ · auth ✓ · RBAC ✓
+                 │ FAIL → block PR merge
+                 ▼
+         ┌───────────────────────────────────────┐
+         │  Is this a PR?                        │
+         │  YES ──────────────────────────────── │ ──→ <span class="hl-purple">PHASE 7  PREVIEW</span>
+         │                                       │         Vercel preview URL
+         │  NO (push to main) ─────────────────  │         Playwright smoke on URL
+         └───────────────────────────────────────┘         PR comment with link
+                 │ (only main branch below)
+                 ▼
+<span class="hl-green">PHASE 8  DEPLOY</span>      prisma migrate deploy (Neon)                    (~30s)
+                      Vercel production deployment
+                      Discord #deploys notification
+                 │
+                 ▼
+<span class="hl-green">PHASE 9  VERIFY</span>      Playwright smoke → aurews.id.vn                 (~20s)
+                      Sitemap XML validation
+                      Lighthouse CI (SEO ≥ 95, Perf ≥ 80)
+                 │ FAIL → Discord alert + manual rollback trigger
+                 ▼
+<span class="hl-cyan">PRODUCTION LIVE</span>  aurews.id.vn  ───────────────────────────────────────
+                 │
+                 ▼
+<span class="hl-cyan">PHASE 10 MONITOR</span>     Sentry (errors) · UptimeRobot (uptime)
+                      Vercel Analytics (LCP/CLS/FID)
+                      Daily 2AM: npm audit + Trivy + uptime check
+                      Weekly Mon: Lighthouse audit + sitemap scan
+                      → Discord #security alerts
+  </div>
+</section>
+
+<!-- ╔══════════════════════════════════╗ -->
+<!-- ║  SECTION: TIMELINE               ║ -->
+<!-- ╚══════════════════════════════════╝ -->
+<section class="section" id="timeline">
+  <div class="section-header">
+    <span class="section-num">TIMELINE</span>
+    <h2>7-Day Implementation Plan</h2>
+  </div>
+
+  <div class="timeline-grid">
+    <div class="timeline-card tc-1">
+      <div class="timeline-day">Day 1</div>
+      <div class="timeline-title">Install Test Framework</div>
+      <div class="timeline-items">
+        Install Vitest + RTL + vite-tsconfig-paths<br>
+        Create vitest.config.ts<br>
+        Add test scripts to package.json<br>
+        Write 5 unit tests (sitemap logic)
+      </div>
+    </div>
+    <div class="timeline-card tc-2">
+      <div class="timeline-day">Day 2</div>
+      <div class="timeline-title">Unit Test Coverage</div>
+      <div class="timeline-items">
+        Unit tests: SEO metadata, auth helpers<br>
+        Unit tests: slug utils, date formatting<br>
+        Unit tests: Redis cache helpers<br>
+        Target: 60+ unit tests passing
+      </div>
+    </div>
+    <div class="timeline-card tc-3">
+      <div class="timeline-day">Day 3</div>
+      <div class="timeline-title">Integration Tests</div>
+      <div class="timeline-items">
+        Install MSW for API mocking<br>
+        Integration tests: article page, category<br>
+        Integration tests: API route handlers<br>
+        Integration tests: auth middleware
+      </div>
+    </div>
+    <div class="timeline-card tc-4">
+      <div class="timeline-day">Day 4</div>
+      <div class="timeline-title">Playwright E2E Setup</div>
+      <div class="timeline-items">
+        Install Playwright, chromium<br>
+        Create playwright.config.ts<br>
+        Write smoke.spec.ts (4 tests)<br>
+        Write article-page.spec.ts (JSON-LD)
+      </div>
+    </div>
+    <div class="timeline-card tc-5">
+      <div class="timeline-day">Day 5</div>
+      <div class="timeline-title">Replace CI Workflow</div>
+      <div class="timeline-items">
+        Replace ci.yml with new version<br>
+        Add preview.yml for PR deployments<br>
+        Update deploy.yml (prisma migrate)<br>
+        Test on a PR to verify
+      </div>
+    </div>
+    <div class="timeline-card tc-6">
+      <div class="timeline-day">Day 6</div>
+      <div class="timeline-title">Lighthouse + Security</div>
+      <div class="timeline-items">
+        Add lighthouse.yml workflow<br>
+        Create .lighthouserc.json<br>
+        Replace daily-security.yml<br>
+        Add Trufflehog to CI security job
+      </div>
+    </div>
+    <div class="timeline-card tc-7">
+      <div class="timeline-day">Day 7</div>
+      <div class="timeline-title">Monitoring &amp; Verify</div>
+      <div class="timeline-items">
+        Add all GitHub Secrets<br>
+        Enable Dependabot alerts<br>
+        Verify Discord webhooks fire<br>
+        Full pipeline end-to-end run ✓
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ╔══════════════════════════════════╗ -->
+<!-- ║  SECTION: CHECKLIST              ║ -->
+<!-- ╚══════════════════════════════════╝ -->
+<section class="section" id="checklist">
+  <div class="section-header">
+    <span class="section-num">CHECKLIST</span>
+    <h2>Complete Setup Checklist</h2>
+  </div>
+
+  <h4>📦 Dependencies</h4>
+  <ul class="checklist">
+    <li><span>npm install -D vitest @vitejs/plugin-react jsdom @testing-library/react @testing-library/dom vite-tsconfig-paths</span></li>
+    <li><span>npm install -D @playwright/test && npx playwright install --with-deps chromium</span></li>
+    <li><span>npm install -D msw (for integration test API mocking)</span></li>
+    <li><span>npm install -D @vitest/coverage-v8</span></li>
+  </ul>
+
+  <h4>⚙️ Configuration Files</h4>
+  <ul class="checklist">
+    <li><span>Create vitest.config.ts</span></li>
+    <li><span>Create playwright.config.ts</span></li>
+    <li><span>Create .lighthouserc.json</span></li>
+    <li><span>Add test scripts to package.json (test, test:coverage, test:e2e)</span></li>
+    <li><span>Verify next.config.ts has output: 'standalone'</span></li>
+  </ul>
+
+  <h4>🧪 Test Files to Create</h4>
+  <ul class="checklist">
+    <li><span>src/__tests__/unit/sitemap.test.ts</span></li>
+    <li><span>src/__tests__/unit/seo-metadata.test.ts</span></li>
+    <li><span>src/__tests__/unit/auth-helpers.test.ts</span></li>
+    <li><span>src/__tests__/unit/utils.test.ts</span></li>
+    <li><span>src/__tests__/integration/article-page.test.tsx</span></li>
+    <li><span>src/__tests__/integration/api-routes.test.ts</span></li>
+    <li><span>e2e/smoke.spec.ts</span></li>
+    <li><span>e2e/article-page.spec.ts</span></li>
+    <li><span>e2e/news-sitemap.spec.ts</span></li>
+    <li><span>e2e/auth.spec.ts</span></li>
+  </ul>
+
+  <h4>🔄 GitHub Actions Workflows</h4>
+  <ul class="checklist">
+    <li><span>Replace .github/workflows/ci.yml (remove || true, pin action versions)</span></li>
+    <li><span>Replace .github/workflows/deploy.yml (add prisma migrate, pin vercel action)</span></li>
+    <li><span>Replace .github/workflows/daily-security.yml (pin trivy version)</span></li>
+    <li><span>Create .github/workflows/preview.yml (PR preview deployments)</span></li>
+    <li><span>Create .github/workflows/lighthouse.yml (Core Web Vitals)</span></li>
+  </ul>
+
+  <h4>🔐 GitHub Secrets</h4>
+  <ul class="checklist">
+    <li><span>DATABASE_URL (Neon connection string)</span></li>
+    <li><span>DIRECT_URL (Neon direct for migrations)</span></li>
+    <li><span>NEXTAUTH_SECRET (32-char random string)</span></li>
+    <li><span>VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID</span></li>
+    <li><span>DISCORD_WEBHOOK_DEPLOY, DISCORD_WEBHOOK_SECURITY</span></li>
+    <li><span>CODECOV_TOKEN (from codecov.io)</span></li>
+    <li><span>LHCI_GITHUB_APP_TOKEN (Lighthouse CI app)</span></li>
+  </ul>
+
+  <h4>📊 Monitoring Setup</h4>
+  <ul class="checklist">
+    <li><span>Enable Sentry for Next.js (npx @sentry/wizard@latest -i nextjs)</span></li>
+    <li><span>Setup UptimeRobot: aurews.id.vn, /sitemap.xml, /news-sitemap.xml</span></li>
+    <li><span>Enable Vercel Analytics + Speed Insights in Vercel dashboard</span></li>
+    <li><span>Enable GitHub Dependabot security alerts</span></li>
+    <li><span>Submit sitemaps to Google Search Console</span></li>
+  </ul>
+
+  <div class="alert alert-green" style="margin-top:2rem;">
+    <strong>✓ Expected Pipeline Performance</strong>
+    Full CI (P1–P6): ~6 minutes. Preview deploy (P7): +3 min. Production deploy + verify (P8–P9): +4 min.
+    Total time from push to production: ~13 minutes with full test coverage and security scanning.
+  </div>
+</section>
+
+</div><!-- /container -->
+
+<footer>
+  <h3>AUREWS DevOps Pipeline v2</h3>
+  <p>Optimized CI/CD · 10-Phase Pipeline · Vitest + Playwright · Lighthouse CI · Preview Deployments · Prisma Migrations</p>
+  <p style="margin-top:.5rem;font-family:var(--mono);font-size:.7rem;">
+    Next.js 16 · TypeScript · Prisma · Neon · Auth.js · Cloudinary · Upstash · Vercel · GitHub Actions
+  </p>
+</footer>
+
+</body>
+</html>

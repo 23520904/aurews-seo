@@ -8,7 +8,7 @@ const REFRESH_TOKEN_SECRET = new TextEncoder().encode(
   (process.env.NEXTAUTH_SECRET || "refresh-secret-fallback") + "-refresh"
 );
 
-export async function generateAccessToken(payload: any) {
+export async function generateAccessToken(payload: { id: string, email: string, role?: string }) {
   return await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
@@ -16,7 +16,7 @@ export async function generateAccessToken(payload: any) {
     .sign(ACCESS_TOKEN_SECRET);
 }
 
-export async function generateRefreshToken(payload: any) {
+export async function generateRefreshToken(payload: { id: string, email: string, role?: string }) {
   const refreshToken = await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
@@ -33,7 +33,7 @@ export async function verifyAccessToken(token: string) {
   try {
     const { payload } = await jwtVerify(token, ACCESS_TOKEN_SECRET);
     return payload;
-  } catch (error) {
+  } catch {
     return null;
   }
 }
@@ -47,7 +47,7 @@ export async function verifyRefreshToken(token: string) {
     if (storedToken !== token) return null;
 
     return payload;
-  } catch (error) {
+  } catch {
     return null;
   }
 }

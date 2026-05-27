@@ -1,12 +1,14 @@
 # 📰 Aurews — Premium Tech & Editorial News Platform
 
+[![codecov](https://codecov.io/gh/23520904/aurews-seo/branch/main/graph/badge.svg)](https://codecov.io/gh/23520904/aurews-seo)
+
 **Aurews** is a next-generation news and editorial platform inspired by the premium **WIRED design system**. Built with **Next.js 16 (App Router)**, **TypeScript**, and **Prisma**, it represents a production-grade, highly optimized, and SEO-maximized web application tailored for lightning-fast delivery and rich reader engagement.
 
 ---
 
 ## 🌟 Executive Overview
 
-Aurews is engineered to bridge the gap between high-end editorial aesthetics and state-of-the-art web performance. Features range from dynamic structured metadata (JSON-LD schemas) to interactive social sharing modules that adapt to native mobile device drawer APIs. The backend is designed for serverless architectures (optimized for **Vercel Edge & Serverless runtimes**), integrating Neon Serverless PostgreSQL and connection-pooled Prisma querying.
+Aurews is engineered to bridge the gap between high-end editorial aesthetics and state-of-the-art web performance. Features range from dynamic structured metadata (JSON-LD schemas) to interactive social sharing modules that adapt to native mobile device drawer APIs. The backend is designed for serverless architectures (optimized for **Vercel Edge & Serverless runtimes**), integrating Supabase PostgreSQL (via Supavisor Connection Pooler) and connection-pooled Prisma querying.
 
 ---
 
@@ -17,7 +19,7 @@ Aurews is engineered to bridge the gap between high-end editorial aesthetics and
 | **Core Framework** | Next.js 16.2.6 (App Router) | High-performance Server-Side Rendering (SSR) & Incremental Static Regeneration (ISR) |
 | **Language** | TypeScript (Strict Mode) | Strong compile-time contract checking & SSR crash prevention |
 | **Styling** | Vanilla CSS Variable Tokens | Premium typography, HSL tailored palettes, and liquid responsive grids |
-| **Database** | Serverless PostgreSQL (Neon DB) | Edge-compatible persistent relational storage |
+| **Database** | Supabase PostgreSQL DB | Edge-compatible persistent relational storage |
 | **ORM** | Prisma Client (v7.8.0) | Type-safe schema definitions and dynamic relational queries |
 | **Authentication** | Auth.js (NextAuth v5 Beta) | Secure role-based gateways and session management |
 | **Performance** | Vercel Speed Insights & Analytics | Core Web Vitals monitor tracking and telemetry |
@@ -36,7 +38,7 @@ graph TD
     Pages[Server/Client Components]
     APIs[REST Edge endpoints]
     Prisma[Prisma ORM Layer]
-    Neon[Neon Serverless PostgreSQL]
+    Supabase[Supabase PostgreSQL]
 
     Client -->|HTTP Request| Router
     Router --> Auth
@@ -44,7 +46,7 @@ graph TD
     Router --> APIs
     Pages --> Prisma
     APIs --> Prisma
-    Prisma -->|Pooled Query| Neon
+    Prisma -->|Pooled Query| Supabase
 ```
 
 ### Database Entities (`schema.prisma`)
@@ -119,7 +121,7 @@ Google Search Console (GSC) enforces strict rules on News Sitemaps (`news-sitema
 sequenceDiagram
     participant Googlebot as GSC Crawler / Googlebot
     participant Route as news-sitemap.xml Handler
-    participant DB as Neon PostgreSQL DB
+    participant DB as Supabase PostgreSQL DB
 
     Googlebot->>Route: GET /news-sitemap.xml
     Route->>DB: Query posts published in last 48 hours
@@ -168,7 +170,7 @@ aurews/
 
 ### Prerequisites
 - **Node.js**: `v20` LTS
-- **Database**: PostgreSQL (e.g. Neon serverless instance)
+- **Database**: PostgreSQL (e.g. Supabase instance)
 
 ### 1. Clone the repository and install dependencies
 ```bash

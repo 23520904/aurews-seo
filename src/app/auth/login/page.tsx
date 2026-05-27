@@ -4,12 +4,10 @@ import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { login } from "@/lib/actions/auth";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
   async function handleSubmit(formData: FormData) {
     setLoading(true);

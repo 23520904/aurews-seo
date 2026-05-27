@@ -3,7 +3,6 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 export async function createPost(formData: FormData) {
   const session = await auth();
@@ -15,7 +14,7 @@ export async function createPost(formData: FormData) {
   const slug = formData.get("slug") as string || title.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
   const body = formData.get("body") as string;
   const categoryId = formData.get("categoryId") as string;
-  const status = (formData.get("status") as any) || "DRAFT";
+  const status = (formData.get("status") as "PUBLISHED" | "DRAFT") || "DRAFT";
   const coverImage = formData.get("coverImage") as string || null;
 
   if (!title || !body || !categoryId) {
@@ -55,7 +54,7 @@ export async function updatePost(id: string, formData: FormData) {
   const title = formData.get("title") as string;
   const body = formData.get("body") as string;
   const categoryId = formData.get("categoryId") as string;
-  const status = (formData.get("status") as any) || "DRAFT";
+  const status = (formData.get("status") as "PUBLISHED" | "DRAFT") || "DRAFT";
   const coverImage = formData.get("coverImage") as string;
 
   if (!title || !body || !categoryId) {
@@ -106,7 +105,7 @@ export async function deletePost(id: string) {
   }
 }
 
-export async function bulkCreatePosts(postsData: any[]) {
+export async function bulkCreatePosts(postsData: { slug?: string, title: string, body: string, excerpt?: string, coverImage?: string, categoryId: string, status?: "PUBLISHED" | "DRAFT" }[]) {
   const session = await auth();
   if (!session || !session.user?.id) {
     throw new Error("Unauthorized");
@@ -152,8 +151,8 @@ export async function bulkCreatePosts(postsData: any[]) {
     revalidatePath("/dashboard");
     
     return { success: true, count: results.length };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Bulk creation failed:", error);
-    return { error: `Bulk creation failed: ${error.message || "Possible slug duplication or invalid category ID"}` };
+    return { error: `Bulk creation failed: ${error instanceof Error ? error.message : "Possible slug duplication or invalid category ID"}` };
   }
 }

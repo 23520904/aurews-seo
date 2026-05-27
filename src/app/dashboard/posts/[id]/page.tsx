@@ -31,7 +31,7 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
           Edit Entry
         </h1>
         <p className="wired-mono" style={{ fontSize: '11px', color: 'var(--caption-gray)', marginTop: '8px' }}>
-          ID: {post.id} // STATUS: {post.status}
+          ID: {post.id} {'//'} STATUS: {post.status}
         </p>
       </header>
 

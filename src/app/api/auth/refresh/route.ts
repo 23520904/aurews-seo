@@ -20,14 +20,15 @@ export async function POST(request: Request) {
 
     // Generate new pair (Refresh Token Rotation)
     // First, remove the old one (logic inside generateRefreshToken handles overwriting/expiry)
-    const newAccessToken = await generateAccessToken({ id: payload.id, email: payload.email, role: payload.role });
-    const newRefreshToken = await generateRefreshToken({ id: payload.id, email: payload.email, role: payload.role });
+    const p = payload as { id: string, email: string, role?: string };
+    const newAccessToken = await generateAccessToken(p);
+    const newRefreshToken = await generateRefreshToken(p);
 
     return NextResponse.json({
       accessToken: newAccessToken,
       refreshToken: newRefreshToken
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

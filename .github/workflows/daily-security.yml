@@ -1,0 +1,72 @@
+name: Daily Security Scan
+on:
+  schedule: [{cron: '0 2 * * *'}]
+  workflow_dispatch:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20', cache: 'npm' }
+      - run: npm ci
+
+      # ── 1. KIỂM TRA NPM AUDIT (Đã tối ưu chạy 1 lần) ──
+      - name: npm audit
+        id: audit
+        continue-on-error: true
+        run: |
+          npm audit --json > audit_results.json || true
+          VULN=$(jq '.metadata.vulnerabilities.total // 0' audit_results.json)
+          HIGH=$(jq '.metadata.vulnerabilities.high // 0' audit_results.json)
+          CRIT=$(jq '.metadata.vulnerabilities.critical // 0' audit_results.json)
+          
+          echo "VULN_COUNT=$VULN" >> $GITHUB_OUTPUT
+          echo "HIGH_COUNT=$HIGH" >> $GITHUB_OUTPUT
+          echo "CRIT_COUNT=$CRIT" >> $GITHUB_OUTPUT
+
+      # ── 2. KIỂM TRA TRIVY SCAN ──
+      - name: Trivy scan
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          severity: 'CRITICAL,HIGH'
+          format: 'json'
+          output: 'trivy.json'
+        continue-on-error: true
+
+      # ── 3. KIỂM TRA UPTIME WEBSITE ──
+      - name: Check uptime
+        id: uptime
+        run: |
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://aurews.id.vn)
+          echo "HTTP_STATUS=$HTTP_CODE" >> $GITHUB_OUTPUT
+
+      # ── 4. GỬI ALERT QUA DISCORD NẾU CÓ BẤT KỲ VẤN ĐỀ GÌ (Đã sửa lỗi so sánh số) ──
+      - name: Discord alert if issues
+        if: |
+          always() && (
+            fromJSON(steps.audit.outputs.HIGH_COUNT) > 0 || 
+            fromJSON(steps.audit.outputs.CRIT_COUNT) > 0 || 
+            steps.uptime.outputs.HTTP_STATUS != '200'
+          )
+        run: |
+          MESSAGE="🚨 **Hệ thống phát hiện bất thường ngày $(date +'%d/%m/%Y')**:\n"
+          
+          # Kiểm tra Uptime
+          if [ "${{ steps.uptime.outputs.HTTP_STATUS }}" != "200" ]; then
+            MESSAGE="$MESSAGE ⚠️ Website sập hoặc lỗi! Mã phản hồi: **${{ steps.uptime.outputs.HTTP_STATUS }}**\n"
+          else
+            MESSAGE="$MESSAGE ✅ Website hoạt động bình thường (200 OK)\n"
+          fi
+          
+          # Kiểm tra Bảo mật npm
+          if [ ${{ steps.audit.outputs.HIGH_COUNT }} -gt 0 ] || [ ${{ steps.audit.outputs.CRIT_COUNT }} -gt 0 ]; then
+            MESSAGE="$MESSAGE 🔐 Lỗ hổng npm: **${{ steps.audit.outputs.CRIT_COUNT }}** CRITICAL, **${{ steps.audit.outputs.HIGH_COUNT }}** HIGH (Tổng số: ${{ steps.audit.outputs.VULN_COUNT }})\n"
+          fi
+          
+          curl -X POST ${{ secrets.DISCORD_WEBHOOK_SECURITY }} \
+            -H 'Content-Type: application/json' \
+            -d "{\"content\":\"$MESSAGE\"}"

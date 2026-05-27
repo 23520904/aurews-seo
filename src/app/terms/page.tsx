@@ -56,7 +56,7 @@ export default function TermsPage() {
 
           <h2 className="wired-display" style={{ fontSize: '32px', margin: '64px 0 24px' }}>04. LIMITATION OF LIABILITY</h2>
           <p>
-            Aurews is provided "as-is." We do not guarantee 100% archival uptime during system refactoring or database migrations. We are not liable for any intellectual damage resulting from the consumption of our "Brutalist" design patterns.
+            Aurews is provided &quot;as-is.&quot; We do not guarantee 100% archival uptime during system refactoring or database migrations. We are not liable for any intellectual damage resulting from the consumption of our &quot;Brutalist&quot; design patterns.
           </p>
 
           <div style={{ marginTop: '80px', padding: '40px', border: '2px solid var(--wired-black)', background: 'var(--wired-black)', color: 'white' }}>

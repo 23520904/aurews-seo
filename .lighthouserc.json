@@ -1,0 +1,17 @@
+{
+  "ci": {
+    "collect": {
+      "url": [
+        "https://aurews.id.vn",
+        "https://aurews.id.vn/article/ai-news-2026-the-hardware-revolution"
+      ]
+    },
+    "assert": {
+      "assertions": {
+        "categories:performance": ["warn", {"minScore": 0.8}],
+        "categories:seo": ["error", {"minScore": 0.95}],
+        "categories:accessibility": ["warn", {"minScore": 0.85}]
+      }
+    }
+  }
+}

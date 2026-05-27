@@ -26,7 +26,7 @@ export default function BulkImportForm() {
         setJsonInput("");
         router.refresh();
       }
-    } catch (e: any) {
+    } catch {
       setMessage({ type: 'error', text: "Data validation failed: Invalid JSON format." });
     } finally {
       setIsPending(false);

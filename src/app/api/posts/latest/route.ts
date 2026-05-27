@@ -1,5 +1,6 @@
 import { ok, withErrorHandler } from "@/lib/api-response";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 
 export const GET = withErrorHandler(async (req: Request) => {
   const { searchParams } = new URL(req.url);
@@ -7,10 +8,10 @@ export const GET = withErrorHandler(async (req: Request) => {
   const limit = Math.min(Number(searchParams.get('limit')) || 10, 50);
   const categorySlug = searchParams.get('category');
 
-  const where: any = { status: 'PUBLISHED' };
-  if (categorySlug) {
-    where.category = { slug: categorySlug };
-  }
+  const where: Prisma.PostWhereInput = {
+    status: 'PUBLISHED',
+    ...(categorySlug ? { category: { slug: categorySlug } } : {})
+  };
 
   const posts = await prisma.post.findMany({
     take: limit + 1,              // overfetch by 1 to detect hasMore

@@ -1,0 +1,114 @@
+name: Preview Deployment (PR)
+on:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20', cache: 'npm' }
+      - run: npm ci
+
+      # ── 1. DEPLOY LÊN VERCEL PREVIEW ──
+      - name: Deploy Preview to Vercel
+        id: vercel-preview
+        uses: amondnet/vercel-action@v25.2.0
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./
+
+      # ── 2. ĐƯA LINK PREVIEW LÊN PR TRƯỚC (ĐÃ SỬA: Sửa lỗi cú pháp + Tránh trùng lặp comment) ──
+      - name: Comment or Update preview URL on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const previewUrl = "${{ steps.vercel-preview.outputs.preview-url }}";
+            const bodyText = `🚀 **Preview URL:** [${previewUrl}](${previewUrl})\n\n⏳ *Smoke tests đang chạy ngầm...*`;
+            
+            // Tìm xem Bot đã từng bình luận ở PR này chưa
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            
+            const botComment = comments.find(comment => 
+              comment.user.type === 'Bot' && comment.body.includes('Preview URL:')
+            );
+            
+            if (botComment) {
+              // Nếu có rồi thì cập nhật nội dung
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: bodyText
+              });
+            } else {
+              // Nếu chưa có thì tạo mới hoàn toàn
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: bodyText
+              });
+            }
+
+      # ── 3. CHẠY SMOKE TEST ──
+      - name: Run smoke tests on preview
+        env:
+          PLAYWRIGHT_BASE_URL: ${{ steps.vercel-preview.outputs.preview-url }}
+        run: |
+          npx playwright install --with-deps chromium
+          npx playwright test e2e/smoke.spec.ts
+
+      # ── 4. CẬP NHẬT TRẠNG THÁI TEST THÀNH CÔNG VÀO COMMENT CŨ ──
+      - name: Update comment on success
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const previewUrl = "${{ steps.vercel-preview.outputs.preview-url }}";
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const botComment = comments.find(comment => comment.user.type === 'Bot' && comment.body.includes('Preview URL:'));
+            
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: `🚀 **Preview URL:** [${previewUrl}](${previewUrl})\n\n✅ **Smoke tests passed hoàn toàn!**`
+              });
+            }
+
+      # ── 5. CẬP NHẬT TRẠNG THÁI TEST THẤT BẠI VÀO COMMENT CŨ ──
+      - name: Update comment on failure
+        if: failure() && steps.vercel-preview.outcome == 'success'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const previewUrl = "${{ steps.vercel-preview.outputs.preview-url }}";
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const botComment = comments.find(comment => comment.user.type === 'Bot' && comment.body.includes('Preview URL:'));
+            
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: `🚀 **Preview URL:** [${previewUrl}](${previewUrl})\n\n❌ **Smoke tests đã bị thất bại!** Vui lòng kiểm tra lại log hệ thống.`
+              });
+            }
