@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { buildArticleJsonLd } from '@/lib/seo'
+import { BASE_URL } from '@/lib/constants'
 
 const mockPost = {
   title: 'AI Regulation 2026',
@@ -18,11 +19,9 @@ describe('Article JSON-LD Schema', () => {
     expect(ld['@type']).toBe('NewsArticle')
   })
 
-  it('canonical mainEntityOfPage uses production domain (not localhost)', () => {
+  it('canonical mainEntityOfPage uses configured BASE_URL and slug', () => {
     const ld = buildArticleJsonLd(mockPost)
-    expect(ld.mainEntityOfPage).toContain('aurews.id.vn')
-    expect(ld.mainEntityOfPage).not.toContain('localhost')
-    expect(ld.mainEntityOfPage).toContain('/article/ai-regulation-2026')
+    expect(ld.mainEntityOfPage).toBe(`${BASE_URL}/article/ai-regulation-2026`)
   })
 
   it('datePublished is ISO 8601 format', () => {
