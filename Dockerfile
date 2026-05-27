@@ -34,12 +34,12 @@ RUN addgroup --system --gid 1001 nodejs && \
 COPY --from=builder --chmod=555 /app/public ./public
 
 # Sao chép gói Standalone đã được Next.js gom gọn
-COPY --from=builder --chown=nextjs:nodejs --chmod=555 /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs --chmod=555 /app/.next/static ./.next/static
+COPY --from=builder --chown=root:root --chmod=555 /app/.next/standalone ./
+COPY --from=builder --chown=root:root --chmod=555 /app/.next/static ./.next/static
 
 # SỬA: Copy bắt buộc thư viện Prisma Client sang môi trường production để tránh lỗi kết nối DB
-COPY --from=builder --chown=nextjs:nodejs --chmod=555 /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder --chown=nextjs:nodejs --chmod=555 /app/node_modules/@prisma/client ./node_modules/@prisma/client
+COPY --from=builder --chown=root:root --chmod=555 /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder --chown=root:root --chmod=555 /app/node_modules/@prisma/client ./node_modules/@prisma/client
 
 USER nextjs
 EXPOSE 3000
