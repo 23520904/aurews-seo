@@ -4,7 +4,7 @@ import { describe, it, expect } from 'vitest'
 function generateSlug(title: string): string {
   return title
     .toLowerCase()
-    .replace(/ /g, '-')
+    .replaceAll(' ', '-')
     .replace(/[^\w-]+/g, '')
 }
 

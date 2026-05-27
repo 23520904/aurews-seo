@@ -37,8 +37,9 @@ test.describe('Article Page — SEO critical paths', () => {
 
     const ld = await ldScript.textContent()
     expect(ld).toBeTruthy()
+    if (!ld) throw new Error('JSON-LD script textContent is null')
 
-    const schema = JSON.parse(ld!)
+    const schema = JSON.parse(ld)
     expect(schema['@type']).toBe('NewsArticle')
   })
 

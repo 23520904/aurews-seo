@@ -24,10 +24,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# SỬA: Cài đặt libc6-compat cho Prisma và curl cho lệnh HEALTHCHECK
-RUN apk add --no-cache libc6-compat curl
-
-RUN addgroup --system --gid 1001 nodejs && \
+# SỬA: Cài đặt libc6-compat cho Prisma, curl cho lệnh HEALTHCHECK, cấu hình user/group
+RUN apk add --no-cache libc6-compat curl && \
+    addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
 # Copy tài nguyên tĩnh công khai

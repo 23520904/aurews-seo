@@ -38,12 +38,13 @@ export function buildArticleJsonLd(post: ArticleJsonLdInput): ArticleJsonLd {
     post.createdAt instanceof Date
       ? post.createdAt
       : new Date(post.createdAt);
-  const updatedAt =
-    post.updatedAt
-      ? post.updatedAt instanceof Date
+  let updatedAt = createdAt;
+  if (post.updatedAt) {
+    updatedAt =
+      post.updatedAt instanceof Date
         ? post.updatedAt
-        : new Date(post.updatedAt)
-      : createdAt;
+        : new Date(post.updatedAt);
+  }
 
   return {
     '@context': 'https://schema.org',

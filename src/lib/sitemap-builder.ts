@@ -29,11 +29,11 @@ export function buildNewsSitemap(
         a.createdAt instanceof Date ? a.createdAt : new Date(a.createdAt);
 
       const safeTitle = a.title
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&apos;');
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&apos;');
 
       return `  <url>
     <loc>${BASE_URL}/article/${a.slug}</loc>

@@ -58,9 +58,10 @@ jobs:
         if: always()
         env:
           DISCORD_WEBHOOK_DEPLOY: ${{ secrets.DISCORD_WEBHOOK_DEPLOY }}
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
         run: |
           STATUS="✅ Deployed"
           [ "${{ job.status }}" != "success" ] && STATUS="❌ Deploy failed"
           curl -X POST "$DISCORD_WEBHOOK_DEPLOY" \
             -H 'Content-Type: application/json' \
-            -d "{\"content\":\"$STATUS — commit ${{ github.sha }} — ${{ github.event.head_commit.message }}\"}"
+            -d "{\"content\":\"$STATUS — commit ${{ github.sha }} — $COMMIT_MSG\"}"

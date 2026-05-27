@@ -24,6 +24,21 @@ export default function Page() {
     checkConnectivity();
   }, []);
 
+  let statusMessage = <div className="success_placeholder" />;
+  if (hasSentError) {
+    statusMessage = <p className="success">Error sent to Sentry.</p>;
+  } else if (!isConnected) {
+    statusMessage = (
+      <div className="connectivity-error">
+        <p>
+          It looks like network requests to Sentry are being blocked, which
+          will prevent errors from being captured. Try disabling your
+          ad-blocker to complete the test.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div>
       <Head>
@@ -64,8 +79,7 @@ export default function Page() {
             href="https://docs.sentry.io/platforms/javascript/guides/nextjs/"
           >
             read our docs
-          </a>
-          .
+          </a>.
         </p>
 
         <button
@@ -93,19 +107,7 @@ export default function Page() {
           <span>Throw Sample Error</span>
         </button>
 
-        {hasSentError ? (
-          <p className="success">Error sent to Sentry.</p>
-        ) : !isConnected ? (
-          <div className="connectivity-error">
-            <p>
-              It looks like network requests to Sentry are being blocked, which
-              will prevent errors from being captured. Try disabling your
-              ad-blocker to complete the test.
-            </p>
-          </div>
-        ) : (
-          <div className="success_placeholder" />
-        )}
+        {statusMessage}
 
         <div className="flex-spacer" />
       </main>
