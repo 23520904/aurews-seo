@@ -306,3 +306,62 @@ npm run test
 # 4. Run local Playwright E2E tests
 npx playwright test
 ```
+
+---
+
+## ⚙️ Integrations & Manual Setup Registry
+
+To ensure full operational visibility and compliance with the production pipeline specifications, Aurews integrates multiple core services. The step-by-step registration guides can be found in the [Manual Setup Guide](./docs/MANUAL_SETUP_GUIDE.md). Below is the operational overview of these integrations.
+
+### 🔐 1. GitHub Secrets Registry (Completed)
+The CI/CD workflows rely on **10 key repository secrets** configured under **Settings ➡️ Secrets and variables ➡️ Actions**:
+*   `DATABASE_URL`: Supabase Connection Pooler string (port `6543` via Supavisor with `?pgbouncer=true`) for active client queries.
+*   `DIRECT_URL`: Supabase Direct Session connection string (port `5432`) used by Prisma to run schema migrations in `deploy.yml`.
+*   `NEXTAUTH_SECRET`: Base64 key generated via openssl to secure user authorization sessions.
+*   `VERCEL_TOKEN`: Vercel automation token to build and deploy preview and production builds.
+*   `VERCEL_ORG_ID` & `VERCEL_PROJECT_ID`: Unique Vercel account and project routing IDs.
+*   `DISCORD_WEBHOOK_DEPLOY`: Channel hook for rolling build and deploy notifications in `#deploys`.
+*   `DISCORD_WEBHOOK_SECURITY`: Channel hook for critical Trufflehog/Trivy findings and uptime reports in `#security`.
+*   `CODECOV_TOKEN`: Repository upload token to upload and track test coverage reports.
+*   `LHCI_GITHUB_APP_TOKEN`: Lighthouse status checker hook to print mobile scores directly inside PR panels.
+
+---
+
+### 🛡️ 2. Sentry Next.js Error Monitoring
+Aurews is fully wired with the Sentry Next.js SDK to catch and log runtime errors across client, server, and edge runtimes:
+*   **Initialization**: Configured client (`sentry.client.config.ts`), server (`sentry.server.config.ts`), and edge (`sentry.edge.config.ts`) environments.
+*   **Environment Variables**:
+    *   `NEXT_PUBLIC_SENTRY_DSN`: Set in Vercel environment variables to direct errors to your Sentry dashboard.
+    *   `SENTRY_AUTH_TOKEN`: Saved in GitHub Secrets. Enables the Next.js compiler to build and securely upload production sourcemaps to Sentry for exact stack trace debugging.
+
+---
+
+### 📊 3. Codecov (E2E Test Coverage)
+Code coverage metrics are automatically computed and monitored:
+*   **Flow**: On every pull request, the Vitest test job computes the full file line coverage via `vitest run --coverage`.
+*   **Reporting**: Automatically uploads code coverage files to Codecov using `CODECOV_TOKEN`, generating status graphs directly within pull request review panels.
+
+---
+
+### 🚨 4. UptimeRobot Uptime Alerting (Homepage & Sitemaps)
+Ensures your site is online and responsive 24/7. Three separate monitors check the application's core endpoints every **5 minutes**:
+1.  **Homepage Monitor**: Checks `https://aurews.id.vn` to verify client-side load states.
+2.  **Sitemap Monitor**: Checks `https://aurews.id.vn/sitemap.xml` to ensure main crawler routes are accessible.
+3.  **News Sitemap Monitor**: Checks `https://aurews.id.vn/news-sitemap.xml` to prevent index disruptions on Google News.
+*   **Discord Webhook Hook**: Connected directly to the `DISCORD_WEBHOOK_SECURITY` webhook, pushing active server down/up status alerts straight to your Discord channel.
+
+---
+
+### 🔍 5. Google Search Console & XML Sitemap indexing
+Fully configured to ensure maximum editorial discoverability and high SEO crawling efficiency:
+*   **Ownership Verification**: Confirmed via the GSC HTML head verification tag defined inside the root `layout.tsx` metadata.
+*   **Crawl Paths Submitted**: Both dynamic sitemaps submitted under **GSC Dashboard ➡️ Sitemaps**:
+    *   `/sitemap.xml` (main site indexes)
+    *   `/news-sitemap.xml` (GSC news crawling compliant with the 48-hour publishing window)
+
+---
+
+### ⚡ 6. Vercel Analytics & Speed Insights
+Core Web Vitals are tracked natively on actual production traffic without heavy external client-side bundles:
+*   **Status**: Activated directly inside the **Vercel Project Dashboard ➡️ Analytics** and **Speed Insights** panels. Real-time visual metrics (LCP, FID, CLS, and page views) start flowing immediately.
+
