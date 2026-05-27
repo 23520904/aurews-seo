@@ -28,7 +28,7 @@ jobs:
 
       # ── 2. KIỂM TRA TRIVY SCAN ──
       - name: Trivy scan
-        uses: aquasecurity/trivy-action@v0.28.0
+        uses: aquasecurity/trivy-action@915b19bbe73b92a6cf82a1bc12b087c9a19a5fe2 # v0.28.0
         with:
           scan-type: 'fs'
           scan-ref: '.'
@@ -52,6 +52,8 @@ jobs:
             fromJSON(steps.audit.outputs.CRIT_COUNT) > 0 || 
             steps.uptime.outputs.HTTP_STATUS != '200'
           )
+        env:
+          DISCORD_WEBHOOK_SECURITY: ${{ secrets.DISCORD_WEBHOOK_SECURITY }}
         run: |
           MESSAGE="🚨 **Hệ thống phát hiện bất thường ngày $(date +'%d/%m/%Y')**:\n"
           
@@ -67,6 +69,6 @@ jobs:
             MESSAGE="$MESSAGE 🔐 Lỗ hổng npm: **${{ steps.audit.outputs.CRIT_COUNT }}** CRITICAL, **${{ steps.audit.outputs.HIGH_COUNT }}** HIGH (Tổng số: ${{ steps.audit.outputs.VULN_COUNT }})\n"
           fi
           
-          curl -X POST ${{ secrets.DISCORD_WEBHOOK_SECURITY }} \
+          curl -X POST "$DISCORD_WEBHOOK_SECURITY" \
             -H 'Content-Type: application/json' \
             -d "{\"content\":\"$MESSAGE\"}"

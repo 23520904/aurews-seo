@@ -24,7 +24,7 @@ jobs:
       # ── Vercel deploy ──
       - name: Deploy to Vercel
         id: deploy
-        uses: amondnet/vercel-action@v25.2.0  # PINNED
+        uses: amondnet/vercel-action@16e87c0a08142b0d0d33b76aeaf20823c381b9b9 # v25.2.0
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
@@ -55,9 +55,11 @@ jobs:
       # ── Discord notification ──
       - name: Notify Discord
         if: always()
+        env:
+          DISCORD_WEBHOOK_DEPLOY: ${{ secrets.DISCORD_WEBHOOK_DEPLOY }}
         run: |
           STATUS="✅ Deployed"
           [ "${{ job.status }}" != "success" ] && STATUS="❌ Deploy failed"
-          curl -X POST ${{ secrets.DISCORD_WEBHOOK_DEPLOY }} \
+          curl -X POST "$DISCORD_WEBHOOK_DEPLOY" \
             -H 'Content-Type: application/json' \
             -d "{\"content\":\"$STATUS — commit ${{ github.sha }} — ${{ github.event.head_commit.message }}\"}"
