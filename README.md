@@ -209,7 +209,7 @@ The production compiler executes standalone package bundling optimization, runs 
 
 ## 🚀 DevOps & CI/CD Pipeline Architecture
 
-Aurews features a production-grade, highly automated DevOps ecosystem designed for continuous validation, security scanning, and seamless deployments. All checks are fully coordinated via GitHub Actions.
+Aurews features a production-grade, highly optimized, and automated DevOps ecosystem designed for continuous validation, strict security scanning, and seamless zero-downtime CD deployments.
 
 ### 🌐 Pipeline Map & Trigger Events
 
@@ -226,72 +226,73 @@ graph TD
 
 ---
 
-### 1. CI Pipeline (`ci.yml`)
-* **Trigger**: Every Pull Request and push to `main` or `develop`.
-* **Jobs Executed**:
-  1. **Validate**: Runs strict lint checks (`npm run lint`) and TypeScript type-checking (`tsc --noEmit`).
-  2. **Test**: Runs the entire Vitest test suite (`npm run test:coverage`) compiling 37/37 unit/integration tests with SQLite. Uploads coverage data directly to Codecov.
-  3. **Security**:
-     * Runs a file system security audit with **Trufflehog** to block any accidental secrets or hardcoded credentials.
-     * Runs a multi-stage **Trivy** scan (`aquasecurity/trivy-action@v0.35.0`) to catch high/critical library CVEs.
-     * Runs a dependency vulnerability check with `npm audit`.
-  4. **Build**: Builds a production Next.js standalone artifact to guarantee compile success before E2E testing.
-  5. **E2E**: Downloads the Next.js build artifact and runs the complete 10/10 file Playwright test suite (`npx playwright test`) inside the isolated virtual runner.
+### 🛡️ Audited Gaps Resolved vs. Optimized Solution
+
+During our deep devops audit of the repository, we identified and resolved several critical production risks to deliver a flawless, high-stability deployment posture:
+
+| ❌ Old Pipeline (Critical Gaps) | ✅ Rebuilt & Optimized Solution |
+| :--- | :--- |
+| **No test runner or framework** in the codebase. | **Vitest (Unit/Integration)** and **Playwright (E2E)** fully integrated. |
+| **`npm run test \|\| true`** was used, silently ignoring test failures and deploying broken code. | Test failures **strictly block** all downstream build and deploy pipelines. |
+| **Unpinned actions** (`trivy-action@master`, `vercel-action@master`) causing supply-chain vulnerability. | All GitHub Actions pinned to **secure, immutable release SHAs**. |
+| **No database migrations** in CD, risking runtime crashes on Prisma schema changes. | Automatically triggers **`prisma migrate deploy`** before deployment via `deploy.yml`. |
+| **No preview environments** for Pull Requests, making QA and visual verification impossible. | Auto-deploys every PR to a unique **Vercel Preview URL** with commenting automation. |
+| **No automated E2E tests**, risking critical user journey and sitemap breakages. | Playwright **runs 10/10 E2E spec files** verifying JSON-LD, auth, sitemaps, and pages. |
+| **No security gating** or secret detection in git pushes. | Integrates **Trivy filesystem scans**, **Trufflehog secrets detection**, and **`npm audit`**. |
+| **No Core Web Vitals checks**, risking Google Search Console / Google News de-indexing. | **Lighthouse CI** automatically audits site metrics (SEO $\ge$ 0.95, Perf $\ge$ 0.80, A11y $\ge$ 0.85). |
 
 ---
 
-### 2. PR Preview Deployment (`preview.yml`)
-* **Trigger**: Every Pull Request targeted at `main` or `develop`.
-* **Flow & Features**:
-  1. **Vercel Deploy**: Leverages `@amondnet/vercel-action` to build and deploy a unique preview instance on Vercel.
-  2. **PR Comment Upsert**: A Github-script comments the preview URL on the PR page. It dynamically updates the card status (e.g. `⏳ Smoke tests running...` ➡️ `✅ Smoke tests passed!`) on subsequent runs to prevent comment spam.
-  3. **Automated Bypass E2E**: Playwright smoke tests are executed directly against the live Vercel Preview URL.
-     * **Bypass Secret**: Uses Vercel's **Protection Bypass for Automation** by sending custom headers `x-vercel-protection-bypass` and `x-vercel-set-bypass-cookie: true` mapped to GitHub Secrets. This seamlessly bypasses Vercel's authentication shield for testing without exposing credentials.
-     * **No Database Hangs**: Conditionally disables Playwright's local `webServer` block when `PLAYWRIGHT_BASE_URL` is detected, avoiding DB connection errors.
+### 🔄 The 10-Phase Pipeline Flow
+
+The rebuilt pipeline implements a rigid 10-phase security and validation pipeline that runs automatically based on events:
+
+```
+[DEVELOPER] ── Push or PR ──► P1: Validate ──► P2: Unit Tests ──► P3: Integration Tests
+                                                                         │
+    ┌───────────────────────────◄────────────────────────────────────────┘
+    ▼
+P4: Security Scan ──► P5: Next.js Standalone Build ──► P6: E2E Playwright Tests
+                                                                         │
+    ┌───────────────────────────◄────────────────────────────────────────┘
+    ├─► [PULL REQUEST ONLY] ────► P7: Vercel Preview Deploy + Playwright Smoke (Auth Bypass)
+    └─► [MERGE TO MAIN ONLY] ───► P8: Prisma Migration + Vercel Production Deploy
+                                       │
+                                       ▼
+                                  P9: Post-Deploy Verification (Smoke + Lighthouse CI)
+                                       │
+                                       ▼
+                                  P10: Continuous Monitoring (Daily Audits & Uptime Crons)
+```
+
+1. **Phase 1: Validate** — Runs strict formatting, ESLint (`npm run lint`), and TypeScript compiler validation (`tsc --noEmit`) to catch bugs at compile time.
+2. **Phase 2: Unit Tests (Vitest)** — Validates pure helper logic, including SEO generators, GSC sitemap fallbacks, auth helpers, date utilities, and slug converters.
+3. **Phase 3: Integration Tests (Vitest + RTL)** — Mocks Prisma queries and REST edge endpoints to verify Next.js Server Components, categories, and API route responses.
+4. **Phase 4: Security Scan** — Pins known-safe **Trivy filesystem scans**, **Trufflehog git history secret scanners**, and strict **`npm audit`** blocks on high/critical library CVEs.
+5. **Phase 5: Next.js Standalone Build** — Compiles Next.js standalone package output (`output: 'standalone'`) to ensure production compile success.
+6. **Phase 6: E2E Tests (Playwright)** — Executes Playwright across a real headless browser validating categories, login sessions, stickies, and sitemap XML schemas.
+7. **Phase 7: Deploy Preview (PRs)** — Builds a Vercel preview, comments it directly on the PR page, and runs E2E smoke tests bypassing Vercel auth shields securely via **Vercel Automation Bypass Secrets & session cookies**.
+8. **Phase 8: Deploy Production** — Performs schema migrations (`prisma migrate deploy`) followed by a production CDN rollout to `https://aurews.id.vn`, reporting success to Discord `#deploys`.
+9. **Phase 9: Post-Deploy Verification** — Runs smoke suites against the live domain and fires **Lighthouse CI** enforcing high metric thresholds.
+10. **Phase 10: Continuous Monitoring** — Scheduled daily midnight crons for vulnerability scans, endpoint uptime pings, and rich Discord `#security` reports.
 
 ---
 
-### 3. Production Deployment (`deploy.yml`)
-* **Trigger**: Push or merge directly to the `main` branch.
-* **Flow & Features**:
-  1. **Prisma Migrations**: Automatically runs `npx prisma migrate deploy` using production Supabase credentials before deployment to ensure schema sync.
-  2. **Vercel Production Deploy**: Builds and rolls out the changes live to `https://aurews.id.vn`.
-  3. **Production Smoke Tests**: Runs Playwright tests against the live production environment using bypass headers to verify site routing, login pages, and XML structure.
-  4. **SEO & Sitemap Validation**: Programmatically calls curl and checks XML structure for Google Search Console compliance (ensuring both `sitemap.xml` and `news-sitemap.xml` contain valid URLs).
-  5. **Discord Notifications**: Pushes a rich deployment summary card detailing status (Success/Failure) and commit messages to your Discord channel.
+### 🛠️ Instructions to Verify and Debug the Pipeline
 
----
-
-### 4. Daily Security & Uptime Scheduler (`daily-security.yml`)
-* **Trigger**: Runs automatically once a day at midnight.
-* **Flow & Features**:
-  1. Runs updated file system security checks using Trufflehog and Trivy.
-  2. **Uptime check**: Sends requests to verify live endpoints (Homepage, `/sitemap.xml`, and `/news-sitemap.xml`).
-  3. Formats and sends a consolidated daily status report directly to the Discord `#security` webhook.
-
----
-
-### 5. Lighthouse Audits (`lighthouse.yml`)
-* **Trigger**: Weekly cron + pushes to `main`.
-* **Flow & Features**: Collects page metrics and strictly enforces high performance standards (SEO $\ge$ 0.95, Perf $\ge$ 0.80, Accessibility $\ge$ 0.85).
-
----
-
-## 🛠️ Instructions to Verify and Debug the Pipeline
-
-### How to trigger pipelines manually
+#### How to trigger pipelines manually
 1. **Trigger CI & PR Preview**: Create a feature branch, commit changes, and open a Pull Request to `main` or `develop`.
 2. **Trigger Production Deploy**: Merge the approved PR directly into the `main` branch.
 3. **Trigger Security / Audits**: You can navigate to **GitHub ➡️ Actions**, select the specific workflow (e.g. `Daily Security & Audit` or `CI Pipeline`), and click **Run workflow**.
 
-### How to check workflow logs
+#### How to check workflow logs
 1. Navigate to the **Actions** tab of your repository on GitHub.
 2. Click on the active or failed run.
 3. View specific logs for each job:
    * **`security` Job**: Expand the `Print Trivy vulnerabilities table` step to view a complete, clean, human-readable console table of library CVEs to see if any dependency needs an upgrade.
    * **`e2e` Job / `Run smoke tests`**: If a smoke test fails, Playwright's HTML report and browser screenshots on failure will be uploaded to the **Artifacts** section at the bottom of the Action run page for easy visual debugging.
 
-### Testing the Pipeline locally
+#### Testing the Pipeline locally
 You can validate the codebase rules locally before committing to guarantee your pipeline runs green:
 ```bash
 # 1. Run type-checker
