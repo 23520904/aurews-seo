@@ -213,6 +213,8 @@ Aurews features a production-grade, highly automated DevOps ecosystem designed f
 
 ### 🌐 Pipeline Map & Trigger Events
 
+![Aurews DevOps Flow Chart](./public/devops_flow_chart.png)
+
 ```mermaid
 graph TD
     PR[Pull Request to main/develop] -->|Triggers| CI[1. CI Pipeline]
