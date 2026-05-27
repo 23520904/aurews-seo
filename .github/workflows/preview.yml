@@ -68,6 +68,7 @@ jobs:
       - name: Run smoke tests on preview
         env:
           PLAYWRIGHT_BASE_URL: ${{ steps.vercel-preview.outputs.preview-url }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
         run: |
           npx playwright install --with-deps chromium
           npx playwright test e2e/smoke.spec.ts

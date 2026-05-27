@@ -41,6 +41,7 @@ jobs:
       - name: Run smoke tests on production
         env:
           PLAYWRIGHT_BASE_URL: "https://aurews.id.vn"
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
         run: |
           npx playwright install --with-deps chromium
           npx playwright test e2e/smoke.spec.ts
