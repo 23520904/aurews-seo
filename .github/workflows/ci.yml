@@ -84,12 +84,21 @@ jobs:
       - name: npm audit
         run: npm audit --audit-level=high
 
-      - name: Trufflehog secret scan
+      - name: Trufflehog secret scan (Push)
+        if: github.event_name == 'push'
         uses: trufflesecurity/trufflehog@f7ff9980e3980dac3fa0ce9a299c5516565a903c # v3.88.13
         with:
           path: ./
-          base: ${{ github.event.repository.default_branch }}
-          head: HEAD
+          base: ${{ github.event.before }}
+          head: ${{ github.sha }}
+
+      - name: Trufflehog secret scan (Pull Request)
+        if: github.event_name == 'pull_request'
+        uses: trufflesecurity/trufflehog@f7ff9980e3980dac3fa0ce9a299c5516565a903c # v3.88.13
+        with:
+          path: ./
+          base: ${{ github.event.pull_request.base.sha }}
+          head: ${{ github.event.pull_request.head.sha }}
 
   # ── 4. BUILD ─────────────────────────────────
   build:
