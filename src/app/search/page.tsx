@@ -111,6 +111,7 @@ export default async function SearchPage({
       </div>
     );
   }
+  
 
   const params = await searchParams;
   const query = params.q || "";
