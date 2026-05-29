@@ -40,46 +40,88 @@ jobs:
           retention-days: 7
 
   notify-discord:
-    needs: lighthouse
+    name: Notify Discord
+    needs: [lighthouse]
     if: always()
     runs-on: ubuntu-latest
+
     steps:
-      - name: Notify Discord
+      - name: Send Lighthouse result to Discord
         env:
           DISCORD_WEBHOOK_DEPLOY: ${{ secrets.DISCORD_WEBHOOK_DEPLOY }}
+          NEEDS_JSON: ${{ toJson(needs) }}
+          WORKFLOW: ${{ github.workflow }}
+          REPOSITORY: ${{ github.repository }}
+          BRANCH: ${{ github.ref_name }}
+          ACTOR: ${{ github.actor }}
+          SHA: ${{ github.sha }}
+          EVENT_NAME: ${{ github.event_name }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
           if [ -z "$DISCORD_WEBHOOK_DEPLOY" ]; then
-            echo "Discord webhook is unconfigured. Skipping notification."
+            echo "DISCORD_WEBHOOK_DEPLOY is not set. Skipping Discord notification."
             exit 0
           fi
-          
-          STATUS="PASSED"
-          STATUS_EMOJI="✅"
-          
-          LH_RES="${{ needs.lighthouse.result }}"
-          
-          if [ "$LH_RES" = "failure" ]; then
+
+          SHORT_SHA="${SHA:0:7}"
+
+          if echo "$NEEDS_JSON" | jq -e 'to_entries[] | select(.value.result == "failure")' > /dev/null; then
             STATUS="FAILED"
-            STATUS_EMOJI="❌"
-          elif [ "$LH_RES" = "cancelled" ]; then
+            EMOJI="❌"
+            COLOR=15158332
+          elif echo "$NEEDS_JSON" | jq -e 'to_entries[] | select(.value.result == "cancelled")' > /dev/null; then
             STATUS="CANCELLED"
-            STATUS_EMOJI="⚠️"
+            EMOJI="⚠️"
+            COLOR=16776960
+          else
+            STATUS="PASSED"
+            EMOJI="✅"
+            COLOR=3066993
           fi
-          
-          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          
-          CONTENT=$(jq -n \
-            --arg emoji "$STATUS_EMOJI" \
-            --arg status "$STATUS" \
-            --arg repo "${{ github.repository }}" \
-            --arg url "$RUN_URL" \
-            '
-            $emoji + " **Lighthouse CI " + $status + "**\n" +
-            "• **Repository:** " + $repo + "\n" +
-            "• **Actions Log:** " + $url
-            '
-          )
-          
-          curl -s -X POST "$DISCORD_WEBHOOK_DEPLOY" \
+
+          JOB_SUMMARY="$(echo "$NEEDS_JSON" | jq -r 'to_entries | map("\(.key): \(.value.result)") | join("\n")')"
+
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            DESCRIPTION="PR: ${PR_TITLE:-No PR title}"
+          else
+            DESCRIPTION="Commit: ${COMMIT_MESSAGE:-No commit message}"
+          fi
+
+          jq -n \
+            --arg title "$EMOJI Lighthouse / SEO Check $STATUS" \
+            --arg description "$DESCRIPTION" \
+            --arg repository "$REPOSITORY" \
+            --arg branch "$BRANCH" \
+            --arg actor "$ACTOR" \
+            --arg sha "$SHORT_SHA" \
+            --arg event "$EVENT_NAME" \
+            --arg run_url "$RUN_URL" \
+            --arg jobs "$JOB_SUMMARY" \
+            --argjson color "$COLOR" \
+            '{
+              username: "Aurews Lighthouse",
+              embeds: [
+                {
+                  title: $title,
+                  description: $description,
+                  url: $run_url,
+                  color: $color,
+                  fields: [
+                    { name: "Repository", value: $repository, inline: true },
+                    { name: "Branch", value: $branch, inline: true },
+                    { name: "Actor", value: $actor, inline: true },
+                    { name: "Event", value: $event, inline: true },
+                    { name: "Commit", value: $sha, inline: true },
+                    { name: "Jobs", value: ("```" + $jobs + "```"), inline: false },
+                    { name: "Run", value: $run_url, inline: false }
+                  ]
+                }
+              ]
+            }' > discord-payload.json
+
+          curl -sS \
             -H "Content-Type: application/json" \
-            -d "$(jq -n --arg content "$CONTENT" '{content: $content}')" || true
+            -d @discord-payload.json \
+            "$DISCORD_WEBHOOK_DEPLOY" || true

@@ -149,72 +149,89 @@ jobs:
           name: playwright-report
           path: playwright-report/
 
-  # ── 6. DISCORD NOTIFICATION ──────────────────
   notify-discord:
+    name: Notify Discord
     needs: [validate, test, security, build, e2e]
     if: always()
     runs-on: ubuntu-latest
+
     steps:
-      - name: Notify Discord
+      - name: Send CI result to Discord
         env:
           DISCORD_WEBHOOK_DEPLOY: ${{ secrets.DISCORD_WEBHOOK_DEPLOY }}
+          NEEDS_JSON: ${{ toJson(needs) }}
+          WORKFLOW: ${{ github.workflow }}
+          REPOSITORY: ${{ github.repository }}
+          BRANCH: ${{ github.ref_name }}
+          ACTOR: ${{ github.actor }}
+          SHA: ${{ github.sha }}
+          EVENT_NAME: ${{ github.event_name }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
           if [ -z "$DISCORD_WEBHOOK_DEPLOY" ]; then
-            echo "Discord webhook is unconfigured. Skipping notification."
+            echo "DISCORD_WEBHOOK_DEPLOY is not set. Skipping Discord notification."
             exit 0
           fi
-          
-          STATUS="PASSED"
-          STATUS_EMOJI="✅"
-          
-          VAL_RES="${{ needs.validate.result }}"
-          TEST_RES="${{ needs.test.result }}"
-          SEC_RES="${{ needs.security.result }}"
-          BUILD_RES="${{ needs.build.result }}"
-          E2E_RES="${{ needs.e2e.result }}"
-          
-          if [ "$VAL_RES" = "failure" ] || [ "$TEST_RES" = "failure" ] || [ "$SEC_RES" = "failure" ] || [ "$BUILD_RES" = "failure" ] || [ "$E2E_RES" = "failure" ]; then
+
+          SHORT_SHA="${SHA:0:7}"
+
+          if echo "$NEEDS_JSON" | jq -e 'to_entries[] | select(.value.result == "failure")' > /dev/null; then
             STATUS="FAILED"
-            STATUS_EMOJI="❌"
-          elif [ "$VAL_RES" = "cancelled" ] || [ "$TEST_RES" = "cancelled" ] || [ "$SEC_RES" = "cancelled" ] || [ "$BUILD_RES" = "cancelled" ] || [ "$E2E_RES" = "cancelled" ]; then
+            EMOJI="❌"
+            COLOR=15158332
+          elif echo "$NEEDS_JSON" | jq -e 'to_entries[] | select(.value.result == "cancelled")' > /dev/null; then
             STATUS="CANCELLED"
-            STATUS_EMOJI="⚠️"
+            EMOJI="⚠️"
+            COLOR=16776960
+          else
+            STATUS="PASSED"
+            EMOJI="✅"
+            COLOR=3066993
           fi
-          
-          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
-          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          
-          CONTENT=$(jq -n \
-            --arg emoji "$STATUS_EMOJI" \
-            --arg status "$STATUS" \
-            --arg repo "${{ github.repository }}" \
-            --arg branch "${{ github.ref_name }}" \
-            --arg actor "${{ github.actor }}" \
+
+          JOB_SUMMARY="$(echo "$NEEDS_JSON" | jq -r 'to_entries | map("\(.key): \(.value.result)") | join("\n")')"
+
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            DESCRIPTION="PR: ${PR_TITLE:-No PR title}"
+          else
+            DESCRIPTION="Commit: ${COMMIT_MESSAGE:-No commit message}"
+          fi
+
+          jq -n \
+            --arg title "$EMOJI $WORKFLOW $STATUS" \
+            --arg description "$DESCRIPTION" \
+            --arg repository "$REPOSITORY" \
+            --arg branch "$BRANCH" \
+            --arg actor "$ACTOR" \
             --arg sha "$SHORT_SHA" \
-            --arg event "${{ github.event_name }}" \
-            --arg url "$RUN_URL" \
-            --arg val "$VAL_RES" \
-            --arg test "$TEST_RES" \
-            --arg sec "$SEC_RES" \
-            --arg build "$BUILD_RES" \
-            --arg e2e "$E2E_RES" \
-            '
-            $emoji + " **CI Pipeline " + $status + "**\n" +
-            "• **Repository:** " + $repo + "\n" +
-            "• **Branch:** " + $branch + "\n" +
-            "• **Actor:** " + $actor + "\n" +
-            "• **Commit:** `" + $sha + "`\n" +
-            "• **Trigger Event:** " + $event + "\n" +
-            "• **Actions Log:** " + $url + "\n\n" +
-            "**Job Summary:**\n" +
-            "• Validate: " + $val + "\n" +
-            "• Test: " + $test + "\n" +
-            "• Security: " + $sec + "\n" +
-            "• Build: " + $build + "\n" +
-            "• E2E: " + $e2e
-            '
-          )
-          
-          curl -s -X POST "$DISCORD_WEBHOOK_DEPLOY" \
+            --arg event "$EVENT_NAME" \
+            --arg run_url "$RUN_URL" \
+            --arg jobs "$JOB_SUMMARY" \
+            --argjson color "$COLOR" \
+            '{
+              username: "Aurews CI/CD",
+              embeds: [
+                {
+                  title: $title,
+                  description: $description,
+                  url: $run_url,
+                  color: $color,
+                  fields: [
+                    { name: "Repository", value: $repository, inline: true },
+                    { name: "Branch", value: $branch, inline: true },
+                    { name: "Actor", value: $actor, inline: true },
+                    { name: "Event", value: $event, inline: true },
+                    { name: "Commit", value: $sha, inline: true },
+                    { name: "Jobs", value: ("```" + $jobs + "```"), inline: false },
+                    { name: "Run", value: $run_url, inline: false }
+                  ]
+                }
+              ]
+            }' > discord-payload.json
+
+          curl -sS \
             -H "Content-Type: application/json" \
-            -d "$(jq -n --arg content "$CONTENT" '{content: $content}')" || true
+            -d @discord-payload.json \
+            "$DISCORD_WEBHOOK_DEPLOY" || true
