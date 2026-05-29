@@ -169,6 +169,7 @@ export default async function Home() {
         </aside>
       </div>
 
+
       <style dangerouslySetInnerHTML={{
         __html: `
         @media (max-width: 1023px) {
