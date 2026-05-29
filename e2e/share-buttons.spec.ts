@@ -29,9 +29,14 @@ test.describe('Article Share Buttons', () => {
     if (await facebookShare.count() > 0) {
       const href = await facebookShare.first().getAttribute('href')
       expect(href).toBeTruthy()
-      expect(href).toContain('https://aurews.id.vn')
-      expect(href).not.toContain('localhost:')
-      expect(href).not.toContain('127.0.0.1:')
+
+      const shareUrl = new URL(href!)
+      const sharedArticleUrl = shareUrl.searchParams.get("u")
+
+      expect(sharedArticleUrl).toBeTruthy()
+      expect(sharedArticleUrl).toContain("https://aurews.id.vn")
+      expect(sharedArticleUrl).not.toContain("localhost:")
+      expect(sharedArticleUrl).not.toContain("127.0.0.1:")
     }
 
     // Check Twitter / X share button
@@ -39,9 +44,14 @@ test.describe('Article Share Buttons', () => {
     if (await twitterShare.count() > 0) {
       const href = await twitterShare.first().getAttribute('href')
       expect(href).toBeTruthy()
-      expect(href).toContain('https://aurews.id.vn')
-      expect(href).not.toContain('localhost:')
-      expect(href).not.toContain('127.0.0.1:')
+
+      const shareUrl = new URL(href!)
+      const sharedArticleUrl = shareUrl.searchParams.get("url")
+
+      expect(sharedArticleUrl).toBeTruthy()
+      expect(sharedArticleUrl).toContain("https://aurews.id.vn")
+      expect(sharedArticleUrl).not.toContain("localhost:")
+      expect(sharedArticleUrl).not.toContain("127.0.0.1:")
     }
   })
 })
