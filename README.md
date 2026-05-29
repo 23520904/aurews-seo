@@ -4,6 +4,19 @@
 
 ### Premium Tech & Editorial News Platform
 
+**Next.js 16 · TypeScript · Prisma · Supabase · Vercel · GitHub Actions · Playwright · Discord Ops**
+
+[🌐 Live Site](https://aurews.id.vn) · [⚙️ CI Pipeline](https://github.com/23520904/aurews-seo/actions/workflows/ci.yml) · [🚢 Production Deploy](https://github.com/23520904/aurews-seo/actions/workflows/deploy.yml) · [📊 Coverage](https://codecov.io/gh/23520904/aurews-seo)
+
+[![CI Pipeline](https://github.com/23520904/aurews-seo/actions/workflows/ci.yml/badge.svg)](https://github.com/23520904/aurews-seo/actions/workflows/ci.yml)
+[![Deploy to Production](https://github.com/23520904/aurews-seo/actions/workflows/deploy.yml/badge.svg)](https://github.com/23520904/aurews-seo/actions/workflows/deploy.yml)
+[![Lighthouse CI — SEO Health](https://github.com/23520904/aurews-seo/actions/workflows/lighthouse.yml/badge.svg)](https://github.com/23520904/aurews-seo/actions/workflows/lighthouse.yml)
+[![codecov](https://codecov.io/gh/23520904/aurews-seo/branch/main/graph/badge.svg)](https://codecov.io/gh/23520904/aurews-seo)
+
+</div>
+
+### Premium Tech & Editorial News Platform
+
 **Next.js 16 · TypeScript · Prisma · Supabase PostgreSQL · Vercel · GitHub Actions · Playwright · Discord Ops**
 
 [Live Site](https://aurews.id.vn) · [CI Pipeline](https://github.com/23520904/aurews-seo/actions/workflows/ci.yml) · [Production Deploy](https://github.com/23520904/aurews-seo/actions/workflows/deploy.yml) · [Coverage Reports](https://codecov.io/gh/23520904/aurews-seo)
@@ -31,6 +44,8 @@
 *   🛡️ **Security**: Trivy + TruffleHog + npm audit
 *   📣 **Alerts**: Discord `#aurews-deploy` / `#aurews-security` channels
 
+</details>
+
 ---
 
 ## 🧰 Tech Stack & Tools
@@ -57,9 +72,9 @@ Sticky floating sharing bar (Facebook, X, LinkedIn, WhatsApp, Copy Link) on desk
 ### 🔒 Role-Based Access Control
 Authenticated author CRUD control panels at `/dashboard` with multi-tier route middleware and Server Action security restricting `/dashboard/bulk` actions strictly to **`ADMIN`** accounts.
 
----
+Production deploy verifies that the live site is not only deployed, but also reachable and SEO-safe.
 
-## ⚙️ Installation & Development Guide
+### 🛡️ Daily Security
 
 ```bash
 # 1. Clone and install dependencies
@@ -113,7 +128,8 @@ flowchart LR
 
 *Every critical path either blocks merge/deploy or reports status to Discord.*
 
----
+> [!IMPORTANT]
+> Aurews separates runtime database traffic from migration/admin traffic.
 
 ## 📋 Workflows & Checklists
 
@@ -304,9 +320,14 @@ aurews/
 ```
 </details>
 
----
+```env
+DATABASE_URL="postgresql://postgres.[ref]:[password]@aws-0-[region].pooler.supabase.com:6543/postgres?pgbouncer=true"
+DIRECT_URL="postgresql://postgres.[ref]:[password]@aws-0-[region].pooler.supabase.com:5432/postgres"
+NEXTAUTH_SECRET="your-auth-secret"
+NEXT_PUBLIC_SITE_URL="https://aurews.id.vn"
+```
 
-### 🛠️ Instructions to Verify and Debug the Pipeline
+---
 
 #### How to check workflow logs
 1. Navigate to the **Actions** tab of your repository on GitHub.
@@ -315,18 +336,10 @@ aurews/
    * **`security` Job**: Expand the `Print Trivy vulnerabilities table` step to view a complete, clean, human-readable console table of library CVEs to see if any dependency needs an upgrade.
    * **`e2e` Job / `Run smoke tests`**: If a smoke test fails, Playwright's HTML report and browser screenshots on failure will be uploaded to the **Artifacts** section at the bottom of the Action run page for easy visual debugging.
 
-#### Testing the Pipeline locally
-You can validate the codebase rules locally before committing to guarantee your pipeline runs green:
 ```bash
-# 1. Run type-checker
-npm run type-check
-
-# 2. Run linter
 npm run lint
-
-# 3. Run all unit and integration tests (passing 37/37)
+npm run type-check
 npm run test
-
-# 4. Run local Playwright E2E tests
 npx playwright test
+npm run build
 ```
