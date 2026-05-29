@@ -15,10 +15,12 @@ jobs:
       - run: npm ci
 
       # ── Prisma migrations before deploy ──
+      # Prisma migrations must use direct/session connection, not Supabase transaction pooler 6543.
       - name: Run Prisma migrations
         run: npx prisma migrate deploy
+        timeout-minutes: 5
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: ${{ secrets.DIRECT_URL }}
           DIRECT_URL: ${{ secrets.DIRECT_URL }}
 
       # ── Vercel deploy ──
