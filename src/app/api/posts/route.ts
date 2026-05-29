@@ -1,7 +1,14 @@
-import { ok, withErrorHandler } from "@/lib/api-response";
+import { ok, err, withErrorHandler } from "@/lib/api-response";
 import { prisma } from "@/lib/prisma";
+import { getClientIp, rateLimit } from "@/lib/ratelimit";
 
 export const GET = withErrorHandler(async (req: Request) => {
+  const ip = await getClientIp();
+  const limitRes = await rateLimit(`api_read:${ip}`, 60, 60);
+  if (!limitRes.success) {
+    return err("Too many requests. Please try again later.", 429);
+  }
+
   const { searchParams } = new URL(req.url);
   const page = Math.max(1, Number(searchParams.get('page')) || 1);
   const limit = Math.min(Number(searchParams.get('limit')) || 25, 100);

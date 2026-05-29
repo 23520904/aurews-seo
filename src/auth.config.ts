@@ -11,8 +11,15 @@ export const authConfig = {
       const isAuthPage = nextUrl.pathname.startsWith("/auth");
 
       if (isOnDashboard) {
-        if (isLoggedIn) return true;
-        return false; // Redirect unauthenticated users to login
+        if (!isLoggedIn) return false;
+
+        // /dashboard/bulk is admin-only
+        const isBulk = nextUrl.pathname.startsWith("/dashboard/bulk");
+        if (isBulk) {
+          return (auth?.user as { role?: string })?.role === "ADMIN";
+        }
+
+        return true;
       }
 
       const isAdminRoute = nextUrl.pathname.startsWith("/admin");
@@ -22,7 +29,6 @@ export const authConfig = {
       }
       
       if (isAuthPage && isLoggedIn) {
-
         return Response.redirect(new URL("/dashboard", nextUrl));
       }
       
