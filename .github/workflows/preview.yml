@@ -10,6 +10,8 @@ jobs:
       pull-requests: write
       issues: write
       contents: read
+    outputs:
+      preview_url: ${{ steps.vercel-preview.outputs.preview-url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -128,3 +130,59 @@ jobs:
                 body: `🚀 **Preview URL:** [${previewUrl}](${previewUrl})\n\n❌ **Smoke tests đã bị thất bại!** Vui lòng kiểm tra lại log hệ thống.`
               });
             }
+
+  # ── 6. DISCORD NOTIFICATION ──────────────────
+  notify-discord:
+    needs: preview
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Discord
+        env:
+          DISCORD_WEBHOOK_DEPLOY: ${{ secrets.DISCORD_WEBHOOK_DEPLOY }}
+        run: |
+          if [ -z "$DISCORD_WEBHOOK_DEPLOY" ]; then
+            echo "Discord webhook is unconfigured. Skipping notification."
+            exit 0
+          fi
+          
+          STATUS="PASSED"
+          STATUS_EMOJI="✅"
+          
+          PREVIEW_RES="${{ needs.preview.result }}"
+          
+          if [ "$PREVIEW_RES" = "failure" ]; then
+            STATUS="FAILED"
+            STATUS_EMOJI="❌"
+          elif [ "$PREVIEW_RES" = "cancelled" ]; then
+            STATUS="CANCELLED"
+            STATUS_EMOJI="⚠️"
+          fi
+          
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          PREVIEW_URL="${{ needs.preview.outputs.preview_url }}"
+          
+          CONTENT=$(jq -n \
+            --arg emoji "$STATUS_EMOJI" \
+            --arg status "$STATUS" \
+            --arg repo "${{ github.repository }}" \
+            --arg branch "${{ github.ref_name }}" \
+            --arg actor "${{ github.actor }}" \
+            --arg sha "$SHORT_SHA" \
+            --arg url "$RUN_URL" \
+            --arg preview "$PREVIEW_URL" \
+            '
+            $emoji + " **Preview Deploy " + $status + "**\n" +
+            "• **Repository:** " + $repo + "\n" +
+            "• **Branch:** " + $branch + "\n" +
+            "• **Actor:** " + $actor + "\n" +
+            "• **Commit:** `" + $sha + "`\n" +
+            "• **Actions Log:** " + $url + "\n" +
+            (if $preview != "" then "• **Preview URL:** " + $preview else "")
+            '
+          )
+          
+          curl -s -X POST "$DISCORD_WEBHOOK_DEPLOY" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n --arg content "$CONTENT" '{content: $content}')" || true

@@ -38,3 +38,48 @@ jobs:
           name: lighthouse-reports
           path: .lighthouseci/
           retention-days: 7
+
+  notify-discord:
+    needs: lighthouse
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Discord
+        env:
+          DISCORD_WEBHOOK_DEPLOY: ${{ secrets.DISCORD_WEBHOOK_DEPLOY }}
+        run: |
+          if [ -z "$DISCORD_WEBHOOK_DEPLOY" ]; then
+            echo "Discord webhook is unconfigured. Skipping notification."
+            exit 0
+          fi
+          
+          STATUS="PASSED"
+          STATUS_EMOJI="✅"
+          
+          LH_RES="${{ needs.lighthouse.result }}"
+          
+          if [ "$LH_RES" = "failure" ]; then
+            STATUS="FAILED"
+            STATUS_EMOJI="❌"
+          elif [ "$LH_RES" = "cancelled" ]; then
+            STATUS="CANCELLED"
+            STATUS_EMOJI="⚠️"
+          fi
+          
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          
+          CONTENT=$(jq -n \
+            --arg emoji "$STATUS_EMOJI" \
+            --arg status "$STATUS" \
+            --arg repo "${{ github.repository }}" \
+            --arg url "$RUN_URL" \
+            '
+            $emoji + " **Lighthouse CI " + $status + "**\n" +
+            "• **Repository:** " + $repo + "\n" +
+            "• **Actions Log:** " + $url
+            '
+          )
+          
+          curl -s -X POST "$DISCORD_WEBHOOK_DEPLOY" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n --arg content "$CONTENT" '{content: $content}')" || true

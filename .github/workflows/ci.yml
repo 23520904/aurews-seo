@@ -37,8 +37,8 @@ jobs:
       - run: npm run test:coverage
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@75cd11691c0faa626561e295848008c8a7dddffe # v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   # ── 3. SECURITY ──────────────────────────────
   security:
@@ -148,3 +148,73 @@ jobs:
         with:
           name: playwright-report
           path: playwright-report/
+
+  # ── 6. DISCORD NOTIFICATION ──────────────────
+  notify-discord:
+    needs: [validate, test, security, build, e2e]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Discord
+        env:
+          DISCORD_WEBHOOK_DEPLOY: ${{ secrets.DISCORD_WEBHOOK_DEPLOY }}
+        run: |
+          if [ -z "$DISCORD_WEBHOOK_DEPLOY" ]; then
+            echo "Discord webhook is unconfigured. Skipping notification."
+            exit 0
+          fi
+          
+          STATUS="PASSED"
+          STATUS_EMOJI="✅"
+          
+          VAL_RES="${{ needs.validate.result }}"
+          TEST_RES="${{ needs.test.result }}"
+          SEC_RES="${{ needs.security.result }}"
+          BUILD_RES="${{ needs.build.result }}"
+          E2E_RES="${{ needs.e2e.result }}"
+          
+          if [ "$VAL_RES" = "failure" ] || [ "$TEST_RES" = "failure" ] || [ "$SEC_RES" = "failure" ] || [ "$BUILD_RES" = "failure" ] || [ "$E2E_RES" = "failure" ]; then
+            STATUS="FAILED"
+            STATUS_EMOJI="❌"
+          elif [ "$VAL_RES" = "cancelled" ] || [ "$TEST_RES" = "cancelled" ] || [ "$SEC_RES" = "cancelled" ] || [ "$BUILD_RES" = "cancelled" ] || [ "$E2E_RES" = "cancelled" ]; then
+            STATUS="CANCELLED"
+            STATUS_EMOJI="⚠️"
+          fi
+          
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          
+          CONTENT=$(jq -n \
+            --arg emoji "$STATUS_EMOJI" \
+            --arg status "$STATUS" \
+            --arg repo "${{ github.repository }}" \
+            --arg branch "${{ github.ref_name }}" \
+            --arg actor "${{ github.actor }}" \
+            --arg sha "$SHORT_SHA" \
+            --arg event "${{ github.event_name }}" \
+            --arg url "$RUN_URL" \
+            --arg val "$VAL_RES" \
+            --arg test "$TEST_RES" \
+            --arg sec "$SEC_RES" \
+            --arg build "$BUILD_RES" \
+            --arg e2e "$E2E_RES" \
+            '
+            $emoji + " **CI Pipeline " + $status + "**\n" +
+            "• **Repository:** " + $repo + "\n" +
+            "• **Branch:** " + $branch + "\n" +
+            "• **Actor:** " + $actor + "\n" +
+            "• **Commit:** `" + $sha + "`\n" +
+            "• **Trigger Event:** " + $event + "\n" +
+            "• **Actions Log:** " + $url + "\n\n" +
+            "**Job Summary:**\n" +
+            "• Validate: " + $val + "\n" +
+            "• Test: " + $test + "\n" +
+            "• Security: " + $sec + "\n" +
+            "• Build: " + $build + "\n" +
+            "• E2E: " + $e2e
+            '
+          )
+          
+          curl -s -X POST "$DISCORD_WEBHOOK_DEPLOY" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n --arg content "$CONTENT" '{content: $content}')" || true
