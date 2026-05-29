@@ -28,12 +28,12 @@ test.describe('Article Share Buttons', () => {
     const facebookShare = page.locator('a[href*="facebook.com/sharer"]')
     if (await facebookShare.count() > 0) {
       const href = await facebookShare.first().getAttribute('href')
-      expect(href).toBeTruthy()
+      if (!href) throw new Error("Facebook share href is missing")
 
-      const shareUrl = new URL(href!)
+      const shareUrl = new URL(href)
       const sharedArticleUrl = shareUrl.searchParams.get("u")
+      if (!sharedArticleUrl) throw new Error("Facebook shared article URL is missing")
 
-      expect(sharedArticleUrl).toBeTruthy()
       expect(sharedArticleUrl).toContain("https://aurews.id.vn")
       expect(sharedArticleUrl).not.toContain("localhost:")
       expect(sharedArticleUrl).not.toContain("127.0.0.1:")
@@ -43,12 +43,12 @@ test.describe('Article Share Buttons', () => {
     const twitterShare = page.locator('a[href*="twitter.com/intent/tweet"]')
     if (await twitterShare.count() > 0) {
       const href = await twitterShare.first().getAttribute('href')
-      expect(href).toBeTruthy()
+      if (!href) throw new Error("Twitter share href is missing")
 
-      const shareUrl = new URL(href!)
+      const shareUrl = new URL(href)
       const sharedArticleUrl = shareUrl.searchParams.get("url")
+      if (!sharedArticleUrl) throw new Error("Twitter shared article URL is missing")
 
-      expect(sharedArticleUrl).toBeTruthy()
       expect(sharedArticleUrl).toContain("https://aurews.id.vn")
       expect(sharedArticleUrl).not.toContain("localhost:")
       expect(sharedArticleUrl).not.toContain("127.0.0.1:")

@@ -58,7 +58,7 @@ export async function rateLimit(
   const fullKey = `ratelimit:${key}`;
   try {
     const current = await redis.get(fullKey);
-    const count = current ? parseInt(current, 10) : 0;
+    const count = current ? Number.parseInt(current, 10) : 0;
 
     if (count >= limit) {
       const ttl = await redis.ttl(fullKey);
@@ -79,7 +79,7 @@ export async function rateLimit(
     const results = await multi.exec();
     
     // results[0][1] holds the output of INCR command
-    const newCount = results && results[0] && results[0][1] 
+    const newCount = results?.[0]?.[1] 
       ? Number(results[0][1]) 
       : count + 1;
 

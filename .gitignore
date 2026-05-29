@@ -46,3 +46,7 @@ next-env.d.ts
 .env.sentry-build-plugin
 
 aurews-devops-pipeline-v2.html
+
+# playwright
+/playwright-report/
+/test-results/

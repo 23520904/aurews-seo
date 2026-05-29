@@ -2,39 +2,49 @@ import { NextResponse } from "next/server";
 import { generateAccessToken, generateRefreshToken, verifyAccessToken, verifyRefreshToken } from "@/lib/tokens";
 import { getRedis } from "@/lib/redis";
 
+async function testTokens(dummyUser: { id: string; email: string; role: string }) {
+  const accessToken = await generateAccessToken(dummyUser);
+  const refreshToken = await generateRefreshToken(dummyUser);
+
+  const decodedAccess = await verifyAccessToken(accessToken);
+  const decodedRefresh = await verifyRefreshToken(refreshToken);
+
+  return {
+    accessToken,
+    refreshToken,
+    decodedAccess,
+    decodedRefresh,
+  };
+}
+
+async function verifyRedis(
+  redis: ReturnType<typeof getRedis>,
+  dummyUserId: string,
+  refreshToken: string
+) {
+  if (!redis) {
+    return { redisStatus: "BYPASSED" as const, storedToken: refreshToken };
+  }
+
+  const pong = await redis.ping();
+  if (pong !== "PONG") {
+    throw new Error("Redis connection failed");
+  }
+
+  const storedToken = await redis.get(`refresh_token:${dummyUserId}`);
+  return { redisStatus: "CONNECTED" as const, storedToken };
+}
+
 export async function GET() {
   try {
     const redis = getRedis();
-    let storedToken: string | null = null;
-    let pong = "BYPASSED";
-
-    if (redis) {
-      // 1. Check Redis Connection
-      pong = await redis.ping();
-      if (pong !== "PONG") {
-        throw new Error("Redis connection failed");
-      }
-    }
-
     const dummyUser = { id: "test-user-123", email: "test@aurews.id.vn", role: "OPERATOR" };
 
-    // 2. Generate Tokens
-    const accessToken = await generateAccessToken(dummyUser);
-    const refreshToken = await generateRefreshToken(dummyUser);
-
-    // 3. Verify Tokens
-    const decodedAccess = await verifyAccessToken(accessToken);
-    const decodedRefresh = await verifyRefreshToken(refreshToken);
-
-    if (redis) {
-      // 4. Check Redis Storage
-      storedToken = await redis.get(`refresh_token:${dummyUser.id}`);
-    } else {
-      storedToken = refreshToken; // Mock storage match in bypassed/disabled environments
-    }
+    const { accessToken, refreshToken, decodedAccess, decodedRefresh } = await testTokens(dummyUser);
+    const { redisStatus, storedToken } = await verifyRedis(redis, dummyUser.id, refreshToken);
 
     return NextResponse.json({
-      redis: redis ? "CONNECTED" : "BYPASSED",
+      redis: redisStatus,
       tokens: {
         access: accessToken ? "GENERATED" : "FAILED",
         refresh: refreshToken ? "GENERATED" : "FAILED"
@@ -48,10 +58,15 @@ export async function GET() {
     });
   } catch (error: unknown) {
     console.error("Token test failed:", error);
+    const isError = error instanceof Error;
+    const message = isError ? error.message : "Unknown error";
+    const stack = isError && process.env.NODE_ENV === 'development' ? error.stack : undefined;
+
     return NextResponse.json({
       error: "TEST_FAILED",
-      message: error instanceof Error ? error.message : "Unknown error",
-      stack: error instanceof Error && process.env.NODE_ENV === 'development' ? error.stack : undefined
+      message,
+      stack
     }, { status: 500 });
   }
 }
+
