@@ -3,11 +3,18 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { getClientIp, rateLimit } from "@/lib/ratelimit";
 
 export async function createPost(formData: FormData) {
   const session = await auth();
   if (!session || !session.user?.id) {
     throw new Error("Unauthorized");
+  }
+
+  const ip = await getClientIp();
+  const limitRes = await rateLimit(`create_post:${session.user.id || ip}`, 10, 60);
+  if (!limitRes.success) {
+    return { error: "Too many write requests. Please try again later." };
   }
 
   const title = formData.get("title") as string;
@@ -51,6 +58,12 @@ export async function updatePost(id: string, formData: FormData) {
     throw new Error("Unauthorized");
   }
 
+  const ip = await getClientIp();
+  const limitRes = await rateLimit(`update_post:${session.user.id || ip}`, 10, 60);
+  if (!limitRes.success) {
+    return { error: "Too many write requests. Please try again later." };
+  }
+
   const title = formData.get("title") as string;
   const body = formData.get("body") as string;
   const categoryId = formData.get("categoryId") as string;
@@ -90,6 +103,12 @@ export async function deletePost(id: string) {
     throw new Error("Unauthorized");
   }
 
+  const ip = await getClientIp();
+  const limitRes = await rateLimit(`delete_post:${session.user.id || ip}`, 10, 60);
+  if (!limitRes.success) {
+    return { error: "Too many write requests. Please try again later." };
+  }
+
   try {
     await prisma.post.delete({
       where: { id },
@@ -109,6 +128,12 @@ export async function bulkCreatePosts(postsData: { slug?: string, title: string,
   const session = await auth();
   if (!session || !session.user?.id) {
     throw new Error("Unauthorized");
+  }
+
+  const ip = await getClientIp();
+  const limitRes = await rateLimit(`bulk_create:${session.user.id || ip}`, 10, 60);
+  if (!limitRes.success) {
+    return { error: "Too many bulk creation requests. Please try again later." };
   }
 
   // Check if user is ADMIN

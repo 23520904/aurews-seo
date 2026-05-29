@@ -366,3 +366,17 @@ Fully configured to ensure maximum editorial discoverability and high SEO crawli
 Core Web Vitals are tracked natively on actual production traffic without heavy external client-side bundles:
 *   **Status**: Activated directly inside the **Vercel Project Dashboard ➡️ Analytics** and **Speed Insights** panels. Real-time visual metrics (LCP, FID, CLS, and page views) start flowing immediately.
 
+---
+
+## 🛡️ DevOps & Route Protection Policies
+
+To ensure platform stability, secure administration, and zero-downtime rolling updates, the following policies are strictly enforced:
+
+*   **Production Deploy Target:** The production target remains **GitHub Actions ──► Vercel Serverless**.
+*   **Docker Support:** Docker builds (`Dockerfile`, `docker-compose.yml`) are strictly utilized for local development, local integration/E2E testing, and production-parity backup deployments.
+*   **Dashboard Access Control:**
+    *   `/dashboard` is open to all regular authenticated users (registered authors).
+    *   `/dashboard/bulk` is restricted exclusively to users with the **`ADMIN`** role, secured both at the Server Action level and on the Edge via global routing middleware.
+*   **Backward-Compatible Database Migrations:** All schema alterations must be backward-compatible. Column deletions or renamings must never be committed in the same release cycle as code that still references them, avoiding runtime database crashes during rolling deployments.
+
+

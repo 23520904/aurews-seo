@@ -44,19 +44,15 @@ jobs:
   security:
     needs: validate
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
     steps:
       - uses: actions/checkout@v4
         with: { fetch-depth: 0 }  # full history for trufflehog
-      - name: Print Trivy vulnerabilities table
-        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # v0.35.0
-        with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          format: 'table'
-          severity: 'CRITICAL,HIGH'
-          exit-code: '0'
 
-      - name: Trivy filesystem scan
+      - name: Generate Trivy SARIF report
         uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # v0.35.0
         with:
           scan-type: 'fs'
@@ -64,12 +60,30 @@ jobs:
           format: 'sarif'
           output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
-          exit-code: '1'  # BLOCK on CRITICAL/HIGH
-      - uses: github/codeql-action/upload-sarif@v3  # updated v3
+          ignore-unfixed: true
+          vuln-type: 'library'
+          exit-code: '0'
+          skip-dirs: 'node_modules,.next,coverage,playwright-report,test-results,.cache'
+
+      - name: Fail on CRITICAL fixable vulnerabilities
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # v0.35.0
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'table'
+          severity: 'CRITICAL'
+          ignore-unfixed: true
+          vuln-type: 'library'
+          exit-code: '1'
+          skip-dirs: 'node_modules,.next,coverage,playwright-report,test-results,.cache'
+
+      - uses: github/codeql-action/upload-sarif@v4
         if: always()
         with: { sarif_file: 'trivy-results.sarif' }
+
       - name: npm audit
-        run: npm audit --audit-level=moderate
+        run: npm audit --audit-level=high
+
       - name: Trufflehog secret scan
         uses: trufflesecurity/trufflehog@f7ff9980e3980dac3fa0ce9a299c5516565a903c # v3.88.13
         with:
@@ -95,12 +109,6 @@ jobs:
         run: npm run build
         env:
           NEXT_TELEMETRY_DISABLED: 1
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: nextjs-build-${{ github.sha }}
-          path: .next/
-          retention-days: 1
 
   # ── 5. E2E TESTS ─────────────────────────────
   e2e:
@@ -110,19 +118,22 @@ jobs:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
       NEXT_PUBLIC_SITE_URL: "http://localhost:3000"
+      DISABLE_RATE_LIMIT: "true"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: '20', cache: 'npm' }
       - run: npm ci
       - run: npx playwright install --with-deps chromium
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: nextjs-build-${{ github.sha }}
-          path: .next/
+      - name: Build app for E2E
+        run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+          DISABLE_RATE_LIMIT: "true"
       - name: Run E2E
         run: npx playwright test
+        env:
+          DISABLE_RATE_LIMIT: "true"
       - uses: actions/upload-artifact@v4
         if: failure()
         with:

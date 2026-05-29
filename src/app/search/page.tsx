@@ -2,6 +2,7 @@
 export const dynamic = "force-dynamic";
 
 import { Ribbon } from "@/components/ui/Ribbon";
+import { getClientIp, rateLimit } from "@/lib/ratelimit";
 
 import { prisma } from "@/lib/prisma";
 import { Suspense } from "react";
@@ -98,6 +99,19 @@ export default async function SearchPage({
 }: { 
   searchParams: Promise<{ q?: string; page?: string }> 
 }) {
+  const ip = await getClientIp();
+  const limitRes = await rateLimit(`search_page:${ip}`, 60, 60);
+  if (!limitRes.success) {
+    return (
+      <div className="wired-wrapper" style={{ padding: '100px 0', textAlign: 'center' }}>
+        <h1 className="wired-display" style={{ fontSize: '48px', color: 'red' }}>429 TOO MANY REQUESTS</h1>
+        <p className="wired-body" style={{ fontSize: '20px', marginTop: '24px' }}>
+          You have made too many search requests. Please wait a moment and try again.
+        </p>
+      </div>
+    );
+  }
+
   const params = await searchParams;
   const query = params.q || "";
   const page = Math.max(1, Number(params.page) || 1);

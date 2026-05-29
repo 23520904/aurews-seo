@@ -65,7 +65,14 @@ test.describe('Article Page — SEO critical paths', () => {
     if (!ld) return
 
     const schema = JSON.parse(ld)
-    expect(schema.mainEntityOfPage).toContain('/article/')
+    const mainEntityUrl =
+      typeof schema.mainEntityOfPage === "string"
+        ? schema.mainEntityOfPage
+        : schema.mainEntityOfPage?.["@id"] ??
+          schema.mainEntityOfPage?.url ??
+          ""
+
+    expect(mainEntityUrl).toContain("/article/")
   })
 
   test('og:image is set', async ({ page }) => {
