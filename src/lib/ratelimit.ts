@@ -1,4 +1,4 @@
-import { redis } from "./redis";
+import { getRedis } from "./redis";
 import { headers } from "next/headers";
 
 /**
@@ -44,6 +44,17 @@ export async function rateLimit(
   limit: number,
   windowSeconds: number
 ): Promise<RateLimitResult> {
+  // Fail-open immediately if rate limiting is explicitly disabled
+  if (process.env.DISABLE_RATE_LIMIT === "true") {
+    return { success: true, count: 0, limit, remaining: limit, reset: 0 };
+  }
+
+  const redis = getRedis();
+  // Fail-open gracefully if the Redis client is null (unconfigured)
+  if (!redis) {
+    return { success: true, count: 0, limit, remaining: limit, reset: 0 };
+  }
+
   const fullKey = `ratelimit:${key}`;
   try {
     const current = await redis.get(fullKey);
@@ -83,7 +94,7 @@ export async function rateLimit(
     };
   } catch (error) {
     console.error("[RateLimit Error]:", error);
-    // Fail-open in case Redis is down to prevent breaking the application
+    // Fail-open in case Redis connection fails
     return {
       success: true,
       count: 0,
