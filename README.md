@@ -15,334 +15,310 @@
 
 </div>
 
----
+### Premium Tech & Editorial News Platform
 
-## ✨ What is Aurews?
+**Next.js 16 · TypeScript · Prisma · Supabase PostgreSQL · Vercel · GitHub Actions · Playwright · Discord Ops**
 
-**Aurews** is a modern editorial news platform inspired by the premium, high-contrast style of **WIRED**.
-It combines a polished reading experience with production-ready engineering: dynamic articles, SEO-first metadata, Google News-safe sitemaps, authenticated creator dashboards, and a full DevOps pipeline from pull request to production.
+[Live Site](https://aurews.id.vn) · [CI Pipeline](https://github.com/23520904/aurews-seo/actions/workflows/ci.yml) · [Production Deploy](https://github.com/23520904/aurews-seo/actions/workflows/deploy.yml) · [Coverage Reports](https://codecov.io/gh/23520904/aurews-seo)
 
-The project is not only a news website. It is also a complete demonstration of how a real production web app can be validated, secured, deployed, monitored, and reported automatically.
+[![CI Pipeline](https://github.com/23520904/aurews-seo/actions/workflows/ci.yml/badge.svg)](https://github.com/23520904/aurews-seo/actions/workflows/ci.yml)
+[![Deploy to Production](https://github.com/23520904/aurews-seo/actions/workflows/deploy.yml/badge.svg)](https://github.com/23520904/aurews-seo/actions/workflows/deploy.yml)
+[![Lighthouse CI — SEO Health](https://github.com/23520904/aurews-seo/actions/workflows/lighthouse.yml/badge.svg)](https://github.com/23520904/aurews-seo/actions/workflows/lighthouse.yml)
+[![codecov](https://codecov.io/gh/23520904/aurews-seo/branch/main/graph/badge.svg)](https://codecov.io/gh/23520904/aurews-seo)
 
----
-
-## ⚡ Production Snapshot
-
-* 🚀 **Runtime**: Vercel Serverless
-* 🧠 **Framework**: Next.js 16 App Router
-* 🗄️ **Database**: Supabase PostgreSQL
-* 🔐 **Auth**: Auth.js / NextAuth v5
-* 🧪 **Testing**: Vitest + Playwright
-* 🛡️ **Security**: Trivy + TruffleHog + npm audit
-* 📈 **Quality**: SonarCloud + Codecov + Lighthouse CI
-* 📣 **Alerts**: Discord `#aurews-deploy` and `#aurews-security`
+</div>
 
 ---
 
-## 🧰 Tech Stack
-
-**Application**
-Next.js 16 · TypeScript · Auth.js · Vanilla CSS Tokens
-
-**Data Layer**
-Prisma ORM · Supabase PostgreSQL · Connection Pooling
-
-**Testing**
-Vitest · React Testing Library · Playwright E2E
-
-**DevOps**
-GitHub Actions · Vercel · Prisma Migrate · Lighthouse CI
-
-**Security & Monitoring**
-Trivy · TruffleHog · npm audit · UptimeRobot · SonarCloud · Codecov · Sentry optional
+**Aurews** is a next-generation tech and editorial news platform inspired by the premium **WIRED design system**. Built with **Next.js 16 (App Router)**, **TypeScript**, and **Prisma**, it represents a production-grade, highly optimized, and SEO-maximized web application tailored for lightning-fast delivery and rich reader engagement.
 
 ---
 
-## 🌟 Product Highlights
+## ⚡ Current Production Stack
 
-### 📑 SEO-first Article Engine
-
-Aurews is optimized for search visibility from the article level upward.
-
-* Dynamic article routes: `/article/[slug]`
-* Canonical URLs and Open Graph metadata
-* `NewsArticle` JSON-LD structured data
-* Production-domain sharing URLs
-* Sitemap and news sitemap support
-
-### 🗺️ Google News-safe Sitemap
-
-Google News sitemaps require fresh content. Aurews handles this with a resilient fallback system.
-
-```mermaid
-sequenceDiagram
-    participant Bot as Googlebot
-    participant Route as news-sitemap.xml
-    participant DB as Supabase DB
-
-    Bot->>Route: Request /news-sitemap.xml
-    Route->>DB: Query posts from last 48 hours
-    alt Recent posts exist
-        DB-->>Route: Return recent posts
-        Route-->>Bot: Render valid news sitemap
-    else No recent posts
-        Route->>DB: Query latest 5 published posts
-        DB-->>Route: Return fallback posts
-        Route-->>Bot: Render non-empty fallback sitemap
-    end
-```
-
-### 💬 Premium Social Sharing
-
-Aurews includes a responsive sharing experience designed for editorial content.
-
-* Desktop sticky circular share panel
-* Facebook, X, LinkedIn, WhatsApp, Copy Link
-* Mobile native Web Share API support
-* Localhost-to-production URL remapping for clean share payloads
-
-### 🔒 Protected Creator Dashboard
-
-The dashboard supports authenticated content management while keeping admin-only actions protected.
-
-* `/dashboard` is available for authenticated users
-* `/dashboard/bulk` is restricted to `ADMIN`
-* Route-level and server-side checks protect privileged actions
-* Supports editorial workflows such as publishing, editing, images, and bulk content creation
-
----
-
-## 🏗️ System Architecture
-
-```mermaid
-flowchart TD
-    User[Reader / Author] --> App[Next.js App Router]
-    App --> Auth[Auth.js Session Layer]
-    App --> Pages[Server & Client Components]
-    App --> API[API Routes / Server Actions]
-    Pages --> Prisma[Prisma ORM]
-    API --> Prisma
-    Prisma --> DB[(Supabase PostgreSQL)]
-    App --> SEO[Metadata / JSON-LD / Sitemaps]
-```
-
-<details>
-<summary>📦 Core database entities</summary>
-
-* **User**: registered account, role, auth profile
-* **Category**: article classification and slug mapping
-* **Post**: article content, metadata, status, author, category, views
-
-```mermaid
-erDiagram
-    User ||--o{ Post : writes
-    Category ||--o{ Post : categorizes
-
-    User {
-        String id PK
-        String name
-        String email UK
-        String password
-        UserRole role
-        String image
-        DateTime createdAt
-        DateTime updatedAt
-    }
-
-    Category {
-        String id PK
-        String name UK
-        String slug UK
-        String image
-        DateTime createdAt
-        DateTime updatedAt
-    }
-
-    Post {
-        String id PK
-        String title
-        String slug UK
-        String body
-        String excerpt
-        String coverImage
-        PostStatus status
-        Int views
-        String authorId FK
-        String categoryId FK
-        DateTime createdAt
-        DateTime updatedAt
-    }
-```
+*   🚀 **Runtime**: Vercel Serverless
+*   🧠 **Framework**: Next.js 16 App Router
+*   🗄️ **Database**: Supabase PostgreSQL
+*   🔐 **Auth**: Auth.js / NextAuth v5
+*   🧪 **Testing**: Vitest + Playwright
+*   🛡️ **Security**: Trivy + TruffleHog + npm audit
+*   📣 **Alerts**: Discord `#aurews-deploy` / `#aurews-security` channels
 
 </details>
 
 ---
 
-## 🚀 DevOps Pipeline at a Glance
+## 🧰 Tech Stack & Tools
 
-Every important path is automated: validation, testing, security, preview deployment, production deployment, smoke testing, sitemap checking, and Discord reporting.
-
-```mermaid
-flowchart LR
-    A[Push / Pull Request] --> CI[CI Pipeline]
-
-    CI --> Lint[Lint + Type Check]
-    CI --> Test[Unit / Integration Tests]
-    CI --> Sec[Security Scan]
-    CI --> Build[Next.js Build]
-    CI --> E2E[Playwright E2E]
-
-    PR[Pull Request] --> Preview[Vercel Preview]
-    Preview --> PreviewSmoke[Preview Smoke Test]
-
-    Main[Push to main] --> Migrate[Prisma migrate deploy]
-    Migrate --> Prod[Vercel Production]
-    Prod --> Smoke[Production Smoke Test]
-    Prod --> Sitemap[Sitemap Validation]
-
-    Cron[Scheduled Jobs] --> Daily[Daily Security Scan]
-    Cron --> Lighthouse[Lighthouse SEO Health]
-
-    CI --> DeployDiscord[Discord Deploy Channel]
-    Preview --> DeployDiscord
-    Prod --> DeployDiscord
-    Lighthouse --> DeployDiscord
-    Daily --> SecurityDiscord[Discord Security Channel]
-```
+*   **App Core**: Next.js, TypeScript, Auth.js (v5 Beta)
+*   **Data & ORM**: Prisma ORM, Supabase PostgreSQL
+*   **Testing Suite**: Vitest, Playwright, React Testing Library, MSW
+*   **Ops & CI/CD**: GitHub Actions, Vercel CLI, UptimeRobot, Discord Webhooks
+*   **Security & Audit**: Trivy, TruffleHog, npm audit, SonarCloud, Codecov, Lighthouse CI
 
 ---
 
-## ✅ Workflow Cards
+## ✨ Product Highlights
 
-### 🧪 CI Pipeline
+### 📑 SEO-First Article Engine
+Dynamic canonical links, custom Open Graph metadata, and automated **NewsArticle JSON-LD structured schema** pre-rendering.
 
-Triggered on push and pull request.
+### 🗺️ Google News-Safe Sitemap
+GSC-compliant news sitemaps (`news-sitemap.xml`) strictly filtered to the last 48 hours, automatically falling back to the **5 latest published articles** to prevent crawl errors during publication droughts.
 
-* Lint and TypeScript validation
-* Unit and integration tests
-* Trivy dependency scan
-* TruffleHog secret scan
-* npm audit
-* Next.js production build
-* Playwright E2E tests
-* Discord report to `#aurews-deploy`
+### 💬 Circular Branded Share Panel
+Sticky floating sharing bar (Facebook, X, LinkedIn, WhatsApp, Copy Link) on desktop, transitioning to the native **Web Share API (`navigator.share`)** on mobile viewports. Automatically remaps dynamic local references to `https://aurews.id.vn`.
 
-### 🌐 Preview Pipeline
-
-Triggered on pull request.
-
-* Creates Vercel Preview deployment
-* Uses Vercel automation bypass when needed
-* Runs preview smoke tests
-* Reports preview status to `#aurews-deploy`
-
-### 🚢 Production Deploy
-
-Triggered on push or merge to `main`.
-
-```mermaid
-flowchart LR
-    Main[main branch] --> Migration[Prisma migrate deploy]
-    Migration --> Vercel[Vercel Production]
-    Vercel --> Smoke[Smoke Test]
-    Smoke --> Sitemap[Sitemap + News Sitemap Check]
-    Sitemap --> Discord[Discord Deploy Report]
-```
+### 🔒 Role-Based Access Control
+Authenticated author CRUD control panels at `/dashboard` with multi-tier route middleware and Server Action security restricting `/dashboard/bulk` actions strictly to **`ADMIN`** accounts.
 
 Production deploy verifies that the live site is not only deployed, but also reachable and SEO-safe.
 
 ### 🛡️ Daily Security
 
-Triggered by schedule or manual run.
+```bash
+# 1. Clone and install dependencies
+npm install
 
-* npm audit summary
-* Trivy filesystem dependency scan
-* Homepage uptime check
-* Sitemap and news sitemap health check
-* Discord alert to `#aurews-security` only when issues are detected
+# 2. Setup environment keys in .env
+DATABASE_URL="postgresql://postgres.[ref]:[pwd]@aws-0-[region].pooler.supabase.com:6543/postgres?pgbouncer=true"
+DIRECT_URL="postgresql://postgres.[ref]:[pwd]@aws-0-[region].pooler.supabase.com:5432/postgres"
+NEXTAUTH_SECRET="auth-session-secret-key"
+NEXT_PUBLIC_SITE_URL="https://aurews.id.vn"
 
-### 💡 Lighthouse Health
+# 3. Generate clients and initialize database
+npx prisma generate
+npx prisma db push
+npm run db:seed
 
-Triggered weekly or manually.
-
-* Performance audit
-* Accessibility audit
-* SEO audit
-* Discord report to `#aurews-deploy`
+# 4. Start local development server
+npm run dev
+```
 
 ---
 
-## 💾 Database & Prisma Policy
+## 🚀 DevOps Pipeline at a Glance
+
+```mermaid
+flowchart LR
+  A[Push / Pull Request] --> B[CI Pipeline]
+  B --> C[Lint + Type Check]
+  B --> D[Unit / Integration Tests]
+  B --> E[Security Scan]
+  B --> F[Build]
+  B --> G[Playwright E2E]
+
+  PR[Pull Request] --> PV[Vercel Preview]
+  PV --> PS[Preview Smoke Test]
+
+  MAIN[Push to main] --> M[Prisma Migration]
+  M --> PROD[Vercel Production]
+  PROD --> SMOKE[Smoke Test]
+  PROD --> SEO[Sitemap Check]
+
+  CRON[Schedule] --> SEC[Daily Security]
+  CRON --> LH[Lighthouse]
+
+  B --> DD[Discord Deploy]
+  PV --> DD
+  PROD --> DD
+  LH --> DD
+  SEC --> DS[Discord Security]
+```
+
+*Every critical path either blocks merge/deploy or reports status to Discord.*
 
 > [!IMPORTANT]
 > Aurews separates runtime database traffic from migration/admin traffic.
 
-```mermaid
-flowchart LR
-    App[Vercel App Runtime] -->|DATABASE_URL :6543| Pooler[Supabase Transaction Pooler]
-    Actions[GitHub Actions Migration] -->|DIRECT_URL :5432| Database[(Supabase PostgreSQL)]
-    Admin[Manual Seed / Admin Scripts] -->|DIRECT_URL :5432| Database
-```
+## 📋 Workflows & Checklists
 
-* `DATABASE_URL` uses Supabase pooler port `6543` for app runtime queries.
-* `DIRECT_URL` uses port `5432` for Prisma migrations, seed, and admin scripts.
-* `prisma migrate deploy` must run through `DIRECT_URL`, not the transaction pooler.
-* Initial migration baseline is stored at `prisma/migrations/0_init`.
+### 🧪 CI Pipeline (`ci.yml`)
+Triggered on push and pull requests to `main` and `develop`.
+- [x] **Lint**: Executes ESLint syntax and rule checking.
+- [x] **Type-Check**: Strict compilation validation (`tsc --noEmit`).
+- [x] **Unit & Integration Tests**: 37/37 tests passing green via Vitest.
+- [x] **Security**: Trivy filesystem scans (blocks critical fixable), TruffleHog git secrets auditing, and `npm audit`.
+- [x] **Production Standalone Build**: Validates compilation success.
+- [x] **E2E tests**: Headless Playwright suite verifying key pathways.
+- [x] **Discord Alerts**: Reports workflow pass/fail to `#aurews-deploy`.
+
+### 🌐 Preview Pipeline (`preview.yml`)
+Triggered on pull requests to `main` and `develop`.
+- [x] **Vercel Preview Deploy**: Automatically spins up a temporary preview deployment.
+- [x] **Security Bypass**: Sets bypass headers & browser session cookies to bypass Vercel's auth shield.
+- [x] **Smoke Tests**: Validates live preview routing using Playwright.
+- [x] **Discord Alerts**: Reports deployment status to `#aurews-deploy`.
+
+### 🚢 Production Deploy (`deploy.yml`)
+Triggered on push/merge to `main`.
+*Production Path:* **GitHub Actions ──► Prisma migrate deploy ──► Vercel Production**
+- [x] **Prisma Migration**: Automatically runs `prisma migrate deploy` through a direct PostgreSQL connection (`port: 5432`).
+- [x] **Vercel Production Deploy**: Direct CDN rollout to `https://aurews.id.vn`.
+- [x] **Smoke Tests**: Verifies site availability post-deploy.
+- [x] **SEO Validation**: Curls `/sitemap.xml` and `/news-sitemap.xml` to protect crawl indexing.
+- [x] **Discord Alerts**: Reports rollout details and commit messages to `#aurews-deploy`.
+
+### 🛡️ Daily Security (`daily-security.yml`)
+Triggered daily at 2:00 AM or manually.
+- [x] **npm audit**: Library vulnerability updates check.
+- [x] **Trivy Scan**: Scans codebase dependencies for new CVEs.
+- [x] **Uptime monitor**: Validates live site responsiveness.
+- [x] **Sitemap health check**: Verifies sitemap availability.
+- [x] **Discord Alerts**: Direct alerts to `#aurews-security` on anomalies.
+
+### 💡 Lighthouse Health (`lighthouse.yml`)
+Triggered weekly on Mondays at 6:00 AM or manually.
+- [x] **Performance Metrics**: Verifies fast LCP load times (Min Performance `0.80`).
+- [x] **Accessibility**: Checks screen-reader compliance (Min A11y `0.85`).
+- [x] **SEO Auditing**: Strictly enforces GSC standards (Min SEO `0.95`).
+- [x] **Discord Alerts**: Reports final health score audits to `#aurews-deploy`.
 
 ---
 
-## 📣 Notification Map
+### 🔄 Pipeline Execution Timeline
 
 ```mermaid
-flowchart LR
-    CI[CI Pipeline] --> Deploy[#aurews-deploy]
-    Preview[Preview Deploy] --> Deploy
-    Prod[Production Deploy] --> Deploy
-    LH[Lighthouse CI] --> Deploy
-
-    Daily[Daily Security] --> Security[#aurews-security]
-    Uptime[UptimeRobot] --> Security
-    Sentry[Sentry optional] -. later .-> Security
+flowchart TD
+  P1[1 Validate] --> P2[2 Tests]
+  P2 --> P3[3 Security]
+  P3 --> P4[4 Build]
+  P4 --> P5[5 E2E]
+  P5 --> P6{PR or main?}
+  P6 -->|PR| P7[Preview Deploy]
+  P6 -->|main| P8[Migration + Production Deploy]
+  P8 --> P9[Smoke + Sitemap]
+  P9 --> P10[Monitoring]
 ```
 
-* `#aurews-deploy`: CI, preview, production deploy, Lighthouse.
-* `#aurews-security`: uptime, security scan, sitemap health.
-* Sentry is available for runtime monitoring and can be fully connected later.
+*   **PR Path**: Automatically provisions sandboxed Vercel preview environments for visual QA.
+*   **Main Path**: Executes Prisma migrations via secure direct session ports before deploying code.
+*   **Scheduled Path**: Continuously audits security, uptime, and SEO scores on a regular basis.
 
 ---
 
-## 🛡️ DevOps Improvements Delivered
+### 💾 Database Routing Policy
 
-<details open>
-<summary>Key improvements from the original setup</summary>
+> [!IMPORTANT]
+> **Database Routing Rules**
+> *   `DATABASE_URL` ➡️ Supabase Pooler (`port: 6543` with `?pgbouncer=true`) for active Next.js serverless queries.
+> *   `DIRECT_URL` ➡️ Supabase Direct PostgreSQL connection (`port: 5432`) used for migrations, database seeding, and admin operations.
+> *   `prisma migrate deploy` must **never** run through the transaction pooler (port `6543`). Schema baseline migration is located at `prisma/migrations/0_init`.
 
-* Test failures now block downstream build and deploy.
-* GitHub Actions use pinned versions / immutable SHAs where applicable.
-* Pull requests get preview deployments for QA.
-* Production deployment runs Prisma migration before Vercel rollout.
-* Playwright verifies critical user journeys and SEO routes.
-* Trivy, TruffleHog, and npm audit protect the codebase from common security risks.
-* UptimeRobot and daily security workflows report operational issues to Discord.
-* Lighthouse CI tracks SEO, accessibility, and performance health.
+```mermaid
+flowchart LR
+  APP[Vercel App Runtime] -->|DATABASE_URL :6543| POOL[Supabase Pooler]
+  MIGRATE[GitHub Actions Migration] -->|DIRECT_URL :5432| DB[Supabase PostgreSQL]
+```
 
+---
+
+### 📢 Notification & Alert Map
+
+```mermaid
+flowchart LR
+  CI[CI Pipeline] --> DEPLOY[#aurews-deploy]
+  PREVIEW[Preview Deploy] --> DEPLOY
+  PROD[Production Deploy] --> DEPLOY
+  LH[Lighthouse] --> DEPLOY
+
+  DAILY[Daily Security] --> SECURITY[#aurews-security]
+  UPTIME[UptimeRobot] --> SECURITY
+  SENTRY[Sentry optional] -. later .-> SECURITY
+```
+
+*   `#aurews-deploy`: Logs build, preview, production deployment status, and Lighthouse CI metrics.
+*   `#aurews-security`: Logs daily security updates, sitemap audits, and UptimeRobot down/up alerts.
+
+---
+
+## 🛠️ Extended Operations Manual
+
+<details>
+<summary>🔑 Required GitHub Secrets</summary>
+
+Configure the following repository secrets under **Settings ➡️ Secrets and variables ➡️ Actions**:
+
+*   `DATABASE_URL` — Transaction connection string (Supabase pooled port `6543`)
+*   `DIRECT_URL` — Session connection string (Supabase direct port `5432`)
+*   `NEXTAUTH_SECRET` — Authorization crypt secret key
+*   `VERCEL_TOKEN` — Vercel Automation deployment token
+*   `VERCEL_ORG_ID` & `VERCEL_PROJECT_ID` — Vercel account and project routing markers
+*   `DISCORD_WEBHOOK_DEPLOY` — Webhook for `#aurews-deploy` channel logs
+*   `DISCORD_WEBHOOK_SECURITY` — Webhook for `#aurews-security` security logs
+*   `CODECOV_TOKEN` — Codecov test line coverage report token
+*   `LHCI_GITHUB_APP_TOKEN` — Lighthouse status checklist app authorization key
+
+*Detailed step-by-step setup guides are available in [docs/MANUAL_SETUP_GUIDE.md](./docs/MANUAL_SETUP_GUIDE.md).*
 </details>
 
----
+<details>
+<summary>☁️ External Services Registry Status</summary>
 
-## ⚙️ Local Development
+*   **Vercel** (Active) — Primary hosting and CDN Serverless runner environment.
+*   **Supabase** (Active) — Relational PostgreSQL storage backend.
+*   **UptimeRobot** (Active) — 24/7 endpoint uptime checkers.
+*   **Codecov** (Active) — Dynamic test coverage reporting.
+*   **SonarCloud** (Active) — PR quality analysis.
+*   **Sentry** (Optional / Later) — Error tracing logging.
+*   **Discord** (Active) — Chat operations alert targets.
+</details>
 
-```bash
-# 1. Install dependencies
-npm install
+<details>
+<summary>📦 Audited Gaps Resolved</summary>
 
-# 2. Generate Prisma client
-npx prisma generate
+We resolved the following design gaps identified in the original repository audit:
+*   **Ignored Failures**: Replaced insecure scripts (`npm run test || true`) with strict exit-code pipelines blocking all runs on test failures.
+*   **Insecure Master Branches**: Pinned all unpinned GitHub actions to immutable, audited SHA-1 hashes (e.g. upgraded Trivy to `v0.35.0`).
+*   **No DB Sync**: Automated database migrations on production during deployments.
+*   **PR Auth Lockout**: Configured Playwright with Vercel protection bypass automation and browser session cookies.
+*   **SEO Coverage**: Configured Lighthouse CI metrics and sitemap curls to protect crawling indices.
+</details>
 
-# 3. Start development server
-npm run dev
+<details>
+<summary>⚡ Architecture & Database Entity Details</summary>
+
+Decoupled Edge Router & Supabase PostgreSQL architecture flow:
+```
+Client ──► Next.js App Router ──► Auth.js Session Gate ──► Server Components ──► Prisma ──► Supabase PostgreSQL
 ```
 
-Create a local `.env` file:
+#### Entities (`schema.prisma`):
+*   **User**: `id` (PK), `name`, `email` (UK), `password`, `role` (USER/ADMIN), `image`, `createdAt`, `updatedAt`
+*   **Category**: `id` (PK), `name` (UK), `slug` (UK), `image`, `createdAt`, `updatedAt`
+*   **Post**: `id` (PK), `title`, `slug` (UK), `body`, `excerpt`, `coverImage`, `status` (DRAFT/PUBLISHED), `views`, `authorId` (FK), `categoryId` (FK), `createdAt`, `updatedAt`
+</details>
+
+<details>
+<summary>🐳 Docker & Dev-Parity Policy Details</summary>
+
+*   **Parity Policy**: Docker environments (`Dockerfile`, `docker-compose.yml`) are restricted strictly to local dev-parity setups, local integration/E2E testing, and production-parity backup deployments.
+*   **Production target**: The production deployment target remains strictly **GitHub Actions ──► Vercel Serverless**.
+</details>
+
+<details>
+<summary>📂 Project Folder Structure Details</summary>
+
+```
+aurews/
+├── analysis/               # Competitor & SEO keyword analysis audits
+├── content/                # Copywriting and SEO-optimized text resources
+├── docs/                   # Developer guidelines and manual setup guides
+├── prisma/                 # Database schema & local seeding models
+│   ├── migrations/         # Prisma migrations database history
+│   ├── schema.prisma       # Relational models
+│   └── seed.ts             # Seeding controller
+├── public/                 # Static vector assets, logos, and sitemaps
+├── src/
+│   ├── app/                # Next.js App Router Page components
+│   │   ├── article/        # Dynamic article reader layout
+│   │   ├── news-sitemap/   # GSC-safe XML news controller
+│   │   ├── sitemap.ts      # Core dynamic sitemap generator
+│   │   └── globals.css     # Premium UI visual tokens
+│   ├── components/         # Reusable UI component modules
+│   └── lib/                # Database clients, tokens, and constant configs
+```
+</details>
 
 ```env
 DATABASE_URL="postgresql://postgres.[ref]:[password]@aws-0-[region].pooler.supabase.com:6543/postgres?pgbouncer=true"
@@ -353,9 +329,12 @@ NEXT_PUBLIC_SITE_URL="https://aurews.id.vn"
 
 ---
 
-## 🧪 Local Quality Checks
-
-Run these before pushing:
+#### How to check workflow logs
+1. Navigate to the **Actions** tab of your repository on GitHub.
+2. Click on the active or failed run.
+3. View specific logs for each job:
+   * **`security` Job**: Expand the `Print Trivy vulnerabilities table` step to view a complete, clean, human-readable console table of library CVEs to see if any dependency needs an upgrade.
+   * **`e2e` Job / `Run smoke tests`**: If a smoke test fails, Playwright's HTML report and browser screenshots on failure will be uploaded to the **Artifacts** section at the bottom of the Action run page for easy visual debugging.
 
 ```bash
 npm run lint
@@ -364,86 +343,3 @@ npm run test
 npx playwright test
 npm run build
 ```
-
----
-
-## 📂 Project Structure
-
-```text
-aurews/
-├── prisma/
-│   ├── migrations/
-│   │   └── 0_init/
-│   ├── schema.prisma
-│   └── seed.ts
-├── public/
-├── e2e/
-├── docs/
-└── src/
-    ├── app/
-    ├── components/
-    └── lib/
-```
-
----
-
-## 🔑 Operations Manual
-
-<details>
-<summary>Required GitHub Secrets</summary>
-
-Configure these in **GitHub → Settings → Secrets and variables → Actions**:
-
-* `DATABASE_URL`
-* `DIRECT_URL`
-* `NEXTAUTH_SECRET`
-* `VERCEL_TOKEN`
-* `VERCEL_ORG_ID`
-* `VERCEL_PROJECT_ID`
-* `DISCORD_WEBHOOK_DEPLOY`
-* `DISCORD_WEBHOOK_SECURITY`
-* `CODECOV_TOKEN`
-* `LHCI_GITHUB_APP_TOKEN`
-
-</details>
-
-<details>
-<summary>External services</summary>
-
-* **Vercel**: hosting and production deployment
-* **Supabase**: PostgreSQL database
-* **UptimeRobot**: homepage, sitemap, news sitemap, keyword monitoring
-* **Codecov**: coverage reports
-* **SonarCloud**: PR code quality gate
-* **Discord**: deployment and security notification channels
-* **Sentry**: optional runtime error monitoring
-
-</details>
-
-<details>
-<summary>Docker policy</summary>
-
-Docker is used for local development, test parity, and backup production-like environments.
-
-The live production path remains:
-
-```text
-GitHub Actions → Prisma migrate deploy → Vercel Production
-```
-
-</details>
-
----
-
-## 🎯 Final Result
-
-Aurews demonstrates a complete modern web delivery system:
-
-* a premium editorial news website,
-* a search-engine-ready article engine,
-* protected dashboard workflows,
-* automated CI/CD gates,
-* production migration safety,
-* preview and production verification,
-* Discord-based operational visibility,
-* and continuous security / uptime monitoring.
