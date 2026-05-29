@@ -16,6 +16,28 @@ jobs:
 
       # ── Prisma migrations before deploy ──
       # Prisma migrations must use direct/session connection, not Supabase transaction pooler 6543.
+      - name: Debug Prisma baseline state
+        run: |
+          echo "Migration folders in repo:"
+          find prisma/migrations -maxdepth 2 \( -type d -o -type f \) | sort
+
+          echo ""
+          echo "Prisma migrate status from GitHub Actions connection:"
+          npx prisma migrate status || true
+
+          echo ""
+          echo "Database identity and _prisma_migrations rows:"
+          npx prisma db execute --stdin <<'SQL' || true
+          SELECT current_database() AS database, current_schema() AS schema, current_user AS user;
+          SELECT migration_name, finished_at, rolled_back_at
+          FROM _prisma_migrations
+          ORDER BY started_at DESC;
+          SQL
+        timeout-minutes: 5
+        env:
+          DATABASE_URL: ${{ secrets.DIRECT_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+
       - name: Run Prisma migrations
         run: npx prisma migrate deploy
         timeout-minutes: 5
