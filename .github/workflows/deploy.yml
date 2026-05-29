@@ -63,8 +63,36 @@ jobs:
           DISCORD_WEBHOOK_DEPLOY: ${{ secrets.DISCORD_WEBHOOK_DEPLOY }}
           COMMIT_MSG: ${{ github.event.head_commit.message }}
         run: |
-          STATUS="✅ Deployed"
-          [ "${{ job.status }}" != "success" ] && STATUS="❌ Deploy failed"
-          curl -X POST "$DISCORD_WEBHOOK_DEPLOY" \
-            -H 'Content-Type: application/json' \
-            -d "{\"content\":\"$STATUS — commit ${{ github.sha }} — $COMMIT_MSG\"}"
+          if [ -z "$DISCORD_WEBHOOK_DEPLOY" ]; then
+            echo "Discord webhook is unconfigured. Skipping notification."
+            exit 0
+          fi
+          
+          STATUS="PASSED"
+          STATUS_EMOJI="✅"
+          if [ "${{ job.status }}" = "failure" ]; then
+            STATUS="FAILED"
+            STATUS_EMOJI="❌"
+          elif [ "${{ job.status }}" = "cancelled" ]; then
+            STATUS="CANCELLED"
+            STATUS_EMOJI="⚠️"
+          fi
+          
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          
+          CONTENT=$(jq -n \
+            --arg emoji "$STATUS_EMOJI" \
+            --arg status "$STATUS" \
+            --arg repo "${{ github.repository }}" \
+            --arg branch "${{ github.ref_name }}" \
+            --arg actor "${{ github.actor }}" \
+            --arg sha "$SHORT_SHA" \
+            --arg url "$RUN_URL" \
+            --arg msg "$COMMIT_MSG" \
+            '$emoji + " **Production Deploy " + $status + "**\n• **Repository:** " + $repo + "\n• **Branch:** " + $branch + "\n• **Actor:** " + $actor + "\n• **Commit:** `" + $sha + "` (" + $msg + ")\n• **Actions Log:** " + $url'
+          )
+          
+          curl -s -X POST "$DISCORD_WEBHOOK_DEPLOY" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n --arg content "$CONTENT" '{content: $content}')" || true
