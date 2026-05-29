@@ -1,28 +1,41 @@
 # 📰 Aurews — Premium Tech & Editorial News Platform
 
+[![CI Pipeline](https://github.com/23520904/aurews-seo/actions/workflows/ci.yml/badge.svg)](https://github.com/23520904/aurews-seo/actions/workflows/ci.yml)
+[![Deploy to Production](https://github.com/23520904/aurews-seo/actions/workflows/deploy.yml/badge.svg)](https://github.com/23520904/aurews-seo/actions/workflows/deploy.yml)
+[![Lighthouse CI — SEO Health](https://github.com/23520904/aurews-seo/actions/workflows/lighthouse.yml/badge.svg)](https://github.com/23520904/aurews-seo/actions/workflows/lighthouse.yml)
 [![codecov](https://codecov.io/gh/23520904/aurews-seo/branch/main/graph/badge.svg)](https://codecov.io/gh/23520904/aurews-seo)
 
-**Aurews** is a next-generation news and editorial platform inspired by the premium **WIRED design system**. Built with **Next.js 16 (App Router)**, **TypeScript**, and **Prisma**, it represents a production-grade, highly optimized, and SEO-maximized web application tailored for lightning-fast delivery and rich reader engagement.
+**Aurews** is a next-generation tech and editorial news platform inspired by the premium **WIRED design system**. Built with **Next.js 16 (App Router)**, **TypeScript**, and **Prisma**, it represents a production-grade, highly optimized, and SEO-maximized web application tailored for lightning-fast delivery and rich reader engagement.
 
 ---
 
-## 🌟 Executive Overview
+## 🌟 System Snapshot
 
-Aurews is engineered to bridge the gap between high-end editorial aesthetics and state-of-the-art web performance. Features range from dynamic structured metadata (JSON-LD schemas) to interactive social sharing modules that adapt to native mobile device drawer APIs. The backend is designed for serverless architectures (optimized for **Vercel Edge & Serverless runtimes**), integrating Supabase PostgreSQL (via Supavisor Connection Pooler) and connection-pooled Prisma querying.
+| Area          | Current Setup                    |
+| ------------- | -------------------------------- |
+| **Framework**     | Next.js 16 App Router            |
+| **Runtime**       | Vercel Serverless (Edge Support) |
+| **Database**      | Supabase PostgreSQL              |
+| **ORM**           | Prisma                           |
+| **Auth**          | Auth.js / NextAuth v5            |
+| **CI/CD**         | GitHub Actions + Vercel          |
+| **Monitoring**    | UptimeRobot + Sentry (Optional)  |
+| **Notifications** | Discord `#aurews-deploy` / `#aurews-security` channels |
 
 ---
 
 ## 🛠️ Modern Tech Stack
 
-| Layer | Technology | Purpose |
+| Layer | Technologies | Purpose |
 | :--- | :--- | :--- |
-| **Core Framework** | Next.js 16.2.6 (App Router) | High-performance Server-Side Rendering (SSR) & Incremental Static Regeneration (ISR) |
-| **Language** | TypeScript (Strict Mode) | Strong compile-time contract checking & SSR crash prevention |
-| **Styling** | Vanilla CSS Variable Tokens | Premium typography, HSL tailored palettes, and liquid responsive grids |
-| **Database** | Supabase PostgreSQL DB | Edge-compatible persistent relational storage |
-| **ORM** | Prisma Client (v7.8.0) | Type-safe schema definitions and dynamic relational queries |
+| **Core App** | Next.js 16, TypeScript | Server-Side Rendering (SSR) & strong compile-time type safety |
+| **Database & ORM** | Supabase PostgreSQL, Prisma | Relational PostgreSQL with pooled querying and strict schema policies |
 | **Authentication** | Auth.js (NextAuth v5 Beta) | Secure role-based gateways and session management |
-| **Performance** | Vercel Speed Insights & Analytics | Core Web Vitals monitor tracking and telemetry |
+| **CI/CD Pipeline** | GitHub Actions, Vercel | Pinned workflows for automated preview and production CD deploys |
+| **Testing Suite** | Playwright, Vitest | Headless E2E journeys, mocked integrations, and sitemap assertions |
+| **Security Scanning** | Trivy, TruffleHog, npm audit | Codebase audits, library CVE blocks, and leaked secrets scanning |
+| **Ops & Telemetry** | Codecov, Lighthouse CI, Sentry | Test coverage reports, SEO health audits, and runtime error logs |
+| **Alerting** | UptimeRobot, Discord | 24/7 endpoint checks with instant notifications |
 
 ---
 
@@ -93,29 +106,26 @@ erDiagram
 
 ## 🎨 Design System & Aesthetics (WIRED-Inspired)
 
-The visual design system of Aurews centers around modern typography, high contrast, and editorial discipline:
-
-- **Typography Core**: Liquid scaling displays (using Merriweather/Playfair Serif headings) paired with rigorous, geometric sans-serif UI labels (Space Mono & Work Sans UI elements).
-- **Hard Grayscale Accents**: Thick 2px black borders, completely square corners (`border-radius: 0 !important`), and strict solid paper whites / ink black backgrounds to keep the layout feeling premium and editorial.
-- **Micro-Animations**: Custom cubic-bezier spring transitions (`150ms` to `300ms` transitions) applied on hover states for interactable bubbles and responsive cards.
+*   **Typography Core**: Merriweather/Playfair Serif headings paired with geometric Space Mono & Work Sans UI elements.
+*   **Hard Grayscale Accents**: Thick 2px black borders, completely square corners (`border-radius: 0 !important`), and strict solid paper whites / ink black backgrounds.
+*   **Micro-Animations**: Custom cubic-bezier spring transitions (`150ms` to `300ms` transitions) applied on hover states for interactive elements.
 
 ---
 
 ## 🚀 Key Feature Sets
 
 ### 📑 1. Dynamic Article Engine & JSON-LD SEO
-Dynamic article routes (`/article/[slug]`) are completely optimized for maximum crawl speed:
-- Generates dynamic canonical links and Open Graph tags during server pre-rendering.
-- Auto-injects dynamic structured `NewsArticle` schemas (`type="application/ld+json"`) via custom Server Component templates to allow Googlebot to parse rich snippets instantly.
+*   Generates dynamic canonical links and Open Graph tags during server pre-rendering.
+*   Auto-injects dynamic structured `NewsArticle` schemas (`type="application/ld+json"`) via Server Components for search engines.
 
-### 💬 2. TikTok-Style Premium Circular Social Sharing
-Designed specifically for high conversion rates and modern responsive interfaces:
-- **Desktop Sidebar**: Pinned sticky sharing bar on the left margin using circular branded bubbles (Facebook, X, LinkedIn, WhatsApp, Copy Link) that float upwards with a soft shadow on hover.
-- **Mobile Drawer Hook**: Connects to the native **Web Share API (`navigator.share`)** on mobile viewports. Tapping sharing bubbles triggers the native iOS/Android system share sheet, letting readers share content through *any* installed messaging or social application (Instagram, WeChat, Telegram, Snapchat) instantly.
-- **Local Host Mapping**: Remaps development addresses (`localhost:3000`) back to the production domain (`https://aurews.id.vn`) in social payload URLs, keeping direct sharing panels fully functional during test environments.
+### 💬 2. Premium Social Sharing Panel
+*   **Desktop Sidebar**: Sticky floating sharing bar (Facebook, X, LinkedIn, WhatsApp, Copy Link) with hover lift states.
+*   **Mobile Drawer Hook**: Connects to the native **Web Share API (`navigator.share`)** for system sharing drawer interaction.
+*   **Local Host Mapping**: Remaps development addresses (`localhost:3000`) back to the production domain (`https://aurews.id.vn`) in social payload URLs.
 
 ### 🗺️ 3. GSC-Resilient News Sitemap with 48-Hour Fallback
-Google Search Console (GSC) enforces strict rules on News Sitemaps (`news-sitemap.xml`), allowing only articles from the last 48 hours. When no content is published, empty sitemaps trigger crawl validation errors. Aurews resolves this with an automated fallback mechanism:
+*   News sitemaps (`news-sitemap.xml`) are strictly filtered to the last 48 hours to comply with Google Search Console policies.
+*   If no recent articles are found, the sitemap automatically falls back to the **5 latest published articles**, preventing blank sitemap crawl errors.
 
 ```mermaid
 sequenceDiagram
@@ -136,8 +146,8 @@ sequenceDiagram
 ```
 
 ### 🔒 4. Protected Editorial & Content Creator Dashboard
-- Fully featured editing console at `/dashboard` where authors can draft, update, and manage articles.
-- Advanced capabilities including batch uploaders (`/dashboard/bulk`), image upload forms, publication status switches, and role-based access gates.
+*   Author writing platform at `/dashboard` with article CRUD, publication triggers, and image uploaders.
+*   `/dashboard/bulk` restricted strictly to users with the **`ADMIN`** role, protected at Edge and action levels.
 
 ---
 
@@ -145,23 +155,13 @@ sequenceDiagram
 
 ```
 aurews/
-├── analysis/               # Competitor & SEO keyword analysis audits
-├── content/                # Copywriting and SEO-optimized text resources
-├── docs/                   # Developer guidelines and editorial strategy manuals
-├── prisma/                 # Database schema & local seeding models
-│   ├── schema.prisma       # Relational models
-│   └── seed.ts             # Seeding controller
-├── public/                 # Static vector assets, logos, and icons
-├── src/
-│   ├── app/                # Next.js App Router Page components
-│   │   ├── article/        # Dynamic article reader layout
-│   │   ├── news-sitemap/   # GSC-safe XML news controller
-│   │   ├── sitemap.ts      # Core dynamic metadata sitemap generator
-│   │   └── globals.css     # Premium UI visual tokens
-│   ├── components/         # Reusable UI component modules
-│   │   ├── analytics/      # GA4 / telemetry click trackers
-│   │   └── seo/            # ShareButtons, Schema injections, and Metadata
-│   └── lib/                # Database clients, tokens, and constant configs
+├── prisma/                 # Database schema & migrations
+├── public/                 # Static vector assets & workflow charts
+├── e2e/                    # Headless Playwright E2E spec suites
+└── src/
+    ├── app/                # App Router layouts, pages, sitemaps
+    ├── components/         # Reusable UI component modules
+    └── lib/                # Database clients, tokens, and constant configs
 ```
 
 ---
@@ -169,121 +169,198 @@ aurews/
 ## ⚙️ Installation & Development Guide
 
 ### Prerequisites
-- **Node.js**: `v20` LTS
-- **Database**: PostgreSQL (e.g. Supabase instance)
+*   **Node.js**: `v20` LTS
+*   **Database**: Supabase PostgreSQL instance
 
-### 1. Clone the repository and install dependencies
+### Quick Setup
+
 ```bash
+# 1. Clone and install dependencies
 npm install
-```
 
-### 2. Configure Environment Variables
-Create a `.env` file in the root directory:
-```env
-DATABASE_URL="postgresql://user:password@hostname/dbname?sslmode=require"
-DIRECT_URL="postgresql://user:password@hostname/dbname?sslmode=require"
-NEXTAUTH_SECRET="your-super-secure-nextauth-secret-key"
+# 2. Setup environment keys in .env
+DATABASE_URL="postgresql://postgres.[ref]:[pwd]@aws-0-[region].pooler.supabase.com:6543/postgres?pgbouncer=true"
+DIRECT_URL="postgresql://postgres.[ref]:[pwd]@aws-0-[region].pooler.supabase.com:5432/postgres"
+NEXTAUTH_SECRET="auth-session-secret-key"
 NEXT_PUBLIC_SITE_URL="https://aurews.id.vn"
-```
 
-### 3. Initialize Database Schemas & Seed Core Data
-```bash
+# 3. Generate clients and initialize database
 npx prisma generate
 npx prisma db push
 npm run db:seed
-```
 
-### 4. Fire Up Dev Server
-```bash
+# 4. Start local development server
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) to view the live interface.
 
 ---
 
-## 🌐 Production Build & Deployment Posture
+## 🚀 DevOps Pipeline
 
-The production compiler executes standalone package bundling optimization, runs the TypeScript strict type validators, optimizes dynamic images, and pre-renders static pages under a resilient Incremental Static Regeneration (ISR) cache structure, fully integrated out of the box with **Vercel's global CDN network**.
-
----
-
-## 🚀 DevOps & CI/CD Pipeline Architecture
-
-Aurews features a production-grade, highly optimized, and automated DevOps ecosystem designed for continuous validation, strict security scanning, and seamless zero-downtime CD deployments.
+All checks, tests, and security scans are automated via GitHub Actions to ensure 100% stable deployments.
 
 ### 🌐 Pipeline Map & Trigger Events
 
 ![Aurews DevOps Flow Chart](./public/devops_flow_chart.png)
 
 ```mermaid
-graph TD
-    PR[Pull Request to main/develop] -->|Triggers| CI[1. CI Pipeline]
-    PR -->|Triggers| Preview[2. Preview Pipeline]
-    Merge[Push/Merge to main] -->|Triggers| Deploy[3. Production Deploy]
-    Cron[Daily Scheduler] -->|Triggers| Security[4. Daily Security & Uptime]
-    Weekly[Weekly Scheduler] -->|Triggers| LH[5. Lighthouse Audits]
+flowchart TD
+  DEV[Developer Push / Pull Request] --> CI[CI Pipeline]
+  CI --> VALIDATE[Lint + Type Check]
+  CI --> TEST[Unit / Integration Tests]
+  CI --> SECURITY[Trivy + TruffleHog + npm audit]
+  CI --> BUILD[Next.js Build]
+  CI --> E2E[Playwright E2E]
+
+  PR[Pull Request] --> PREVIEW[Vercel Preview Deploy]
+  PREVIEW --> PREVIEW_SMOKE[Preview Smoke Test]
+
+  MAIN[Merge / Push to main] --> MIGRATE[Prisma migrate deploy]
+  MIGRATE --> PROD[Vercel Production Deploy]
+  PROD --> SMOKE[Production Smoke Test]
+  PROD --> SITEMAP[Sitemap Validation]
+
+  CRON[Scheduled Jobs] --> DAILY[Daily Security Scan]
+  CRON --> LH[Lighthouse / SEO Health]
+
+  CI --> DISCORD_DEPLOY[#aurews-deploy]
+  PREVIEW --> DISCORD_DEPLOY
+  PROD --> DISCORD_DEPLOY
+  LH --> DISCORD_DEPLOY
+  DAILY --> DISCORD_SECURITY[#aurews-security]
 ```
+
+### 📋 Workflows Overview
+
+| Workflow | Trigger | Main Checks | Discord Target |
+| :--- | :--- | :--- | :--- |
+| `ci.yml` | Push / Pull Request to `main`, `develop` | ESLint, type-check, Vitest, Trivy scan, TruffleHog, build, Playwright E2E | `#aurews-deploy` |
+| `preview.yml` | Pull Request | Vercel Preview Deploy, Playwright E2E Smoke test with bypass cookie | `#aurews-deploy` |
+| `deploy.yml` | Push / Merge to `main` | Prisma migrate, Vercel Production Deploy, post-deploy smoke test, sitemap check | `#aurews-deploy` |
+| `daily-security.yml` | Daily Cron (2:00 AM) | npm audit, Trivy filesystem scan, endpoint uptime, sitemap check | `#aurews-security` |
+| `lighthouse.yml` | Weekly Cron / manual | Lighthouse SEO, Performance, Accessibility health checks | `#aurews-deploy` |
 
 ---
 
-### 🛡️ Audited Gaps Resolved vs. Optimized Solution
+### 🛡️ Pipeline Gates
 
-During our deep devops audit of the repository, we identified and resolved several critical production risks to deliver a flawless, high-stability deployment posture:
+Our pipeline enforces rigorous checkpoints before allowing code integration or rollout:
 
-| ❌ Old Pipeline (Critical Gaps) | ✅ Rebuilt & Optimized Solution |
-| :--- | :--- |
-| **No test runner or framework** in the codebase. | **Vitest (Unit/Integration)** and **Playwright (E2E)** fully integrated. |
-| **`npm run test \|\| true`** was used, silently ignoring test failures and deploying broken code. | Test failures **strictly block** all downstream build and deploy pipelines. |
-| **Unpinned actions** (`trivy-action@master`, `vercel-action@master`) causing supply-chain vulnerability. | All GitHub Actions pinned to **secure, immutable release SHAs**. |
-| **No database migrations** in CD, risking runtime crashes on Prisma schema changes. | Automatically triggers **`prisma migrate deploy`** before deployment via `deploy.yml`. |
-| **No preview environments** for Pull Requests, making QA and visual verification impossible. | Auto-deploys every PR to a unique **Vercel Preview URL** with commenting automation. |
-| **No automated E2E tests**, risking critical user journey and sitemap breakages. | Playwright **runs 10/10 E2E spec files** verifying JSON-LD, auth, sitemaps, and pages. |
-| **No security gating** or secret detection in git pushes. | Integrates **Trivy filesystem scans**, **Trufflehog secrets detection**, and **`npm audit`**. |
-| **No Core Web Vitals checks**, risking Google Search Console / Google News de-indexing. | **Lighthouse CI** automatically audits site metrics (SEO $\ge$ 0.95, Perf $\ge$ 0.80, A11y $\ge$ 0.85). |
+| Gate | Blocks Merge/Deploy? | Purpose |
+| :--- | :---: | :--- |
+| **Lint + TypeScript** | Yes | Prevents syntax issues and compilation regressions |
+| **Unit/Integration Tests** | Yes | Validates core business logic and API route behavior |
+| **Trivy Critical Scan** | Yes | Blocks known, fixable high/critical security vulnerabilities |
+| **TruffleHog** | Yes | Scan git history to completely block leaked credentials |
+| **Production Build** | Yes | Confirms Next.js standalone compile passes without errors |
+| **Playwright E2E** | Yes | Guarantees sitemap schemas, JSON-LD, and user journeys work |
+| **Smoke Test** | Yes | Verifies that the newly deployed build is fully accessible |
+| **Sitemap Check** | Yes | Safeguards XML structure to prevent Google Search Console indexing blocks |
+
+---
+
+### 💾 Database & Prisma Migration Policy
+
+Supabase and Prisma access routing is separated into pooled and direct policies:
+
+| Variable | Connection Port | Mode | Used For |
+| :--- | :--- | :---: | :--- |
+| `DATABASE_URL` | `6543` | Transaction | App runtime queries on Vercel via Supavisor pooler |
+| `DIRECT_URL` | `5432` | Session | Direct PostgreSQL connection for Prisma migrations, seeding, and admin tasks |
+
+> [!IMPORTANT]
+> * Production migrations (**`prisma migrate deploy`**) must use **`DIRECT_URL`** (port `5432`). Do not run database schema migrations through the transaction pooler (port `6543`).
+> * The database setup assumes a clean base. The migration baseline resides at `prisma/migrations/0_init`.
+
+---
+
+### 🛡️ Audited Gaps Resolved
+
+We rebuilt the pipeline from a fragile, untested setup into a top-tier secure delivery flow:
+
+*   **Test Gate Enforced**: Replaced silent, failing checks (`npm run test || true`) with strict exit-code blocks.
+*   **Security Supply-Chain Pinned**: Replaced unpinned action master tags with secure, immutable release SHAs.
+*   **Database Automated**: Introduced schema migrations (`prisma migrate deploy`) dynamically running before deployment.
+*   **Vercel Auth Bypass Integration**: Designed automated E2E tests to bypass Vercel deployment protection seamlessly using automated bypass secrets and browser session cookies.
+*   **Vitals & SEO Shield**: Integrated Lighthouse CI audits and dynamic sitemap curls to prevent index regressions on Google News.
 
 ---
 
 ### 🔄 The 10-Phase Pipeline Flow
 
-The rebuilt pipeline implements a rigid 10-phase security and validation pipeline that runs automatically based on events:
+Our delivery cycle maps through ten key phases:
 
-```
-[DEVELOPER] ── Push or PR ──► P1: Validate ──► P2: Unit Tests ──► P3: Integration Tests
-                                                                         │
-    ┌───────────────────────────◄────────────────────────────────────────┘
-    ▼
-P4: Security Scan ──► P5: Next.js Standalone Build ──► P6: E2E Playwright Tests
-                                                                         │
-    ┌───────────────────────────◄────────────────────────────────────────┘
-    ├─► [PULL REQUEST ONLY] ────► P7: Vercel Preview Deploy + Playwright Smoke (Auth Bypass)
-    └─► [MERGE TO MAIN ONLY] ───► P8: Prisma Migration + Vercel Production Deploy
-                                       │
-                                       ▼
-                                  P9: Post-Deploy Verification (Smoke + Lighthouse CI)
-                                       │
-                                       ▼
-                                  P10: Continuous Monitoring (Daily Audits & Uptime Crons)
-```
+| Phase | Category | Check / Step |
+| :---: | :--- | :--- |
+| **1** | Validate | Formatting, ESLint, TypeScript compiler checks |
+| **2** | Unit Tests | SEO, GSC fallbacks, auth helpers, and utilities |
+| **3** | Security Scan | Trivy filesystem, TruffleHog secret scanning, and npm audit |
+| **4** | Build | Standalone bundle generation |
+| **5** | E2E | Core user journey test executions via Playwright |
+| **6** | Preview Deploy | Automatic Vercel preview deploys for PRs |
+| **7** | Production Migration | Prisma schema updates applied on production database |
+| **8** | Production Deploy | Rolling rollout to the live server CDN |
+| **9** | Smoke + Sitemap | Deployed smoke checks and crawler XML validations |
+| **10** | Monitoring | Continuous daily scanning, Sentry logs, and Uptime robots |
 
-1. **Phase 1: Validate** — Runs strict formatting, ESLint (`npm run lint`), and TypeScript compiler validation (`tsc --noEmit`) to catch bugs at compile time.
-2. **Phase 2: Unit Tests (Vitest)** — Validates pure helper logic, including SEO generators, GSC sitemap fallbacks, auth helpers, date utilities, and slug converters.
-3. **Phase 3: Integration Tests (Vitest + RTL)** — Mocks Prisma queries and REST edge endpoints to verify Next.js Server Components, categories, and API route responses.
-4. **Phase 4: Security Scan** — Pins known-safe **Trivy filesystem scans**, **Trufflehog git history secret scanners**, and strict **`npm audit`** blocks on high/critical library CVEs.
-5. **Phase 5: Next.js Standalone Build** — Compiles Next.js standalone package output (`output: 'standalone'`) to ensure production compile success.
-6. **Phase 6: E2E Tests (Playwright)** — Executes Playwright across a real headless browser validating categories, login sessions, stickies, and sitemap XML schemas.
-7. **Phase 7: Deploy Preview (PRs)** — Builds a Vercel preview, comments it directly on the PR page, and runs E2E smoke tests bypassing Vercel auth shields securely via **Vercel Automation Bypass Secrets & session cookies**.
-8. **Phase 8: Deploy Production** — Performs schema migrations (`prisma migrate deploy`) followed by a production CDN rollout to `https://aurews.id.vn`, reporting success to Discord `#deploys`.
-9. **Phase 9: Post-Deploy Verification** — Runs smoke suites against the live domain and fires **Lighthouse CI** enforcing high metric thresholds.
-10. **Phase 10: Continuous Monitoring** — Scheduled daily midnight crons for vulnerability scans, endpoint uptime pings, and rich Discord `#security` reports.
+---
+
+### ⚙️ Integrations & Manual Setup Registry
+
+For complete system walkthroughs and step-by-step setup guides, refer to the [Manual Setup Guide](./docs/MANUAL_SETUP_GUIDE.md).
+
+#### Required GitHub Secrets
+
+| Secret | Purpose |
+| :--- | :--- |
+| `DATABASE_URL` | App runtime Supabase PostgreSQL connection via transaction pooler |
+| `DIRECT_URL` | Direct connection for Prisma schema migrations |
+| `NEXTAUTH_SECRET` | Base64 token to secure Auth.js author sessions |
+| `VERCEL_TOKEN` | Auth token enabling Vercel deploy integration |
+| `VERCEL_ORG_ID` & `VERCEL_PROJECT_ID` | Vercel account and project routing IDs |
+| `DISCORD_WEBHOOK_DEPLOY` | Discord deploy channel hook (`#aurews-deploy`) |
+| `DISCORD_WEBHOOK_SECURITY` | Discord security alerts channel hook (`#aurews-security`) |
+| `CODECOV_TOKEN` | Repository upload token for test coverage reports |
+| `LHCI_GITHUB_APP_TOKEN` | Lighthouse CI status reporting token |
+
+#### External Services Status
+
+| Service | Status | Purpose |
+| :--- | :---: | :--- |
+| **Vercel** | Active | Primary hosting and Serverless edge deployment |
+| **Supabase** | Active | Relational PostgreSQL database client |
+| **UptimeRobot** | Active | 24/7 uptime monitor for homepage, sitemaps, and news routes |
+| **Codecov** | Active | Dynamic test line coverage dashboards |
+| **SonarCloud** | Active | Code quality gating and automated PR audits |
+| **Sentry** | Optional | Production runtime error logging |
+| **Discord** | Active | Real-time channel status cards |
+
+---
+
+### 🚨 Notification Map
+
+Our monitoring and alerting hooks dynamically direct summaries to dedicated communication endpoints:
+
+| Source | Channel | What It Reports |
+| :--- | :--- | :--- |
+| **CI Pipeline** | `#aurews-deploy` | CI validation pass/fail/cancel logs |
+| **Preview Deploy** | `#aurews-deploy` | PR preview deploy status and Playwright smoke results |
+| **Production Deploy** | `#aurews-deploy` | Production Prisma migrations and live rollout status |
+| **Lighthouse** | `#aurews-deploy` | SEO/performance health metrics |
+| **Daily Security** | `#aurews-security` | npm audit, Trivy package scans, sitemap compliance |
+| **UptimeRobot** | `#aurews-security` | Website down/up telemetry alerts |
+| **Sentry** | Optional / Later | Production runtime edge/server error stacks |
+
+---
+
+### 🐳 Docker & Dev-Parity Policy
+
+*   **Role**: Docker (`Dockerfile`, `docker-compose.yml`) is strictly restricted to local development, local integration/E2E testing, and production-parity backup deployments.
+*   **Production Path**: The live production deployment path remains strictly orchestrated via **GitHub Actions ──► Vercel Serverless**.
 
 ---
 
 ### 🛠️ Instructions to Verify and Debug the Pipeline
-
-#### How to trigger pipelines manually
-1. **Trigger CI & PR Preview**: Create a feature branch, commit changes, and open a Pull Request to `main` or `develop`.
-2. **Trigger Production Deploy**: Merge the approved PR directly into the `main` branch.
-3. **Trigger Security / Audits**: You can navigate to **GitHub ➡️ Actions**, select the specific workflow (e.g. `Daily Security & Audit` or `CI Pipeline`), and click **Run workflow**.
 
 #### How to check workflow logs
 1. Navigate to the **Actions** tab of your repository on GitHub.
@@ -307,76 +384,5 @@ npm run test
 # 4. Run local Playwright E2E tests
 npx playwright test
 ```
-
----
-
-## ⚙️ Integrations & Manual Setup Registry
-
-To ensure full operational visibility and compliance with the production pipeline specifications, Aurews integrates multiple core services. The step-by-step registration guides can be found in the [Manual Setup Guide](./docs/MANUAL_SETUP_GUIDE.md). Below is the operational overview of these integrations.
-
-### 🔐 1. GitHub Secrets Registry (Completed)
-The CI/CD workflows rely on **10 key repository secrets** configured under **Settings ➡️ Secrets and variables ➡️ Actions**:
-*   `DATABASE_URL`: Supabase Connection Pooler string (port `6543` via Supavisor with `?pgbouncer=true`) for active client queries.
-*   `DIRECT_URL`: Supabase Direct Session connection string (port `5432`) used by Prisma to run schema migrations in `deploy.yml`.
-*   `NEXTAUTH_SECRET`: Base64 key generated via openssl to secure user authorization sessions.
-*   `VERCEL_TOKEN`: Vercel automation token to build and deploy preview and production builds.
-*   `VERCEL_ORG_ID` & `VERCEL_PROJECT_ID`: Unique Vercel account and project routing IDs.
-*   `DISCORD_WEBHOOK_DEPLOY`: Channel hook for rolling build and deploy notifications in `#deploys`.
-*   `DISCORD_WEBHOOK_SECURITY`: Channel hook for critical Trufflehog/Trivy findings and uptime reports in `#security`.
-*   `CODECOV_TOKEN`: Repository upload token to upload and track test coverage reports.
-*   `LHCI_GITHUB_APP_TOKEN`: Lighthouse status checker hook to print mobile scores directly inside PR panels.
-
----
-
-### 🛡️ 2. Sentry Next.js Error Monitoring
-Aurews is fully wired with the Sentry Next.js SDK to catch and log runtime errors across client, server, and edge runtimes:
-*   **Initialization**: Configured client (`sentry.client.config.ts`), server (`sentry.server.config.ts`), and edge (`sentry.edge.config.ts`) environments.
-*   **Environment Variables**:
-    *   `NEXT_PUBLIC_SENTRY_DSN`: Set in Vercel environment variables to direct errors to your Sentry dashboard.
-    *   `SENTRY_AUTH_TOKEN`: Saved in GitHub Secrets. Enables the Next.js compiler to build and securely upload production sourcemaps to Sentry for exact stack trace debugging.
-
----
-
-### 📊 3. Codecov (E2E Test Coverage)
-Code coverage metrics are automatically computed and monitored:
-*   **Flow**: On every pull request, the Vitest test job computes the full file line coverage via `vitest run --coverage`.
-*   **Reporting**: Automatically uploads code coverage files to Codecov using `CODECOV_TOKEN`, generating status graphs directly within pull request review panels.
-
----
-
-### 🚨 4. UptimeRobot Uptime Alerting (Homepage & Sitemaps)
-Ensures your site is online and responsive 24/7. Three separate monitors check the application's core endpoints every **5 minutes**:
-1.  **Homepage Monitor**: Checks `https://aurews.id.vn` to verify client-side load states.
-2.  **Sitemap Monitor**: Checks `https://aurews.id.vn/sitemap.xml` to ensure main crawler routes are accessible.
-3.  **News Sitemap Monitor**: Checks `https://aurews.id.vn/news-sitemap.xml` to prevent index disruptions on Google News.
-*   **Discord Webhook Hook**: Connected directly to the `DISCORD_WEBHOOK_SECURITY` webhook, pushing active server down/up status alerts straight to your Discord channel.
-
----
-
-### 🔍 5. Google Search Console & XML Sitemap indexing
-Fully configured to ensure maximum editorial discoverability and high SEO crawling efficiency:
-*   **Ownership Verification**: Confirmed via the GSC HTML head verification tag defined inside the root `layout.tsx` metadata.
-*   **Crawl Paths Submitted**: Both dynamic sitemaps submitted under **GSC Dashboard ➡️ Sitemaps**:
-    *   `/sitemap.xml` (main site indexes)
-    *   `/news-sitemap.xml` (GSC news crawling compliant with the 48-hour publishing window)
-
----
-
-### ⚡ 6. Vercel Analytics & Speed Insights
-Core Web Vitals are tracked natively on actual production traffic without heavy external client-side bundles:
-*   **Status**: Activated directly inside the **Vercel Project Dashboard ➡️ Analytics** and **Speed Insights** panels. Real-time visual metrics (LCP, FID, CLS, and page views) start flowing immediately.
-
----
-
-## 🛡️ DevOps & Route Protection Policies
-
-To ensure platform stability, secure administration, and zero-downtime rolling updates, the following policies are strictly enforced:
-
-*   **Production Deploy Target:** The production target remains **GitHub Actions ──► Vercel Serverless**.
-*   **Docker Support:** Docker builds (`Dockerfile`, `docker-compose.yml`) are strictly utilized for local development, local integration/E2E testing, and production-parity backup deployments.
-*   **Dashboard Access Control:**
-    *   `/dashboard` is open to all regular authenticated users (registered authors).
-    *   `/dashboard/bulk` is restricted exclusively to users with the **`ADMIN`** role, secured both at the Server Action level and on the Edge via global routing middleware.
-*   **Backward-Compatible Database Migrations:** All schema alterations must be backward-compatible. Column deletions or renamings must never be committed in the same release cycle as code that still references them, avoiding runtime database crashes during rolling deployments.
 
 
