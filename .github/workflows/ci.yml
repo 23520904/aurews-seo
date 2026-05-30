@@ -92,7 +92,7 @@ jobs:
           path: ./
           base: ${{ github.event.before }}
           head: ${{ github.sha }}
-          extra-args: --only-verified
+          extra_args: --only-verified
 
 
   # ── 4. BUILD ─────────────────────────────────
