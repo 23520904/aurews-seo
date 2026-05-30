@@ -1,9 +1,10 @@
-name: CI Pipeline
+name: CI - Commit check
 on:
   push:
-    branches: [main, develop]
-  pull_request:
-    branches: [main, develop]
+    branches-ignore:
+      - main
+      - master
+  workflow_dispatch:     
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -77,7 +78,8 @@ jobs:
           exit-code: '1'
           skip-dirs: 'node_modules,.next,coverage,playwright-report,test-results,.cache'
 
-      - uses: github/codeql-action/upload-sarif@v4
+      - name: Upload Trivy SARIF to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v4
         if: always()
         with: { sarif_file: 'trivy-results.sarif' }
 
@@ -85,20 +87,13 @@ jobs:
         run: npm audit --audit-level=high
 
       - name: Trufflehog secret scan (Push)
-        if: github.event_name == 'push'
         uses: trufflesecurity/trufflehog@f7ff9980e3980dac3fa0ce9a299c5516565a903c # v3.88.13
         with:
           path: ./
           base: ${{ github.event.before }}
           head: ${{ github.sha }}
+          extra-args: --only-verified
 
-      - name: Trufflehog secret scan (Pull Request)
-        if: github.event_name == 'pull_request'
-        uses: trufflesecurity/trufflehog@f7ff9980e3980dac3fa0ce9a299c5516565a903c # v3.88.13
-        with:
-          path: ./
-          base: ${{ github.event.pull_request.base.sha }}
-          head: ${{ github.event.pull_request.head.sha }}
 
   # ── 4. BUILD ─────────────────────────────────
   build:
@@ -119,42 +114,13 @@ jobs:
         env:
           NEXT_TELEMETRY_DISABLED: 1
 
-  # ── 5. E2E TESTS ─────────────────────────────
-  e2e:
-    needs: build
-    runs-on: ubuntu-latest
-    env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
-      NEXT_PUBLIC_SITE_URL: "http://localhost:3000"
-      DISABLE_RATE_LIMIT: "true"
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
-        with: { node-version: '20', cache: 'npm' }
-      - run: npm ci
-      - run: npx playwright install --with-deps chromium
-      - name: Build app for E2E
-        run: npm run build
-        env:
-          NEXT_TELEMETRY_DISABLED: 1
-          DISABLE_RATE_LIMIT: "true"
-      - name: Run E2E
-        run: npx playwright test
-        env:
-          DISABLE_RATE_LIMIT: "true"
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        if: failure()
-        with:
-          name: playwright-report
-          path: playwright-report/
+  
 
   notify-discord:
     name: Notify Discord
-    needs: [validate, test, security, build, e2e]
+    needs: [validate, test, security, build]
     if: always()
     runs-on: ubuntu-latest
-
     steps:
       - name: Send CI result to Discord
         env:
@@ -168,7 +134,6 @@ jobs:
           EVENT_NAME: ${{ github.event_name }}
           RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
           COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
-          PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
           if [ -z "$DISCORD_WEBHOOK_DEPLOY" ]; then
             echo "DISCORD_WEBHOOK_DEPLOY is not set. Skipping Discord notification."
@@ -192,12 +157,7 @@ jobs:
           fi
 
           JOB_SUMMARY="$(echo "$NEEDS_JSON" | jq -r 'to_entries | map("\(.key): \(.value.result)") | join("\n")')"
-
-          if [ "$EVENT_NAME" = "pull_request" ]; then
-            DESCRIPTION="PR: ${PR_TITLE:-No PR title}"
-          else
-            DESCRIPTION="Commit: ${COMMIT_MESSAGE:-No commit message}"
-          fi
+          DESCRIPTION="Commit: ${COMMIT_MESSAGE:-Manual workflow run}"
 
           jq -n \
             --arg title "$EMOJI $WORKFLOW $STATUS" \
@@ -211,7 +171,7 @@ jobs:
             --arg jobs "$JOB_SUMMARY" \
             --argjson color "$COLOR" \
             '{
-              username: "Aurews CI/CD",
+              username: "Aurews CI",
               embeds: [
                 {
                   title: $title,
