@@ -1,33 +1,66 @@
-name: Daily Security Scan
+name: Daily Security & Uptime Monitoring
+
 on:
-  schedule: [{cron: '0 2 * * *'}]
+  # Runs every day at 02:00 Vietnam time (19:00 UTC)
+  schedule:
+    - cron: '0 19 * * *'
+
   workflow_dispatch:
+
+concurrency:
+  group: daily-security-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
   scan:
+    name: Scheduled Security and Uptime Scan
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: '20', cache: 'npm' }
-      - run: npm ci
+    timeout-minutes: 20
 
-      # ── 1. KIỂM TRA NPM AUDIT (Đã tối ưu chạy 1 lần) ──
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # ── 1. NPM AUDIT ──────────────────────────────
       - name: npm audit
         id: audit
         continue-on-error: true
         run: |
-          npm audit --json > audit_results.json || true
-          VULN=$(jq '.metadata.vulnerabilities.total // 0' audit_results.json)
-          HIGH=$(jq '.metadata.vulnerabilities.high // 0' audit_results.json)
-          CRIT=$(jq '.metadata.vulnerabilities.critical // 0' audit_results.json)
-          
-          echo "VULN_COUNT=$VULN" >> $GITHUB_OUTPUT
-          echo "HIGH_COUNT=$HIGH" >> $GITHUB_OUTPUT
-          echo "CRIT_COUNT=$CRIT" >> $GITHUB_OUTPUT
+          set -euo pipefail
 
-      # ── 2. KIỂM TRA TRIVY SCAN ──
+          npm audit --json > audit_results.json || true
+
+          VULN="$(jq '.metadata.vulnerabilities.total // 0' audit_results.json 2>/dev/null || echo 0)"
+          HIGH="$(jq '.metadata.vulnerabilities.high // 0' audit_results.json 2>/dev/null || echo 0)"
+          CRIT="$(jq '.metadata.vulnerabilities.critical // 0' audit_results.json 2>/dev/null || echo 0)"
+
+          VULN="${VULN:-0}"
+          HIGH="${HIGH:-0}"
+          CRIT="${CRIT:-0}"
+
+          echo "VULN_COUNT=$VULN" >> "$GITHUB_OUTPUT"
+          echo "HIGH_COUNT=$HIGH" >> "$GITHUB_OUTPUT"
+          echo "CRIT_COUNT=$CRIT" >> "$GITHUB_OUTPUT"
+
+          echo "npm audit summary:"
+          echo "Total: $VULN"
+          echo "High: $HIGH"
+          echo "Critical: $CRIT"
+
+      # ── 2. TRIVY SCAN ─────────────────────────────
       - name: Trivy scan
+        id: trivy
+        continue-on-error: true
         uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # v0.35.0
         with:
           scan-type: 'fs'
@@ -35,109 +68,172 @@ jobs:
           severity: 'CRITICAL,HIGH'
           format: 'json'
           output: 'trivy.json'
-        continue-on-error: true
+          ignore-unfixed: true
+          vuln-type: 'library'
+          skip-dirs: 'node_modules,.next,coverage,playwright-report,test-results,.cache'
 
       - name: Summarize Trivy results
         id: trivy_summary
         run: |
+          set -euo pipefail
+
           CRIT=0
           HIGH=0
-          if [ -f trivy.json ]; then
-            CRIT=$(jq '[.Results[].Vulnerabilities[]? | select(.Severity == "CRITICAL")] | length' trivy.json 2>/dev/null || echo 0)
-            HIGH=$(jq '[.Results[].Vulnerabilities[]? | select(.Severity == "HIGH")] | length' trivy.json 2>/dev/null || echo 0)
-          fi
-          [ -z "$CRIT" ] && CRIT=0
-          [ -z "$HIGH" ] && HIGH=0
-          echo "CRIT_COUNT=$CRIT" >> $GITHUB_OUTPUT
-          echo "HIGH_COUNT=$HIGH" >> $GITHUB_OUTPUT
 
-      # ── 3. KIỂM TRA UPTIME WEBSITE ──
-      - name: Check uptime
+          if [ -f trivy.json ]; then
+            CRIT="$(jq '[.Results[]?.Vulnerabilities[]? | select(.Severity == "CRITICAL")] | length' trivy.json 2>/dev/null || echo 0)"
+            HIGH="$(jq '[.Results[]?.Vulnerabilities[]? | select(.Severity == "HIGH")] | length' trivy.json 2>/dev/null || echo 0)"
+          fi
+
+          CRIT="${CRIT:-0}"
+          HIGH="${HIGH:-0}"
+
+          echo "CRIT_COUNT=$CRIT" >> "$GITHUB_OUTPUT"
+          echo "HIGH_COUNT=$HIGH" >> "$GITHUB_OUTPUT"
+
+          echo "Trivy summary:"
+          echo "High: $HIGH"
+          echo "Critical: $CRIT"
+
+      # ── 3. UPTIME + SEO ENDPOINT CHECKS ───────────
+      - name: Check production uptime and SEO endpoints
         id: uptime
         run: |
-          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://aurews.id.vn)
-          SITEMAP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://aurews.id.vn/sitemap.xml)
-          NEWS_SITEMAP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://aurews.id.vn/news-sitemap.xml)
-          
-          echo "HTTP_STATUS=$HTTP_CODE" >> $GITHUB_OUTPUT
-          echo "SITEMAP_STATUS=$SITEMAP_CODE" >> $GITHUB_OUTPUT
-          echo "NEWS_SITEMAP_STATUS=$NEWS_SITEMAP_CODE" >> $GITHUB_OUTPUT
+          set -euo pipefail
 
-      # ── 4. GỬI ALERT QUA DISCORD NẾU CÓ BẤT KỲ VẤN ĐỀ GÌ ──
+          check_status() {
+            local url="$1"
+            curl -s -L -o /dev/null -w "%{http_code}" "$url" 2>/dev/null || echo "000"
+          }
+
+          check_url_count() {
+            local url="$1"
+            local body
+            body="$(curl -fsSL "$url" 2>/dev/null || true)"
+
+            if [ -z "$body" ]; then
+              echo 0
+              return
+            fi
+
+            printf '%s' "$body" | grep -c "<url>" || true
+          }
+
+          HOME_STATUS="$(check_status "https://aurews.id.vn")"
+          SITEMAP_STATUS="$(check_status "https://aurews.id.vn/sitemap.xml")"
+          NEWS_SITEMAP_STATUS="$(check_status "https://aurews.id.vn/news-sitemap.xml")"
+
+          SITEMAP_URL_COUNT="$(check_url_count "https://aurews.id.vn/sitemap.xml")"
+          NEWS_SITEMAP_URL_COUNT="$(check_url_count "https://aurews.id.vn/news-sitemap.xml")"
+
+          echo "HTTP_STATUS=$HOME_STATUS" >> "$GITHUB_OUTPUT"
+          echo "SITEMAP_STATUS=$SITEMAP_STATUS" >> "$GITHUB_OUTPUT"
+          echo "NEWS_SITEMAP_STATUS=$NEWS_SITEMAP_STATUS" >> "$GITHUB_OUTPUT"
+          echo "SITEMAP_URL_COUNT=$SITEMAP_URL_COUNT" >> "$GITHUB_OUTPUT"
+          echo "NEWS_SITEMAP_URL_COUNT=$NEWS_SITEMAP_URL_COUNT" >> "$GITHUB_OUTPUT"
+
+          echo "Homepage status: $HOME_STATUS"
+          echo "sitemap.xml status: $SITEMAP_STATUS, url count: $SITEMAP_URL_COUNT"
+          echo "news-sitemap.xml status: $NEWS_SITEMAP_STATUS, url count: $NEWS_SITEMAP_URL_COUNT"
+
+      # ── 4. UPLOAD REPORT ARTIFACTS ────────────────
+      - name: Upload security scan artifacts
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: daily-security-reports
+          path: |
+            audit_results.json
+            trivy.json
+          retention-days: 7
+          if-no-files-found: ignore
+
+      # ── 5. DISCORD ALERT ONLY IF ISSUES ───────────
       - name: Discord alert if issues
         if: always()
         env:
           DISCORD_WEBHOOK_SECURITY: ${{ secrets.DISCORD_WEBHOOK_SECURITY }}
+
           UPTIME_STATUS: ${{ steps.uptime.outputs.HTTP_STATUS }}
           SITEMAP_STATUS: ${{ steps.uptime.outputs.SITEMAP_STATUS }}
           NEWS_SITEMAP_STATUS: ${{ steps.uptime.outputs.NEWS_SITEMAP_STATUS }}
+          SITEMAP_URL_COUNT: ${{ steps.uptime.outputs.SITEMAP_URL_COUNT }}
+          NEWS_SITEMAP_URL_COUNT: ${{ steps.uptime.outputs.NEWS_SITEMAP_URL_COUNT }}
+
+          NPM_VULN: ${{ steps.audit.outputs.VULN_COUNT }}
           NPM_HIGH: ${{ steps.audit.outputs.HIGH_COUNT }}
           NPM_CRIT: ${{ steps.audit.outputs.CRIT_COUNT }}
+
           TRIVY_HIGH: ${{ steps.trivy_summary.outputs.HIGH_COUNT }}
           TRIVY_CRIT: ${{ steps.trivy_summary.outputs.CRIT_COUNT }}
+
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          # Thiết lập mặc định an toàn nếu rỗng
+          set -euo pipefail
+
           UPTIME_STATUS="${UPTIME_STATUS:-000}"
           SITEMAP_STATUS="${SITEMAP_STATUS:-000}"
           NEWS_SITEMAP_STATUS="${NEWS_SITEMAP_STATUS:-000}"
+          SITEMAP_URL_COUNT="${SITEMAP_URL_COUNT:-0}"
+          NEWS_SITEMAP_URL_COUNT="${NEWS_SITEMAP_URL_COUNT:-0}"
+
+          NPM_VULN="${NPM_VULN:-0}"
           NPM_HIGH="${NPM_HIGH:-0}"
           NPM_CRIT="${NPM_CRIT:-0}"
+
           TRIVY_HIGH="${TRIVY_HIGH:-0}"
           TRIVY_CRIT="${TRIVY_CRIT:-0}"
 
           has_issue=0
-          MESSAGE="🚨 **Daily Security Alert ($(date +'%d/%m/%Y'))**\n"
+          MESSAGE="🚨 **Aurews Daily Security & Uptime Alert ($(date +'%d/%m/%Y'))**"$'\n'
 
-          # 1. Kiểm tra Uptime
           if [ "$UPTIME_STATUS" != "200" ]; then
-            MESSAGE="${MESSAGE}⚠️ Homepage is DOWN/Error (Status: ${UPTIME_STATUS})\n"
+            MESSAGE+="⚠️ Homepage is DOWN/Error. Status: **$UPTIME_STATUS**"$'\n'
             has_issue=1
           fi
 
           if [ "$SITEMAP_STATUS" != "200" ]; then
-            MESSAGE="${MESSAGE}⚠️ sitemap.xml is DOWN/Error (Status: ${SITEMAP_STATUS})\n"
+            MESSAGE+="⚠️ sitemap.xml is DOWN/Error. Status: **$SITEMAP_STATUS**"$'\n'
+            has_issue=1
+          elif [ "$SITEMAP_URL_COUNT" -le 0 ]; then
+            MESSAGE+="⚠️ sitemap.xml returned 200 but has **0** <url> entries."$'\n'
             has_issue=1
           fi
 
           if [ "$NEWS_SITEMAP_STATUS" != "200" ]; then
-            MESSAGE="${MESSAGE}⚠️ news-sitemap.xml is DOWN/Error (Status: ${NEWS_SITEMAP_STATUS})\n"
+            MESSAGE+="⚠️ news-sitemap.xml is DOWN/Error. Status: **$NEWS_SITEMAP_STATUS**"$'\n'
+            has_issue=1
+          elif [ "$NEWS_SITEMAP_URL_COUNT" -le 0 ]; then
+            MESSAGE+="⚠️ news-sitemap.xml returned 200 but has **0** <url> entries."$'\n'
             has_issue=1
           fi
 
-          # 2. Kiểm tra NPM Audit
           if [ "$NPM_HIGH" -gt 0 ] || [ "$NPM_CRIT" -gt 0 ]; then
-            MESSAGE="${MESSAGE}🔐 **NPM Audit:** ${NPM_CRIT} CRITICAL, ${NPM_HIGH} HIGH vulnerabilities\n"
+            MESSAGE+="📦 **npm audit:** $NPM_CRIT CRITICAL, $NPM_HIGH HIGH vulnerabilities. Total: $NPM_VULN"$'\n'
             has_issue=1
           fi
 
-          # 3. Kiểm tra Trivy Scan
           if [ "$TRIVY_HIGH" -gt 0 ] || [ "$TRIVY_CRIT" -gt 0 ]; then
-            MESSAGE="${MESSAGE}🛡️ **Trivy Scan:** ${TRIVY_CRIT} CRITICAL, ${TRIVY_HIGH} HIGH vulnerabilities\n"
+            MESSAGE+="🛡️ **Trivy:** $TRIVY_CRIT CRITICAL, $TRIVY_HIGH HIGH vulnerabilities."$'\n'
             has_issue=1
           fi
 
-          # Thêm link Actions Run
-          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          MESSAGE="${MESSAGE}\n• **Actions Log:** ${RUN_URL}"
+          MESSAGE+=$'\n'"🔎 **Actions Log:** $RUN_URL"
 
-          # Phán quyết có gửi hay không
           if [ "$has_issue" -eq 0 ]; then
             echo "No security or uptime issues found. Skip Discord alert."
             exit 0
           fi
 
-          # Nếu có issue nhưng thiếu webhook URL
           if [ -z "$DISCORD_WEBHOOK_SECURITY" ]; then
             echo "Error: DISCORD_WEBHOOK_SECURITY secret is missing but issues were detected."
             exit 1
           fi
 
-          # Tạo payload JSON bằng jq
           payload="$(jq -n --arg content "$MESSAGE" '{content: $content}')"
 
-          # Gửi tin nhắn qua Discord
-          echo "Sending alert to Discord..."
-          curl -sS --fail-with-body -X POST \
+          echo "Sending daily security alert to Discord..."
+          curl -sS --fail-with-body \
+            -X POST "$DISCORD_WEBHOOK_SECURITY" \
             -H "Content-Type: application/json" \
-            -d "$payload" \
-            "$DISCORD_WEBHOOK_SECURITY"
+            --data "$payload"
