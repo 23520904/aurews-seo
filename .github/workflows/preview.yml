@@ -197,7 +197,7 @@ jobs:
                   description: $description,
                   url: $run_url,
                   color: $color,
-                  fields: [
+                  fields: ([
                     { name: "Repository", value: $repository, inline: true },
                     { name: "Branch", value: $branch, inline: true },
                     { name: "Actor", value: $actor, inline: true },
@@ -205,7 +205,11 @@ jobs:
                     { name: "Commit", value: $sha, inline: true },
                     { name: "Jobs", value: ("```" + $jobs + "```"), inline: false },
                     { name: "Run", value: $run_url, inline: false }
-                  ] + (if $preview_url != "" then [{ name: "Preview URL", value: $preview_url, inline: false }] else [])
+                  ] + (if ($preview_url | length) > 0 then
+                    [{ name: "Preview URL", value: $preview_url, inline: false }]
+                  else
+                    []
+                  end))
                 }
               ]
             }' > discord-payload.json
