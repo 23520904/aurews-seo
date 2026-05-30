@@ -37,16 +37,17 @@ jobs:
           output: 'trivy.json'
         continue-on-error: true
 
-      - name: Parse Trivy results
-        id: trivy_parse
+      - name: Summarize Trivy results
+        id: trivy_summary
         run: |
+          CRIT=0
+          HIGH=0
           if [ -f trivy.json ]; then
-            CRIT=$(jq '[.Results[].Vulnerabilities[]? | select(.Severity == "CRITICAL")] | length' trivy.json || echo 0)
-            HIGH=$(jq '[.Results[].Vulnerabilities[]? | select(.Severity == "HIGH")] | length' trivy.json || echo 0)
-          else
-            CRIT=0
-            HIGH=0
+            CRIT=$(jq '[.Results[].Vulnerabilities[]? | select(.Severity == "CRITICAL")] | length' trivy.json 2>/dev/null || echo 0)
+            HIGH=$(jq '[.Results[].Vulnerabilities[]? | select(.Severity == "HIGH")] | length' trivy.json 2>/dev/null || echo 0)
           fi
+          [ -z "$CRIT" ] && CRIT=0
+          [ -z "$HIGH" ] && HIGH=0
           echo "CRIT_COUNT=$CRIT" >> $GITHUB_OUTPUT
           echo "HIGH_COUNT=$HIGH" >> $GITHUB_OUTPUT
 
@@ -64,61 +65,79 @@ jobs:
 
       # ── 4. GỬI ALERT QUA DISCORD NẾU CÓ BẤT KỲ VẤN ĐỀ GÌ ──
       - name: Discord alert if issues
-        if: |
-          always() && (
-            (steps.audit.outputs.HIGH_COUNT != '' && fromJSON(steps.audit.outputs.HIGH_COUNT) > 0) || 
-            (steps.audit.outputs.CRIT_COUNT != '' && fromJSON(steps.audit.outputs.CRIT_COUNT) > 0) || 
-            (steps.trivy_parse.outputs.HIGH_COUNT != '' && fromJSON(steps.trivy_parse.outputs.HIGH_COUNT) > 0) || 
-            (steps.trivy_parse.outputs.CRIT_COUNT != '' && fromJSON(steps.trivy_parse.outputs.CRIT_COUNT) > 0) || 
-            (steps.uptime.outputs.HTTP_STATUS != '' && steps.uptime.outputs.HTTP_STATUS != '200') ||
-            (steps.uptime.outputs.SITEMAP_STATUS != '' && steps.uptime.outputs.SITEMAP_STATUS != '200') ||
-            (steps.uptime.outputs.NEWS_SITEMAP_STATUS != '' && steps.uptime.outputs.NEWS_SITEMAP_STATUS != '200')
-          )
+        if: always()
         env:
           DISCORD_WEBHOOK_SECURITY: ${{ secrets.DISCORD_WEBHOOK_SECURITY }}
+          UPTIME_STATUS: ${{ steps.uptime.outputs.HTTP_STATUS }}
+          SITEMAP_STATUS: ${{ steps.uptime.outputs.SITEMAP_STATUS }}
+          NEWS_SITEMAP_STATUS: ${{ steps.uptime.outputs.NEWS_SITEMAP_STATUS }}
+          NPM_HIGH: ${{ steps.audit.outputs.HIGH_COUNT }}
+          NPM_CRIT: ${{ steps.audit.outputs.CRIT_COUNT }}
+          TRIVY_HIGH: ${{ steps.trivy_summary.outputs.HIGH_COUNT }}
+          TRIVY_CRIT: ${{ steps.trivy_summary.outputs.CRIT_COUNT }}
         run: |
-          if [ -z "$DISCORD_WEBHOOK_SECURITY" ]; then
-            echo "Discord webhook is unconfigured. Skipping alert."
+          # Thiết lập mặc định an toàn nếu rỗng
+          UPTIME_STATUS="${UPTIME_STATUS:-000}"
+          SITEMAP_STATUS="${SITEMAP_STATUS:-000}"
+          NEWS_SITEMAP_STATUS="${NEWS_SITEMAP_STATUS:-000}"
+          NPM_HIGH="${NPM_HIGH:-0}"
+          NPM_CRIT="${NPM_CRIT:-0}"
+          TRIVY_HIGH="${TRIVY_HIGH:-0}"
+          TRIVY_CRIT="${TRIVY_CRIT:-0}"
+
+          has_issue=0
+          MESSAGE="🚨 **Daily Security Alert ($(date +'%d/%m/%Y'))**\n"
+
+          # 1. Kiểm tra Uptime
+          if [ "$UPTIME_STATUS" != "200" ]; then
+            MESSAGE="${MESSAGE}⚠️ Homepage is DOWN/Error (Status: ${UPTIME_STATUS})\n"
+            has_issue=1
+          fi
+
+          if [ "$SITEMAP_STATUS" != "200" ]; then
+            MESSAGE="${MESSAGE}⚠️ sitemap.xml is DOWN/Error (Status: ${SITEMAP_STATUS})\n"
+            has_issue=1
+          fi
+
+          if [ "$NEWS_SITEMAP_STATUS" != "200" ]; then
+            MESSAGE="${MESSAGE}⚠️ news-sitemap.xml is DOWN/Error (Status: ${NEWS_SITEMAP_STATUS})\n"
+            has_issue=1
+          fi
+
+          # 2. Kiểm tra NPM Audit
+          if [ "$NPM_HIGH" -gt 0 ] || [ "$NPM_CRIT" -gt 0 ]; then
+            MESSAGE="${MESSAGE}🔐 **NPM Audit:** ${NPM_CRIT} CRITICAL, ${NPM_HIGH} HIGH vulnerabilities\n"
+            has_issue=1
+          fi
+
+          # 3. Kiểm tra Trivy Scan
+          if [ "$TRIVY_HIGH" -gt 0 ] || [ "$TRIVY_CRIT" -gt 0 ]; then
+            MESSAGE="${MESSAGE}🛡️ **Trivy Scan:** ${TRIVY_CRIT} CRITICAL, ${TRIVY_HIGH} HIGH vulnerabilities\n"
+            has_issue=1
+          fi
+
+          # Thêm link Actions Run
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          MESSAGE="${MESSAGE}\n• **Actions Log:** ${RUN_URL}"
+
+          # Phán quyết có gửi hay không
+          if [ "$has_issue" -eq 0 ]; then
+            echo "No security or uptime issues found. Skip Discord alert."
             exit 0
           fi
-          
-          UPTIME_STATUS="${{ steps.uptime.outputs.HTTP_STATUS }}"
-          SITEMAP_STATUS="${{ steps.uptime.outputs.SITEMAP_STATUS }}"
-          NEWS_SITEMAP_STATUS="${{ steps.uptime.outputs.NEWS_SITEMAP_STATUS }}"
-          
-          NPM_HIGH="${{ steps.audit.outputs.HIGH_COUNT }}"
-          NPM_HIGH="${NPM_HIGH:-0}"
-          NPM_CRIT="${{ steps.audit.outputs.CRIT_COUNT }}"
-          NPM_CRIT="${NPM_CRIT:-0}"
-          
-          TRIVY_HIGH="${{ steps.trivy_parse.outputs.HIGH_COUNT }}"
-          TRIVY_HIGH="${TRIVY_HIGH:-0}"
-          TRIVY_CRIT="${{ steps.trivy_parse.outputs.CRIT_COUNT }}"
-          TRIVY_CRIT="${TRIVY_CRIT:-0}"
-          
-          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          
-          CONTENT=$(jq -n \
-            --arg date "$(date +'%d/%m/%Y')" \
-            --arg uptime "$UPTIME_STATUS" \
-            --arg sitemap "$SITEMAP_STATUS" \
-            --arg news_sitemap "$NEWS_SITEMAP_STATUS" \
-            --arg npm_high "$NPM_HIGH" \
-            --arg npm_crit "$NPM_CRIT" \
-            --arg trivy_high "$TRIVY_HIGH" \
-            --arg trivy_crit "$TRIVY_CRIT" \
-            --arg url "$RUN_URL" \
-            '
-            "🚨 **Daily Security Alert (" + $date + ")**\n" +
-            (if $uptime != "200" then "⚠️ Homepage is DOWN/Error (Status: " + $uptime + ")\n" else "") +
-            (if $sitemap != "200" then "⚠️ sitemap.xml is DOWN/Error (Status: " + $sitemap + ")\n" else "") +
-            (if $news_sitemap != "200" then "⚠️ news-sitemap.xml is DOWN/Error (Status: " + $news_sitemap + ")\n" else "") +
-            (if ($npm_high | tonumber) > 0 or ($npm_crit | tonumber) > 0 then "🔐 **NPM Audit:** " + $npm_crit + " CRITICAL, " + $npm_high + " HIGH vulnerabilities\n" else "") +
-            (if ($trivy_high | tonumber) > 0 or ($trivy_crit | tonumber) > 0 then "🛡️ **Trivy Scan:** " + $trivy_crit + " CRITICAL, " + $trivy_high + " HIGH vulnerabilities\n" else "") +
-            "\n• **Actions Log:** " + $url
-            '
-          )
-          
-          curl -s -X POST "$DISCORD_WEBHOOK_SECURITY" \
+
+          # Nếu có issue nhưng thiếu webhook URL
+          if [ -z "$DISCORD_WEBHOOK_SECURITY" ]; then
+            echo "Error: DISCORD_WEBHOOK_SECURITY secret is missing but issues were detected."
+            exit 1
+          fi
+
+          # Tạo payload JSON bằng jq
+          payload="$(jq -n --arg content "$MESSAGE" '{content: $content}')"
+
+          # Gửi tin nhắn qua Discord
+          echo "Sending alert to Discord..."
+          curl -sS --fail-with-body -X POST \
             -H "Content-Type: application/json" \
-            -d "$(jq -n --arg content "$CONTENT" '{content: $content}')" || true
+            -d "$payload" \
+            "$DISCORD_WEBHOOK_SECURITY"
