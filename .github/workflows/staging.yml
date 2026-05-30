@@ -1,0 +1,401 @@
+name: Deploy to Staging
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+concurrency:
+  group: staging-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # ── 1. DEPLOY STAGING / VERCEL PREVIEW ─────────────────────
+  deploy-staging:
+    name: Deploy Vercel Preview
+    runs-on: ubuntu-latest
+    environment: staging
+
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+
+    outputs:
+      preview_url: ${{ steps.vercel-preview.outputs.preview-url }}
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Deploy to Vercel Preview
+        id: vercel-preview
+        uses: amondnet/vercel-action@de09aeac2ace6599ec9b11ef87558759a496bac4 # v42.3.0
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-version: latest
+          working-directory: ./
+
+      - name: Create or update PR staging comment
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PREVIEW_URL: ${{ steps.vercel-preview.outputs.preview-url }}
+        run: |
+          set -euo pipefail
+
+          COMMENT_BODY="$(cat <<EOF
+          🚀 **Aurews Staging Preview**
+
+          **Preview URL:** ${PREVIEW_URL}
+
+          ⏳ Acceptance tests, optional share-button quality check, and Lighthouse audit are running...
+          EOF
+          )"
+
+          COMMENT_ID="$(gh api "repos/${REPOSITORY}/issues/${PR_NUMBER}/comments" \
+            --jq '.[] | select(.user.type == "Bot" and (.body | contains("Aurews Staging Preview"))) | .id' \
+            | head -n 1)"
+
+          if [ -n "$COMMENT_ID" ]; then
+            gh api --method PATCH "repos/${REPOSITORY}/issues/comments/${COMMENT_ID}" \
+              -f body="$COMMENT_BODY"
+          else
+            gh api --method POST "repos/${REPOSITORY}/issues/${PR_NUMBER}/comments" \
+              -f body="$COMMENT_BODY"
+          fi
+
+  # ── 2. STAGING ACCEPTANCE TESTS ─────────────────────────────
+  acceptance-tests:
+    name: Staging Acceptance Tests
+    needs: deploy-staging
+    runs-on: ubuntu-latest
+
+    env:
+      PLAYWRIGHT_BASE_URL: ${{ needs.deploy-staging.outputs.preview_url }}
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run staging acceptance tests
+        run: |
+          npx playwright test \
+            e2e/homepage.spec.ts \
+            e2e/article-page.spec.ts \
+            e2e/category.spec.ts \
+            e2e/search.spec.ts \
+            e2e/auth.spec.ts \
+            e2e/dashboard-access.spec.ts \
+            e2e/404.spec.ts
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: playwright-report-staging-acceptance
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+
+  # ── 3. OPTIONAL SHARE BUTTONS QUALITY CHECK ─────────────────
+  share-buttons-quality:
+    name: Optional Share Buttons Quality Check
+    needs: deploy-staging
+    runs-on: ubuntu-latest
+
+    outputs:
+      share_buttons_outcome: ${{ steps.share_buttons.outcome }}
+
+    env:
+      PLAYWRIGHT_BASE_URL: ${{ needs.deploy-staging.outputs.preview_url }}
+      EXPECTED_SHARE_BASE_URL: ${{ needs.deploy-staging.outputs.preview_url }}
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run share buttons quality test
+        id: share_buttons
+        continue-on-error: true
+        run: npx playwright test e2e/share-buttons.spec.ts
+
+      - name: Upload share buttons report on failure
+        if: steps.share_buttons.outcome == 'failure'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: playwright-report-share-buttons
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+
+  # ── 4. OPTIONAL LIGHTHOUSE STAGING AUDIT ────────────────────
+  lighthouse-staging:
+    name: Optional Lighthouse Staging Audit
+    needs: deploy-staging
+    runs-on: ubuntu-latest
+
+    outputs:
+      lighthouse_outcome: ${{ steps.lighthouse.outcome }}
+
+    env:
+      PREVIEW_URL: ${{ needs.deploy-staging.outputs.preview_url }}
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Create Lighthouse staging config
+        run: |
+          cat > .lighthouserc-staging.json <<EOF
+          {
+            "ci": {
+              "collect": {
+                "url": ["${PREVIEW_URL}"],
+                "numberOfRuns": 1,
+                "settings": {
+                  "extraHeaders": {
+                    "x-vercel-protection-bypass": "${VERCEL_AUTOMATION_BYPASS_SECRET}"
+                  }
+                }
+              },
+              "assert": {
+                "assertions": {
+                  "categories:seo": ["warn", { "minScore": 0.8 }],
+                  "categories:accessibility": ["warn", { "minScore": 0.8 }],
+                  "categories:best-practices": ["warn", { "minScore": 0.8 }],
+                  "categories:performance": ["warn", { "minScore": 0.6 }]
+                }
+              },
+              "upload": {
+                "target": "temporary-public-storage"
+              }
+            }
+          }
+          EOF
+
+      - name: Run Lighthouse on staging URL
+        id: lighthouse
+        continue-on-error: true
+        uses: treosh/lighthouse-ci-action@512cc908a55bfb0ad231facca52adf3d3a651df4 # v12
+        with:
+          configPath: ./.lighthouserc-staging.json
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+  # ── 5. UPDATE PR COMMENT ────────────────────────────────────
+  update-pr-comment:
+    name: Update PR Comment
+    needs:
+      - deploy-staging
+      - acceptance-tests
+      - share-buttons-quality
+      - lighthouse-staging
+    if: always() && github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+
+    steps:
+      - name: Update staging status comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PREVIEW_URL: ${{ needs.deploy-staging.outputs.preview_url }}
+          ACCEPTANCE_RESULT: ${{ needs.acceptance-tests.result }}
+          SHARE_BUTTONS_OUTCOME: ${{ needs.share-buttons-quality.outputs.share_buttons_outcome }}
+          LIGHTHOUSE_OUTCOME: ${{ needs.lighthouse-staging.outputs.lighthouse_outcome }}
+        run: |
+          set -euo pipefail
+
+          if [ "$ACCEPTANCE_RESULT" = "success" ]; then
+            ACCEPTANCE_LINE="✅ Acceptance tests passed. Ready for review."
+          else
+            ACCEPTANCE_LINE="❌ Acceptance tests failed. Please check GitHub Actions logs before merging."
+          fi
+
+          if [ "$SHARE_BUTTONS_OUTCOME" = "success" ]; then
+            SHARE_LINE="✅ Optional share-buttons quality check passed."
+          elif [ "$SHARE_BUTTONS_OUTCOME" = "failure" ]; then
+            SHARE_LINE="⚠️ Optional share-buttons quality check failed. This does not block staging, but should be reviewed."
+          else
+            SHARE_LINE="ℹ️ Optional share-buttons quality check result: ${SHARE_BUTTONS_OUTCOME:-unknown}."
+          fi
+
+          if [ "$LIGHTHOUSE_OUTCOME" = "success" ]; then
+            LIGHTHOUSE_LINE="✅ Optional Lighthouse staging audit completed."
+          elif [ "$LIGHTHOUSE_OUTCOME" = "failure" ]; then
+            LIGHTHOUSE_LINE="⚠️ Optional Lighthouse staging audit failed or did not meet warning thresholds."
+          else
+            LIGHTHOUSE_LINE="ℹ️ Optional Lighthouse staging audit result: ${LIGHTHOUSE_OUTCOME:-unknown}."
+          fi
+
+          COMMENT_BODY="$(cat <<EOF
+          🚀 **Aurews Staging Preview**
+
+          **Preview URL:** ${PREVIEW_URL}
+
+          ${ACCEPTANCE_LINE}
+          ${SHARE_LINE}
+          ${LIGHTHOUSE_LINE}
+          EOF
+          )"
+
+          COMMENT_ID="$(gh api "repos/${REPOSITORY}/issues/${PR_NUMBER}/comments" \
+            --jq '.[] | select(.user.type == "Bot" and (.body | contains("Aurews Staging Preview"))) | .id' \
+            | head -n 1)"
+
+          if [ -n "$COMMENT_ID" ]; then
+            gh api --method PATCH "repos/${REPOSITORY}/issues/comments/${COMMENT_ID}" \
+              -f body="$COMMENT_BODY"
+          else
+            gh api --method POST "repos/${REPOSITORY}/issues/${PR_NUMBER}/comments" \
+              -f body="$COMMENT_BODY"
+          fi
+
+  # ── 6. NOTIFY DISCORD ───────────────────────────────────────
+  notify-discord:
+    name: Notify Discord
+    needs:
+      - deploy-staging
+      - acceptance-tests
+      - share-buttons-quality
+      - lighthouse-staging
+    if: always()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send staging result to Discord
+        env:
+          DISCORD_WEBHOOK_DEPLOY: ${{ secrets.DISCORD_WEBHOOK_DEPLOY }}
+          NEEDS_JSON: ${{ toJson(needs) }}
+          WORKFLOW: ${{ github.workflow }}
+          REPOSITORY: ${{ github.repository }}
+          BRANCH: ${{ github.head_ref || github.ref_name }}
+          ACTOR: ${{ github.actor }}
+          SHA: ${{ github.sha }}
+          EVENT_NAME: ${{ github.event_name }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PREVIEW_URL: ${{ needs.deploy-staging.outputs.preview_url }}
+          SHARE_BUTTONS_OUTCOME: ${{ needs.share-buttons-quality.outputs.share_buttons_outcome }}
+          LIGHTHOUSE_OUTCOME: ${{ needs.lighthouse-staging.outputs.lighthouse_outcome }}
+        run: |
+          if [ -z "$DISCORD_WEBHOOK_DEPLOY" ]; then
+            echo "DISCORD_WEBHOOK_DEPLOY is not set. Skipping Discord notification."
+            exit 0
+          fi
+
+          SHORT_SHA="${SHA:0:7}"
+
+          if echo "$NEEDS_JSON" | jq -e 'to_entries[] | select(.key == "acceptance-tests" and .value.result == "failure")' > /dev/null; then
+            STATUS="FAILED"
+            EMOJI="❌"
+            COLOR=15158332
+          elif echo "$NEEDS_JSON" | jq -e 'to_entries[] | select(.value.result == "cancelled")' > /dev/null; then
+            STATUS="CANCELLED"
+            EMOJI="⚠️"
+            COLOR=16776960
+          else
+            STATUS="PASSED"
+            EMOJI="✅"
+            COLOR=3066993
+          fi
+
+          JOB_SUMMARY="$(echo "$NEEDS_JSON" | jq -r 'to_entries | map("\(.key): \(.value.result)") | join("\n")')"
+          DESCRIPTION="PR: ${PR_TITLE:-Deploy to staging}"
+
+          OPTIONAL_SUMMARY="share-buttons: ${SHARE_BUTTONS_OUTCOME:-unknown}\nlighthouse: ${LIGHTHOUSE_OUTCOME:-unknown}"
+
+          jq -n \
+            --arg title "$EMOJI $WORKFLOW $STATUS" \
+            --arg description "$DESCRIPTION" \
+            --arg repository "$REPOSITORY" \
+            --arg branch "$BRANCH" \
+            --arg actor "$ACTOR" \
+            --arg sha "$SHORT_SHA" \
+            --arg event "$EVENT_NAME" \
+            --arg run_url "$RUN_URL" \
+            --arg jobs "$JOB_SUMMARY" \
+            --arg optional "$OPTIONAL_SUMMARY" \
+            --arg preview_url "$PREVIEW_URL" \
+            --argjson color "$COLOR" \
+            '{
+              username: "Aurews Staging",
+              embeds: [
+                {
+                  title: $title,
+                  description: $description,
+                  url: $run_url,
+                  color: $color,
+                  fields: ([
+                    { name: "Repository", value: $repository, inline: true },
+                    { name: "Branch", value: $branch, inline: true },
+                    { name: "Actor", value: $actor, inline: true },
+                    { name: "Event", value: $event, inline: true },
+                    { name: "Commit", value: $sha, inline: true },
+                    { name: "Jobs", value: ("```" + $jobs + "```"), inline: false },
+                    { name: "Optional checks", value: ("```" + $optional + "```"), inline: false },
+                    { name: "Run", value: $run_url, inline: false }
+                  ] + (if ($preview_url | length) > 0 then
+                    [{ name: "Staging URL", value: $preview_url, inline: false }]
+                  else
+                    []
+                  end))
+                }
+              ]
+            }' > discord-payload.json
+
+          curl -sS \
+            -H "Content-Type: application/json" \
+            -d @discord-payload.json \
+            "$DISCORD_WEBHOOK_DEPLOY" || true
