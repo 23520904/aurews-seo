@@ -331,6 +331,59 @@ flowchart LR
 
 ## ⚙️ Local Development
 
+### 🐳 Option A: Running with Docker (Recommended)
+
+Docker is used to standardize the local development environment for the entire team, preventing version discrepancies of Node.js, npm, and system packages. This configuration does **not** affect the production Vercel deployment.
+
+#### Key Benefits:
+- **Consistent Node.js & npm version**: Every developer runs on `node:20-alpine` out of the box.
+- **Isolate host dependencies**: No more `node_modules` conflicts across different operating systems.
+- **Frictionless onboarding**: New developers only need Docker installed; no manual database/Node setup required.
+- **Instant deployment**: Ready with hot reloading (`WATCHPACK_POLLING=true`) and secure Prisma Client pre-generation.
+
+#### Quick Start:
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/23520904/aurews-seo.git
+   cd aurews
+   ```
+2. Create your environment variables file from the template:
+   ```bash
+   cp .env.example .env
+   ```
+3. Fill in the required environment variables in `.env` (like Supabase Database URL).
+4. Run the Docker container:
+   ```bash
+   docker compose up --build
+   # Or using our utility npm script:
+   npm run docker:dev
+   ```
+   The application will be accessible at [http://localhost:3000](http://localhost:3000).
+
+#### Operations:
+- **Stop containers**:
+  ```bash
+  docker compose down
+  # Or:
+  npm run docker:down
+  ```
+- **View logs**:
+  ```bash
+  docker compose logs -f
+  # Or:
+  npm run docker:logs
+  ```
+- **Rebuild container** (e.g., when adding/changing dependencies in `package.json`):
+  ```bash
+  docker compose up --build
+  ```
+
+---
+
+### 💻 Option B: Running Locally (Manual Setup)
+
+If you prefer to run the application directly on your host machine:
+
 ```bash
 # 1. Install dependencies
 npm install
@@ -348,7 +401,7 @@ Create a local `.env` file:
 DATABASE_URL="postgresql://postgres.[ref]:[password]@aws-0-[region].pooler.supabase.com:6543/postgres?pgbouncer=true"
 DIRECT_URL="postgresql://postgres.[ref]:[password]@aws-0-[region].pooler.supabase.com:5432/postgres"
 NEXTAUTH_SECRET="your-auth-secret"
-NEXT_PUBLIC_SITE_URL="https://aurews.id.vn"
+NEXT_PUBLIC_SITE_URL="http://localhost:3000"
 ```
 
 ---

@@ -1,21 +1,23 @@
 services:
   app:
+    container_name: aurews-dev-app
     build:
       context: .
-      target: runner
-      args:
-        NEXT_PUBLIC_SITE_URL: https://aurews.id.vn
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
     env_file:
       - .env
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
+      # Kích hoạt chế độ polling giúp Next.js phát hiện thay đổi file chính xác trong Docker Volume
+      - WATCHPACK_POLLING=true
+      - NEXT_TELEMETRY_DISABLED=1
+    volumes:
+      # Mount toàn bộ mã nguồn từ máy host vào trong container
+      - .:/app
+      # Bảo vệ node_modules bên trong container, không cho máy host ghi đè (tránh lỗi xung đột OS)
+      - /app/node_modules
+      # Bảo vệ thư mục build cache của Next.js khỏi bị ghi đè chéo
+      - /app/.next
     restart: unless-stopped
-    # Align with Dockerfile HEALTHCHECK — uses curl (installed in runner stage)
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
-      interval: 30s
-      timeout: 5s
-      start_period: 15s
-      retries: 3
