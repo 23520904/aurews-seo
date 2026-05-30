@@ -9,11 +9,8 @@ RUN apk add --no-cache libc6-compat
 COPY package.json package-lock.json ./
 COPY prisma ./prisma/
 
-# Cài đặt toàn bộ dependencies bao gồm cả devDependencies phục vụ phát triển local
-RUN npm ci --legacy-peer-deps
-
-# Tự sinh mã Prisma Client cho môi trường container
-RUN npx prisma generate
+# Cài đặt toàn bộ dependencies và sinh mã Prisma Client cho môi trường container
+RUN npm ci --legacy-peer-deps && npx prisma generate
 
 # Sao chép toàn bộ mã nguồn vào trong container
 COPY . .
