@@ -1,41 +1,90 @@
-name: Lighthouse CI — SEO Health
+name: Lighthouse Production Audit
+
 on:
-  push:
-    branches: [main]
+  # Runs every Monday 06:00 Vietnam time (Sunday 23:00 UTC)
   schedule:
-    - cron: '0 6 * * 1'  # Chạy tự động vào lúc 6h sáng thứ Hai hàng tuần
-  workflow_dispatch:     # Cho phép bấm nút chạy thủ công bất cứ lúc nào
+    - cron: '0 23 * * 0'
+
+  workflow_dispatch:
+    inputs:
+      target_url:
+        description: 'Target URL to audit'
+        required: false
+        default: 'https://aurews.id.vn'
+
+concurrency:
+  group: lighthouse-production-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
   lighthouse:
+    name: Audit Production SEO & Performance
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
-      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
-        with: { node-version: '20' }
+      - name: Resolve target URL
+        id: target
+        env:
+          INPUT_TARGET_URL: ${{ github.event.inputs.target_url }}
+        run: |
+          set -euo pipefail
 
-      # Chạy Lighthouse CI quét qua các link, đánh giá điểm số và lưu báo cáo an toàn
-      - name: Run Lighthouse CI
+          TARGET_URL="${INPUT_TARGET_URL:-https://aurews.id.vn}"
+
+          if ! echo "$TARGET_URL" | grep -Eq '^https?://'; then
+            echo "Invalid target URL: $TARGET_URL"
+            exit 1
+          fi
+
+          echo "target_url=$TARGET_URL" >> "$GITHUB_OUTPUT"
+          echo "Target URL: $TARGET_URL"
+
+      - name: Check target availability
+        run: |
+          set -euo pipefail
+
+          TARGET_URL="${{ steps.target.outputs.target_url }}"
+
+          echo "Checking target availability: $TARGET_URL"
+
+          for i in {1..6}; do
+            HTTP_CODE="$(curl -s -L -o /dev/null -w "%{http_code}" "$TARGET_URL" 2>/dev/null || true)"
+            HTTP_CODE="${HTTP_CODE:-000}"
+
+            if [ "$HTTP_CODE" = "200" ]; then
+              echo "Target is available: $HTTP_CODE"
+              exit 0
+            fi
+
+            echo "Target not ready. Attempt $i/6. Status: $HTTP_CODE"
+            sleep 10
+          done
+
+          echo "Target is not available for Lighthouse audit."
+          exit 1
+
+      - name: Run Lighthouse CI audit
+        id: lighthouse
+        continue-on-error: true
         uses: treosh/lighthouse-ci-action@512cc908a55bfb0ad231facca52adf3d3a651df4 # v12
         with:
-          configPath: .lighthouserc.json
+          urls: |
+            ${{ steps.target.outputs.target_url }}
+            ${{ steps.target.outputs.target_url }}/search
+            ${{ steps.target.outputs.target_url }}/category/business
           uploadArtifacts: true
           temporaryPublicStorage: true
-        env:
-          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
-  notify-discord:
-    name: Notify Discord
-    needs: [lighthouse]
-    if: always()
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Send Lighthouse result to Discord
+      - name: Notify Discord
+        if: always()
         env:
           DISCORD_WEBHOOK_DEPLOY: ${{ secrets.DISCORD_WEBHOOK_DEPLOY }}
-          NEEDS_JSON: ${{ toJson(needs) }}
           WORKFLOW: ${{ github.workflow }}
           REPOSITORY: ${{ github.repository }}
           BRANCH: ${{ github.ref_name }}
@@ -43,8 +92,8 @@ jobs:
           SHA: ${{ github.sha }}
           EVENT_NAME: ${{ github.event_name }}
           RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
-          PR_TITLE: ${{ github.event.pull_request.title }}
+          TARGET_URL: ${{ steps.target.outputs.target_url }}
+          LIGHTHOUSE_OUTCOME: ${{ steps.lighthouse.outcome }}
         run: |
           if [ -z "$DISCORD_WEBHOOK_DEPLOY" ]; then
             echo "DISCORD_WEBHOOK_DEPLOY is not set. Skipping Discord notification."
@@ -53,30 +102,24 @@ jobs:
 
           SHORT_SHA="${SHA:0:7}"
 
-          if echo "$NEEDS_JSON" | jq -e 'to_entries[] | select(.value.result == "failure")' > /dev/null; then
-            STATUS="FAILED"
-            EMOJI="❌"
-            COLOR=15158332
-          elif echo "$NEEDS_JSON" | jq -e 'to_entries[] | select(.value.result == "cancelled")' > /dev/null; then
+          if [ "$LIGHTHOUSE_OUTCOME" = "failure" ]; then
+            STATUS="NEEDS REVIEW"
+            EMOJI="⚠️"
+            COLOR=16776960
+          elif [ "$LIGHTHOUSE_OUTCOME" = "cancelled" ]; then
             STATUS="CANCELLED"
             EMOJI="⚠️"
             COLOR=16776960
           else
-            STATUS="PASSED"
+            STATUS="COMPLETED"
             EMOJI="✅"
             COLOR=3066993
           fi
 
-          JOB_SUMMARY="$(echo "$NEEDS_JSON" | jq -r 'to_entries | map("\(.key): \(.value.result)") | join("\n")')"
-
-          if [ "$EVENT_NAME" = "pull_request" ]; then
-            DESCRIPTION="PR: ${PR_TITLE:-No PR title}"
-          else
-            DESCRIPTION="Commit: ${COMMIT_MESSAGE:-No commit message}"
-          fi
+          DESCRIPTION="Production Lighthouse audit for ${TARGET_URL}"
 
           jq -n \
-            --arg title "$EMOJI Lighthouse / SEO Check $STATUS" \
+            --arg title "$EMOJI $WORKFLOW $STATUS" \
             --arg description "$DESCRIPTION" \
             --arg repository "$REPOSITORY" \
             --arg branch "$BRANCH" \
@@ -84,7 +127,8 @@ jobs:
             --arg sha "$SHORT_SHA" \
             --arg event "$EVENT_NAME" \
             --arg run_url "$RUN_URL" \
-            --arg jobs "$JOB_SUMMARY" \
+            --arg target_url "$TARGET_URL" \
+            --arg outcome "$LIGHTHOUSE_OUTCOME" \
             --argjson color "$COLOR" \
             '{
               username: "Aurews Lighthouse",
@@ -100,7 +144,9 @@ jobs:
                     { name: "Actor", value: $actor, inline: true },
                     { name: "Event", value: $event, inline: true },
                     { name: "Commit", value: $sha, inline: true },
-                    { name: "Jobs", value: ("```" + $jobs + "```"), inline: false },
+                    { name: "Target URL", value: $target_url, inline: false },
+                    { name: "Lighthouse outcome", value: $outcome, inline: true },
+                    { name: "Report", value: "Check GitHub Actions artifacts / temporary Lighthouse links.", inline: false },
                     { name: "Run", value: $run_url, inline: false }
                   ]
                 }

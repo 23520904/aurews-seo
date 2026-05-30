@@ -1,20 +1,36 @@
 name: Deploy to Production
+
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: production-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
 
 jobs:
   deploy:
+    name: Deploy Vercel Production
     runs-on: ubuntu-latest
     environment: production
+    timeout-minutes: 20
+
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
-      - uses: actions/setup-node@v4
-        with: { node-version: '20', cache: 'npm' }
-      - run: npm ci
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: '20'
+          cache: 'npm'
 
-      # ── Prisma migrations before deploy ──
+      - name: Install dependencies
+        run: npm ci
+
       # Prisma migrations must use direct/session connection, not Supabase transaction pooler 6543.
       - name: Run Prisma migrations
         run: npx prisma migrate deploy
@@ -23,8 +39,7 @@ jobs:
           DATABASE_URL: ${{ secrets.DIRECT_URL }}
           DIRECT_URL: ${{ secrets.DIRECT_URL }}
 
-      # ── Vercel deploy ──
-      - name: Deploy to Vercel
+      - name: Deploy to Vercel Production
         id: deploy
         uses: amondnet/vercel-action@de09aeac2ace6599ec9b11ef87558759a496bac4 # v42.3.0
         with:
@@ -35,64 +50,141 @@ jobs:
           vercel-args: '--prod'
           working-directory: ./
 
-      # ── Tối ưu: Chờ 10 giây để Vercel Production ổn định hoàn toàn ──
       - name: Wait for production availability
-        run: sleep 10
+        run: |
+          set -euo pipefail
 
-      # ── Post-deploy smoke test (ĐÃ SỬA: Xóa npm ci trùng lặp) ──
-      - name: Run smoke tests on production
+          echo "Waiting for production to become available..."
+          for i in {1..12}; do
+            HTTP_CODE="$(curl -s -o /dev/null -w "%{http_code}" https://aurews.id.vn || echo 000)"
+
+            if [ "$HTTP_CODE" = "200" ]; then
+              echo "Production is available: $HTTP_CODE"
+              exit 0
+            fi
+
+            echo "Production not ready yet. Attempt $i/12. Status: $HTTP_CODE"
+            sleep 10
+          done
+
+          echo "Production did not become available in time."
+          exit 1
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run production smoke tests
         env:
           PLAYWRIGHT_BASE_URL: "https://aurews.id.vn"
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
-        run: |
-          npx playwright install --with-deps chromium
-          npx playwright test e2e/smoke.spec.ts
+        run: npx playwright test e2e/smoke.spec.ts
 
-      # ── SEO + Sitemap check (ĐÃ SỬA: Tránh lỗi gãy do exit code của grep) ──
-      - name: Validate sitemaps
-        run: |
-          set -e
-          echo "Sitemap count: $(curl -sf https://aurews.id.vn/sitemap.xml | grep -c "<url>" || true)"
-          echo "News Sitemap count: $(curl -sf https://aurews.id.vn/news-sitemap.xml | grep -c "<url>" || true)"
-          echo "✓ Sitemaps OK"
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: playwright-report-production-smoke
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
 
-      # ── Discord notification ──
+      - name: Validate production sitemaps
+        run: |
+          set -euo pipefail
+
+          echo "Checking sitemap.xml..."
+          SITEMAP_BODY="$(curl -fsSL https://aurews.id.vn/sitemap.xml)"
+          SITEMAP_COUNT="$(printf '%s' "$SITEMAP_BODY" | grep -c "<url>" || true)"
+
+          if [ "$SITEMAP_COUNT" -le 0 ]; then
+            echo "sitemap.xml has no <url> entries."
+            exit 1
+          fi
+
+          echo "sitemap.xml URL count: $SITEMAP_COUNT"
+
+          echo "Checking news-sitemap.xml..."
+          NEWS_SITEMAP_BODY="$(curl -fsSL https://aurews.id.vn/news-sitemap.xml)"
+          NEWS_SITEMAP_COUNT="$(printf '%s' "$NEWS_SITEMAP_BODY" | grep -c "<url>" || true)"
+
+          if [ "$NEWS_SITEMAP_COUNT" -le 0 ]; then
+            echo "news-sitemap.xml has no <url> entries."
+            exit 1
+          fi
+
+          echo "news-sitemap.xml URL count: $NEWS_SITEMAP_COUNT"
+          echo "Production sitemap validation passed."
+
       - name: Notify Discord
         if: always()
         env:
           DISCORD_WEBHOOK_DEPLOY: ${{ secrets.DISCORD_WEBHOOK_DEPLOY }}
           COMMIT_MSG: ${{ github.event.head_commit.message }}
+          WORKFLOW: ${{ github.workflow }}
+          REPOSITORY: ${{ github.repository }}
+          BRANCH: ${{ github.ref_name }}
+          ACTOR: ${{ github.actor }}
+          SHA: ${{ github.sha }}
+          EVENT_NAME: ${{ github.event_name }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          JOB_STATUS: ${{ job.status }}
         run: |
           if [ -z "$DISCORD_WEBHOOK_DEPLOY" ]; then
-            echo "Discord webhook is unconfigured. Skipping notification."
+            echo "DISCORD_WEBHOOK_DEPLOY is not set. Skipping Discord notification."
             exit 0
           fi
-          
-          STATUS="PASSED"
-          STATUS_EMOJI="✅"
-          if [ "${{ job.status }}" = "failure" ]; then
+
+          SHORT_SHA="${SHA:0:7}"
+
+          if [ "$JOB_STATUS" = "failure" ]; then
             STATUS="FAILED"
-            STATUS_EMOJI="❌"
-          elif [ "${{ job.status }}" = "cancelled" ]; then
+            EMOJI="❌"
+            COLOR=15158332
+          elif [ "$JOB_STATUS" = "cancelled" ]; then
             STATUS="CANCELLED"
-            STATUS_EMOJI="⚠️"
+            EMOJI="⚠️"
+            COLOR=16776960
+          else
+            STATUS="PASSED"
+            EMOJI="✅"
+            COLOR=3066993
           fi
-          
-          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
-          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          
-          CONTENT=$(jq -n \
-            --arg emoji "$STATUS_EMOJI" \
-            --arg status "$STATUS" \
-            --arg repo "${{ github.repository }}" \
-            --arg branch "${{ github.ref_name }}" \
-            --arg actor "${{ github.actor }}" \
+
+          DESCRIPTION="Commit: ${COMMIT_MSG:-No commit message}"
+
+          jq -n \
+            --arg title "$EMOJI Production Deploy $STATUS" \
+            --arg description "$DESCRIPTION" \
+            --arg repository "$REPOSITORY" \
+            --arg branch "$BRANCH" \
+            --arg actor "$ACTOR" \
             --arg sha "$SHORT_SHA" \
-            --arg url "$RUN_URL" \
-            --arg msg "$COMMIT_MSG" \
-            '$emoji + " **Production Deploy " + $status + "**\n• **Repository:** " + $repo + "\n• **Branch:** " + $branch + "\n• **Actor:** " + $actor + "\n• **Commit:** `" + $sha + "` (" + $msg + ")\n• **Actions Log:** " + $url'
-          )
-          
-          curl -s -X POST "$DISCORD_WEBHOOK_DEPLOY" \
+            --arg event "$EVENT_NAME" \
+            --arg run_url "$RUN_URL" \
+            --argjson color "$COLOR" \
+            '{
+              username: "Aurews Production",
+              embeds: [
+                {
+                  title: $title,
+                  description: $description,
+                  url: $run_url,
+                  color: $color,
+                  fields: [
+                    { name: "Repository", value: $repository, inline: true },
+                    { name: "Branch", value: $branch, inline: true },
+                    { name: "Actor", value: $actor, inline: true },
+                    { name: "Event", value: $event, inline: true },
+                    { name: "Commit", value: $sha, inline: true },
+                    { name: "Production URL", value: "https://aurews.id.vn", inline: false },
+                    { name: "Run", value: $run_url, inline: false }
+                  ]
+                }
+              ]
+            }' > discord-payload.json
+
+          curl -sS \
             -H "Content-Type: application/json" \
-            -d "$(jq -n --arg content "$CONTENT" '{content: $content}')" || true
+            -d @discord-payload.json \
+            "$DISCORD_WEBHOOK_DEPLOY" || true
