@@ -53,11 +53,33 @@ const MoreIcon = () => (
   </svg>
 );
 
+const PRODUCTION_ORIGIN = "https://www.aurews.id.vn";
+
 const getShareUrl = (url: string) => {
-  if (url.includes("localhost") || url.includes("127.0.0.1")) {
-    return url.replace(/https?:\/\/(localhost|127\.0\.0\.1):\d+/, "https://aurews.id.vn");
+  const fallbackUrl = new URL(url, PRODUCTION_ORIGIN);
+
+  if (typeof window === "undefined") {
+    return fallbackUrl.toString();
   }
-  return url;
+
+  const currentOrigin = window.location.origin;
+
+  // Local dev: never share localhost / 127.0.0.1 to social platforms.
+  if (
+    currentOrigin.includes("localhost") ||
+    currentOrigin.includes("127.0.0.1")
+  ) {
+    fallbackUrl.protocol = "https:";
+    fallbackUrl.host = new URL(PRODUCTION_ORIGIN).host;
+    return fallbackUrl.toString();
+  }
+
+  // Preview / staging / production:
+  // keep the article path/query, but use the current deployment origin.
+  fallbackUrl.protocol = window.location.protocol;
+  fallbackUrl.host = window.location.host;
+
+  return fallbackUrl.toString();
 };
 
 export const ShareButtons = ({ url, title }: ShareButtonsProps) => {
@@ -101,13 +123,13 @@ export const ShareButtons = ({ url, title }: ShareButtonsProps) => {
 
   const handleCopyLink = () => {
     if (navigator.clipboard) {
-      navigator.clipboard.writeText(url).then(() => {
+      navigator.clipboard.writeText(shareUrl).then(() => {
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
       });
     } else {
       const textarea = document.createElement("textarea");
-      textarea.value = url;
+      textarea.value = shareUrl;
       textarea.style.position = "fixed";
       textarea.style.opacity = "0";
       document.body.appendChild(textarea);
@@ -192,13 +214,13 @@ export const ShareButtonsBottom = ({ url, title }: ShareButtonsProps) => {
 
   const handleCopyLink = () => {
     if (navigator.clipboard) {
-      navigator.clipboard.writeText(url).then(() => {
+      navigator.clipboard.writeText(shareUrl).then(() => {
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
       });
     } else {
       const textarea = document.createElement("textarea");
-      textarea.value = url;
+      textarea.value = shareUrl;
       textarea.style.position = "fixed";
       textarea.style.opacity = "0";
       document.body.appendChild(textarea);
