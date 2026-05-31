@@ -87,7 +87,7 @@ jobs:
         run: npm audit --audit-level=high
 
       - name: Trufflehog secret scan (Push)
-        uses: trufflesecurity/trufflehog@f7ff9980e3980dac3fa0ce9a299c5516565a903c # v3.88.13
+        uses: trufflesecurity/trufflehog@37b77001d0174ebec2fcca2bd83ff83a6d45a3ab # v3.95.3
         with:
           path: ./
           base: ${{ github.event.before }}
